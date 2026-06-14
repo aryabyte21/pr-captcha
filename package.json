@@ -1,0 +1,24 @@
+{
+  "name": "ci-captcha",
+  "version": "0.1.0",
+  "private": true,
+  "description": "CAPTCHA before CI for GitHub Actions.",
+  "type": "module",
+  "scripts": {
+    "build": "npm run build --workspaces",
+    "check": "npm run check --workspaces",
+    "test": "npm run test --workspaces --if-present",
+    "format": "prettier --check ."
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "devDependencies": {
+    "prettier": "^3.6.2",
+    "typescript": "^5.8.3"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

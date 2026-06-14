@@ -1,0 +1,15 @@
+node_modules/
+dist/
+apps/worker/dist/
+!packages/action/dist/
+!packages/action/dist/**
+.wrangler/
+apps/worker/.wrangler/
+.playwright-mcp/
+.dev.vars
+.env
+.env.*
+coverage/
+tmp/
+*.tsbuildinfo
+.DS_Store

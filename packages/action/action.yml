@@ -1,0 +1,10 @@
+name: ci-captcha gate
+description: Fail fast until ci-captcha has verified the exact pull request head SHA.
+author: ci-captcha
+inputs:
+  api-url:
+    description: Base URL for the ci-captcha Worker.
+    required: true
+runs:
+  using: node20
+  main: dist/index.js

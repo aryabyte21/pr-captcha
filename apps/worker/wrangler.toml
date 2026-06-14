@@ -1,0 +1,8 @@
+name = "ci-captcha"
+main = "src/index.ts"
+compatibility_date = "2026-06-14"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "ci-captcha"
+database_id = "replace-with-your-d1-database-id"

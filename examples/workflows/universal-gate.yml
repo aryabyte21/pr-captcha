@@ -1,0 +1,21 @@
+name: CI
+
+on:
+  pull_request:
+
+jobs:
+  human-gate:
+    name: ci-captcha / human gate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: yourname/ci-captcha/packages/action@v1
+        with:
+          api-url: https://ci-captcha.example.com
+
+  test:
+    needs: human-gate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci
+      - run: npm test

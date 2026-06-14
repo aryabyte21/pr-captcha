@@ -1,0 +1,34 @@
+mode: hybrid
+
+captcha:
+  provider: cloudflare_turnstile
+
+require:
+  github_login: true
+  solver_must_be_pr_author: true
+  new_sha_requires_new_captcha: true
+
+apply_to:
+  first_time_contributors: true
+  outside_contributors: true
+  fork_prs: true
+  bots: true
+
+skip:
+  authors:
+    - dependabot[bot]
+    - renovate[bot]
+  labels:
+    - trusted-contributor
+    - no-captcha
+
+checks:
+  create_required_check: true
+  name: ci-captcha/human
+
+comment:
+  enabled: true
+  tone: direct
+
+universal_gate:
+  rerun_after_verification: true
