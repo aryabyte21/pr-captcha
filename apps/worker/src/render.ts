@@ -5,187 +5,262 @@ export function renderHome(): string {
   return layout(
     "pr-captcha",
     `<header class="site-header">
-      <a class="brand" href="/"><span class="shield">✓</span><span>pr-captcha</span></a>
+      <a class="brand" href="/"><span class="brand-mark">p</span><span>pr-captcha</span></a>
       <nav class="site-nav" aria-label="Primary navigation">
-        <a href="#docs">Docs</a>
-        <a href="https://github.com/aryabyte21/pr-captcha">GitHub</a>
+        <a href="#how">How it works</a>
+        <a href="#integration">Integration</a>
+        <a href="#security">Security</a>
         <a href="#roadmap">Roadmap</a>
+        <a href="https://github.com/aryabyte21/pr-captcha">GitHub</a>
       </nav>
-      <a class="button header-cta" href="https://github.com/apps">Install GitHub App</a>
+      <a class="button dark header-cta" href="https://github.com/apps">Install GitHub App</a>
     </header>
     <main class="home">
-      <section class="landing-hero">
+      <section class="hero">
         <div class="hero-copy">
-          <h1>CAPTCHA before CI for GitHub Actions</h1>
-          <p>Stop drive-by bots and agent-generated pull requests from burning maintainer time and CI minutes.</p>
+          <h1>Do not spend CI on drive-by pull requests.</h1>
+          <p>Hold suspicious PR workflows until a GitHub-authenticated human verifies the exact head SHA.</p>
           <div class="actions">
-            <a class="button" href="https://github.com/apps">Install GitHub App</a>
-            <a class="button secondary" href="#docs">Read the docs</a>
+            <a class="button dark" href="https://github.com/apps">Install GitHub App</a>
+            <a class="button light" href="#integration">View setup</a>
           </div>
-          <div class="proof-grid" aria-label="Product guarantees">
-            <div><span class="mini-shield">✓</span><strong>GitHub-native</strong><small>Uses workflow approval and Checks API</small></div>
-            <div><span class="mini-shield">✓</span><strong>SHA-bound</strong><small>New commit, new human check</small></div>
-            <div><span class="mini-shield">✓</span><strong>Security-first</strong><small>Never runs untrusted PR code</small></div>
-          </div>
+          <p class="proof-line"><span class="success-shield">✓</span>No CAPTCHA, no CI.</p>
         </div>
-        <div class="pr-preview" aria-label="pr-captcha pull request preview">
-          <div class="repo-row">
-            <strong>pr-captcha-demo</strong>
-            <span>Public</span>
-          </div>
-          <p class="preview-title">Update README.md</p>
-          <p class="preview-subtitle">#1842 opened by some-contributor</p>
-          <div class="workflow-hold">
-            <span class="hold-dot"></span>
-            <div>
-              <strong>ci.yml</strong>
-              <small>Awaiting approval before running on a fork.</small>
+        <div class="product-stage" aria-label="pr-captcha pull request flow preview">
+          <div class="repo-shell">
+            <div class="repo-topbar">
+              <strong>octo-org / awesome-repo</strong>
+              <span>Pull requests 184</span>
             </div>
-            <button type="button">View workflow run</button>
-          </div>
-          <div class="comment-preview">
-            <div class="comment-top">
-              <strong><span class="mini-shield">✓</span> pr-captcha</strong>
-              <span>bot just now</span>
+            <div class="repo-pr">
+              <h2>Add feature</h2>
+              <p><strong>Open</strong> some-user wants to merge 3 commits into <code>main</code> from <code>some-user:feature</code></p>
             </div>
-            <h2>Human check required before CI starts</h2>
-            <p>Please complete a quick verification before GitHub Actions runs.</p>
-            <a class="button compact" href="#demo">Run CI after human check</a>
-            <p class="preview-subtitle">PR: #1842 &middot; Commit: 8f31c9a &middot; Author: some-contributor</p>
+          </div>
+          <div class="workflow-card">
+            <div class="card-top"><strong>GitHub Actions / ci.yml</strong><span>2m ago</span></div>
+            <h3>Workflow run 1234567890</h3>
+            <div class="approval-box">
+              <span class="warn-dot"></span>
+              <div>
+                <strong>Awaiting approval</strong>
+                <p>This workflow run is waiting for approval to run from a public fork.</p>
+              </div>
+            </div>
+          </div>
+          <div class="check-card">
+            <div class="card-top"><strong>pr-captcha / human</strong><span>Required</span></div>
+            <h3>Human verification required</h3>
+            <p>Solve pr-captcha to allow CI to run.</p>
+            <button type="button">Verify human</button>
+          </div>
+          <div class="comment-card">
+            <div class="card-top"><strong>pr-captcha</strong><span>bot · now</span></div>
+            <h3>Human check required before CI starts</h3>
+            <p>This repository uses pr-captcha to protect maintainer time and CI minutes.</p>
+            <a class="button dark compact" href="#how">Run CI after human check</a>
+          </div>
+          <div class="gate-card">
+            <div class="gate-brand"><span class="brand-mark small">p</span><strong>pr-captcha</strong></div>
+            <h3>Verify to run CI</h3>
+            <dl>
+              <div><dt>Repository</dt><dd>octo-org/awesome-repo</dd></div>
+              <div><dt>Pull request</dt><dd>#184</dd></div>
+              <div><dt>Commit</dt><dd>8f31c9a</dd></div>
+              <div><dt>GitHub user</dt><dd>some-user</dd></div>
+            </dl>
+            <div class="captcha-box">
+              <span>✓</span>
+              <strong>Verify you are human</strong>
+              <small>Turnstile</small>
+            </div>
+            <button type="button">Approve and run CI</button>
+            <p>Bound to this exact commit SHA.</p>
           </div>
         </div>
       </section>
-      <section class="section" id="demo">
-        <div class="section-heading">
-          <span></span>
-          <h2>How it works</h2>
-          <span></span>
-        </div>
-        <div class="flow-grid">
-          ${flowStep("1", "PR opened", "Contributor opens a PR from a fork or for the first time.")}
-          ${flowStep("2", "CI paused", "GitHub holds the workflow run awaiting approval.")}
-          ${flowStep("3", "CAPTCHA solved", "Contributor logs in with GitHub and solves the browser CAPTCHA.")}
-          ${flowStep("4", "Workflow approved", "pr-captcha approves the exact workflow run through GitHub.")}
-          ${flowStep("5", "CI starts", "GitHub Actions starts and runs the repository workflow.")}
+      <section class="timeline-section" id="how">
+        <h2>What happens on a PR</h2>
+        <div class="timeline">
+          ${timelineItem("1", "PR opened", "A fork or first-time contributor opens a pull request.")}
+          ${timelineItem("2", "Workflow held", "GitHub keeps the workflow in awaiting approval state.")}
+          ${timelineItem("3", "CAPTCHA solved", "Contributor logs in with GitHub and completes browser verification.")}
+          ${timelineItem("4", "Workflow approved", "pr-captcha checks the exact SHA and approves the workflow run.")}
+          ${timelineItem("5", "CI starts", "GitHub Actions starts only after a human shows up.")}
         </div>
       </section>
-      <section class="section" id="docs">
-        <div class="section-heading">
-          <span></span>
-          <h2>Ways to integrate</h2>
-          <span></span>
+      <section class="integration-section" id="integration">
+        <h2>Integration paths</h2>
+        <div class="comparison-wrap">
+          <table class="comparison-table">
+            <thead>
+              <tr>
+                <th></th>
+                <th>Native fork gate</th>
+                <th>Universal Action gate</th>
+                <th>Required check</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th>When to use</th>
+                <td>Public repos using GitHub's approval queue for fork workflows.</td>
+                <td>Any repo, including same-repo PRs, where expensive jobs need protection.</td>
+                <td>Repositories that need merge protection before human verification completes.</td>
+              </tr>
+              <tr>
+                <th>How it works</th>
+                <td>GitHub holds the workflow run. pr-captcha approves it after CAPTCHA.</td>
+                <td>A tiny job runs first. Expensive jobs wait on it.</td>
+                <td>pr-captcha creates a required check on the pull request SHA.</td>
+              </tr>
+              <tr>
+                <th>CI cost</th>
+                <td>No runner minutes until approved.</td>
+                <td>One tiny job uses minutes.</td>
+                <td>No runner minutes by itself.</td>
+              </tr>
+              <tr>
+                <th>Setup</th>
+                <td>Enable fork approval and install the app.</td>
+                <td>Add one step to your workflow.</td>
+                <td>Enable required check in branch protection.</td>
+              </tr>
+              <tr>
+                <th>Blocks CI</th>
+                <td><span class="yes">Yes</span>, before any jobs start.</td>
+                <td><span class="partial">Partial</span>, blocks heavy jobs.</td>
+                <td><span class="no">No</span>, merge gate only.</td>
+              </tr>
+              <tr>
+                <th>Best for</th>
+                <td>Open-source fork PR spam.</td>
+                <td>Private repos and broad adoption.</td>
+                <td>Compliance-style reviewer signal.</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
-        <div class="mode-grid">
-          <article class="mode-card recommended">
-            <div class="mode-title"><span class="icon-box">1</span><h3>Native fork gate</h3></div>
-            <p>Use GitHub's native awaiting approval state for fork workflows. pr-captcha approves the run after a human verification.</p>
-            <ul>
-              <li>Saves CI minutes</li>
-              <li>Zero runner minutes spent</li>
-              <li>Works with required checks</li>
-            </ul>
-            <pre><code>Settings -> Actions -> General
-Fork pull request workflows
-Require approval for outside contributors</code></pre>
-          </article>
-          <article class="mode-card">
-            <div class="mode-title"><span class="icon-box">2</span><h3>Universal Action gate</h3></div>
-            <p>Add a tiny job before expensive jobs. Until verification passes, the job fails quickly and dependent jobs do not run.</p>
-            <ul>
-              <li>Works for any PR</li>
-              <li>Protects expensive jobs</li>
-              <li>Can rerun after approval</li>
-            </ul>
-            <pre><code>jobs:
-  human-gate:
-    steps:
-      - uses: pr-captcha/gate@v1</code></pre>
-          </article>
-          <article class="mode-card">
-            <div class="mode-title"><span class="icon-box">3</span><h3>Required check</h3></div>
-            <p>pr-captcha creates a SHA-bound check named <code>pr-captcha/human</code> that branch protection can require.</p>
-            <ul>
-              <li>Branch protection friendly</li>
-              <li>Clear reviewer signal</li>
-              <li>Commit-specific status</li>
-            </ul>
-            <div class="status-board">
-              <div><span class="ok-dot"></span><strong>pr-captcha/human</strong><span>Success</span></div>
-              <div><span class="wait-dot"></span><strong>ci / build</strong><span>Pending</span></div>
-              <div><span class="wait-dot muted"></span><strong>ci / test</strong><span>Pending</span></div>
-            </div>
-          </article>
-        </div>
-        <div class="security-strip">
-          <strong>Security first:</strong>
-          <span>pr-captcha never checks out untrusted PR code and never executes the patch from a privileged context.</span>
+        <div class="integration-mobile">
+          ${integrationMobileCard("Native fork gate", [
+            "Best for public repos and fork PR spam.",
+            "GitHub holds the workflow run.",
+            "No runner minutes until approved.",
+            "Blocks CI before jobs start.",
+          ])}
+          ${integrationMobileCard("Universal Action gate", [
+            "Best for private repos and broad adoption.",
+            "A tiny job runs first.",
+            "Expensive jobs wait on it.",
+            "Uses one tiny job worth of minutes.",
+          ])}
+          ${integrationMobileCard("Required check", [
+            "Best for merge protection.",
+            "Creates a required check on the PR SHA.",
+            "Does not affect CI start by itself.",
+            "Clear reviewer signal.",
+          ])}
         </div>
       </section>
-      <section class="section" id="roadmap">
-        <div class="section-heading">
-          <span></span>
-          <h2>From MVP to production</h2>
-          <span></span>
+      <section class="security-band" id="security">
+        <div>
+          <h2>Security model: metadata only.</h2>
+          <p>The privileged app reads PR metadata, verifies a GitHub session and Turnstile token, then approves or denies a workflow run. It never checks out or executes the pull request patch.</p>
         </div>
+        <div class="security-grid">
+          <span>GitHub OAuth</span>
+          <span>Exact head SHA</span>
+          <span>Server-side CAPTCHA</span>
+          <span>Installation token</span>
+        </div>
+      </section>
+      <section class="roadmap-section" id="roadmap">
+        <h2>Production path</h2>
         <div class="roadmap-grid">
-          ${roadmapCard("1", "Beta MVP", "Current", [
-            "GitHub App installation",
-            "Signed PR verification links",
-            "GitHub OAuth plus Turnstile",
-            "Approve fork workflow runs",
-            "Required check and universal Action gate",
-            "SHA-bound verification store",
-          ])}
-          ${roadmapCard("2", "Hardening", "Next", [
-            "Replay protection and nonce hardening",
-            "Rate limits and abuse controls",
-            "First-time contributor detection",
-            "Config and repository overrides",
-            "Audit log and admin retry path",
-            "End-to-end reliability tests",
-          ])}
-          ${roadmapCard("3", "Launch", "Target", [
-            "Team and organization management",
-            "Granular policy controls",
-            "Webhook notifications",
-            "Advanced analytics with opt-in",
-            "SLA and support process",
-            "Billing and scale controls",
-          ])}
+          ${roadmapCard(
+            "1",
+            "Beta",
+            [
+              "Core fork gate flow",
+              "Turnstile verification",
+              "Checks, comments, workflow approval",
+              "YAML configuration",
+              "Audit logging",
+            ],
+            "Goal: prove value with real repositories.",
+          )}
+          ${roadmapCard(
+            "2",
+            "Hardening",
+            [
+              "Rate limiting and abuse controls",
+              "Replay protection and SHA binding",
+              "Idempotent approvals",
+              "Observability and alerts",
+              "Comprehensive tests",
+            ],
+            "Goal: secure, reliable, and boring.",
+          )}
+          ${roadmapCard(
+            "3",
+            "Launch",
+            [
+              "Highly available deploy",
+              "Backups and disaster recovery",
+              "Documentation and guides",
+              "Community feedback loop",
+              "SLA and incident response",
+            ],
+            "Goal: trusted by maintainers at scale.",
+          )}
         </div>
       </section>
     </main>
     <footer class="site-footer">
-      <div class="brand"><span class="shield">✓</span><span>pr-captcha</span></div>
-      <p>Human gate before GitHub Actions burns CI minutes.</p>
-      <strong class="footer-tagline">No CAPTCHA, no CI.</strong>
+      <div>
+        <div class="brand footer-brand"><span class="brand-mark">p</span><span>pr-captcha</span></div>
+        <p>Human gate before CI burns minutes.</p>
+        <strong>No CAPTCHA, no CI.</strong>
+      </div>
+      <div class="footer-points">
+        <span>GitHub App</span>
+        <span>SHA-bound</span>
+        <span>Maintainer control</span>
+        <span>Real humans</span>
+      </div>
+      <div class="footer-actions">
+        <a class="button light-on-dark" href="https://github.com/apps">Install GitHub App</a>
+        <a class="button ghost-on-dark" href="#integration">View setup guide</a>
+      </div>
     </footer>`,
   );
 }
 
-function flowStep(number: string, title: string, body: string): string {
-  return `<article class="flow-step">
+function timelineItem(number: string, title: string, body: string): string {
+  return `<article class="timeline-item">
     <span>${escapeHtml(number)}</span>
     <h3>${escapeHtml(title)}</h3>
     <p>${escapeHtml(body)}</p>
   </article>`;
 }
 
+function integrationMobileCard(title: string, items: string[]): string {
+  return `<article class="integration-card">
+    <h3>${escapeHtml(title)}</h3>
+    <ul>${items.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
+  </article>`;
+}
+
 function roadmapCard(
   number: string,
   title: string,
-  status: string,
   items: string[],
+  goal: string,
 ): string {
   return `<article class="roadmap-card">
-    <div class="roadmap-title">
-      <span>${escapeHtml(number)}</span>
-      <div>
-        <h3>${escapeHtml(title)}</h3>
-        <small>${escapeHtml(status)}</small>
-      </div>
-    </div>
+    <div class="roadmap-title"><span>${escapeHtml(number)}</span><h3>${escapeHtml(title)}</h3></div>
     <ul>${items.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
+    <p>${escapeHtml(goal)}</p>
   </article>`;
 }
 
@@ -205,8 +280,8 @@ export function renderGatePage(input: {
     ? `<div class="notice success">Human check passed for commit ${escapeHtml(shortSha)}.</div>`
     : "";
   const button = input.verified
-    ? `<a class="button full" href="https://github.com/${escapeHtml(input.gate.owner)}/${escapeHtml(input.gate.repo)}/pull/${input.gate.pr_number}">Return to pull request</a>`
-    : `<button class="button full" type="submit">Approve and run CI</button>`;
+    ? `<a class="button dark full" href="https://github.com/${escapeHtml(input.gate.owner)}/${escapeHtml(input.gate.repo)}/pull/${input.gate.pr_number}">Return to pull request</a>`
+    : `<button class="button dark full" type="submit">Approve and run CI</button>`;
   const turnstile = input.verified
     ? ""
     : `<div class="turnstile-wrap">
@@ -218,7 +293,7 @@ export function renderGatePage(input: {
     "Run CI for this pull request?",
     `<main class="gate-page">
       <section class="gate">
-        <div class="brand centered"><span class="shield">✓</span><span>pr-captcha</span></div>
+        <div class="brand centered"><span class="brand-mark">p</span><span>pr-captcha</span></div>
         <h1>Run CI for this pull request?</h1>
         <p class="intro">To help protect repository CI from unauthorized usage, verify that you are human.</p>
         <div class="status-strip">
@@ -253,7 +328,7 @@ export function renderMessagePage(
     title,
     `<main class="gate-page">
       <section class="gate small">
-        <div class="brand centered"><span class="shield">✓</span><span>pr-captcha</span></div>
+        <div class="brand centered"><span class="brand-mark">p</span><span>pr-captcha</span></div>
         <h1>${escapeHtml(title)}</h1>
         <div class="notice ${status}">${escapeHtml(message)}</div>
       </section>
@@ -279,15 +354,19 @@ function layout(title: string, body: string): string {
       :root {
         color-scheme: light;
         --bg: #ffffff;
-        --text: #0f1720;
-        --muted: #5d6673;
-        --border: #d8dee6;
-        --soft: #f8fafc;
-        --accent: #087f3f;
-        --accent-dark: #046a34;
-        --danger: #b42318;
-        --danger-bg: #fff1f0;
+        --ink: #080d14;
+        --text: #101821;
+        --muted: #5b6673;
+        --faint: #f6f8fa;
+        --line: #d9dee6;
+        --line-dark: #202a35;
+        --green: #0b8f4d;
+        --green-dark: #08733e;
+        --amber: #f3a000;
+        --red: #b42318;
+        --red-bg: #fff1f0;
         --success-bg: #ecfdf3;
+        --shadow: 0 22px 60px rgba(8, 13, 20, 0.12);
       }
       * {
         box-sizing: border-box;
@@ -295,7 +374,11 @@ function layout(title: string, body: string): string {
       body {
         margin: 0;
         min-height: 100vh;
-        background: var(--bg);
+        background:
+          linear-gradient(90deg, rgba(8, 13, 20, 0.035) 1px, transparent 1px),
+          linear-gradient(180deg, rgba(8, 13, 20, 0.03) 1px, transparent 1px),
+          var(--bg);
+        background-size: 72px 72px;
         color: var(--text);
         font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
         letter-spacing: 0;
@@ -304,462 +387,611 @@ function layout(title: string, body: string): string {
         color: inherit;
         text-decoration: none;
       }
-      .site-header {
-        width: min(1180px, calc(100% - 48px));
-        min-height: 72px;
+      button,
+      .button {
+        font: inherit;
+      }
+      .site-header,
+      .home,
+      .site-footer {
+        width: min(1200px, calc(100% - 48px));
         margin: 0 auto;
+      }
+      .site-header {
+        min-height: 78px;
         display: flex;
         align-items: center;
         justify-content: space-between;
         gap: 24px;
-        border-bottom: 1px solid var(--border);
+        border-bottom: 1px solid var(--line);
+      }
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        font-weight: 840;
+        font-size: 28px;
+        color: var(--ink);
+      }
+      .brand.centered {
+        display: flex;
+        justify-content: center;
+      }
+      .brand-mark {
+        width: 38px;
+        height: 38px;
+        display: inline-grid;
+        place-items: center;
+        border-radius: 9px;
+        background: var(--ink);
+        color: #ffffff;
+        font-weight: 900;
+        font-size: 20px;
+        box-shadow: inset 0 0 0 2px #ffffff, 0 0 0 1px var(--ink);
+      }
+      .brand-mark.small {
+        width: 24px;
+        height: 24px;
+        border-radius: 6px;
+        font-size: 13px;
       }
       .site-nav {
         display: flex;
         align-items: center;
         gap: 30px;
-        color: #202936;
+        color: #222c38;
         font-size: 14px;
         font-weight: 720;
       }
+      .button {
+        min-height: 48px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 6px;
+        padding: 0 20px;
+        border: 1px solid transparent;
+        cursor: pointer;
+        font-weight: 800;
+        font-size: 15px;
+        white-space: nowrap;
+      }
+      .button.dark,
+      .gate-card button {
+        background: var(--ink);
+        color: #ffffff;
+        box-shadow: 0 12px 24px rgba(8, 13, 20, 0.16);
+      }
+      .button.dark:hover,
+      .gate-card button:hover {
+        background: #1a232e;
+      }
+      .button.light {
+        background: #ffffff;
+        border-color: var(--line);
+        color: var(--ink);
+      }
+      .button.compact {
+        min-height: 40px;
+        padding: 0 14px;
+        font-size: 13px;
+      }
       .header-cta {
         min-height: 42px;
-        padding: 0 16px;
       }
       .home {
-        width: min(1180px, calc(100% - 48px));
-        margin: 0 auto;
-        padding: 34px 0 44px;
+        padding: 30px 0 46px;
+      }
+      .hero {
+        min-height: calc(100vh - 108px);
+        display: grid;
+        grid-template-columns: minmax(0, 0.86fr) minmax(560px, 1.14fr);
+        align-items: center;
+        gap: 58px;
+        padding: 34px 0 52px;
+      }
+      .hero-copy h1 {
+        max-width: 620px;
+        margin: 0 0 26px;
+        color: var(--ink);
+        font-size: clamp(58px, 6.8vw, 92px);
+        line-height: 0.94;
+        letter-spacing: 0;
+      }
+      .hero-copy p {
+        max-width: 570px;
+        margin: 0;
+        color: #3e4957;
+        font-size: 21px;
+        line-height: 1.55;
+      }
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 18px;
+        margin-top: 36px;
+      }
+      .proof-line {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-top: 40px !important;
+        color: var(--ink) !important;
+        font-size: 22px !important;
+        font-weight: 850;
+      }
+      .success-shield,
+      .mini-shield {
+        display: inline-grid;
+        place-items: center;
+        color: #ffffff;
+        background: var(--green);
+        font-weight: 900;
+      }
+      .success-shield {
+        width: 30px;
+        height: 30px;
+        border-radius: 8px;
+      }
+      .mini-shield {
+        width: 22px;
+        height: 22px;
+        border-radius: 6px;
+        font-size: 12px;
+      }
+      .product-stage {
+        position: relative;
+        min-height: 700px;
+      }
+      .repo-shell,
+      .workflow-card,
+      .check-card,
+      .comment-card,
+      .gate-card,
+      .timeline-section,
+      .integration-section,
+      .roadmap-card {
+        background: rgba(255, 255, 255, 0.96);
+        border: 1px solid var(--line);
+        border-radius: 7px;
+      }
+      .repo-shell {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 118px;
+        overflow: hidden;
+        box-shadow: var(--shadow);
+      }
+      .repo-topbar {
+        min-height: 62px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+        padding: 0 18px;
+        background: #090e15;
+        color: #ffffff;
+      }
+      .repo-topbar span {
+        color: #b8c0cc;
+        font-size: 13px;
+      }
+      .repo-pr {
+        padding: 18px;
+      }
+      .repo-pr h2,
+      .workflow-card h3,
+      .check-card h3,
+      .comment-card h3,
+      .gate-card h3 {
+        margin: 0;
+        color: var(--ink);
+        line-height: 1.2;
+      }
+      .repo-pr h2 {
+        font-size: 21px;
+      }
+      .repo-pr p,
+      .workflow-card p,
+      .check-card p,
+      .comment-card p,
+      .gate-card p {
+        margin: 8px 0 0;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.45;
+      }
+      .repo-pr strong {
+        display: inline-flex;
+        align-items: center;
+        min-height: 22px;
+        padding: 0 9px;
+        border-radius: 999px;
+        background: #6f42c1;
+        color: #ffffff;
+        font-size: 12px;
+        margin-right: 8px;
+      }
+      code {
+        padding: 2px 6px;
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        background: var(--faint);
+        color: var(--ink);
+        font-size: 0.92em;
+      }
+      .workflow-card,
+      .check-card,
+      .comment-card {
+        position: absolute;
+        left: 0;
+        width: calc(100% - 286px);
+        padding: 18px;
+        box-shadow: 0 16px 36px rgba(8, 13, 20, 0.08);
+      }
+      .workflow-card {
+        top: 172px;
+      }
+      .check-card {
+        top: 350px;
+      }
+      .comment-card {
+        top: 520px;
+      }
+      .card-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        margin-bottom: 14px;
+        color: #2a3542;
+        font-size: 13px;
+      }
+      .card-top span {
+        color: var(--muted);
+      }
+      .approval-box {
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr);
+        gap: 12px;
+        margin-top: 18px;
+        padding: 15px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: #fffdf8;
+      }
+      .warn-dot {
+        width: 18px;
+        height: 18px;
+        border: 2px solid var(--amber);
+        border-radius: 999px;
+        margin-top: 2px;
+      }
+      .approval-box strong {
+        color: #9a6500;
+      }
+      .check-card button {
+        min-height: 34px;
+        margin-top: 14px;
+        border: 1px solid var(--line);
+        border-radius: 5px;
+        background: #ffffff;
+        color: var(--ink);
+        padding: 0 13px;
+        font-weight: 760;
+        cursor: pointer;
+      }
+      .gate-card {
+        position: absolute;
+        top: 168px;
+        right: 0;
+        width: 260px;
+        padding: 18px;
+        box-shadow: 0 24px 60px rgba(8, 13, 20, 0.14);
+      }
+      .gate-brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 18px;
+      }
+      .gate-card h3 {
+        font-size: 20px;
+      }
+      .gate-card dl {
+        display: grid;
+        gap: 12px;
+        margin: 18px 0;
+      }
+      .gate-card dl div {
+        display: grid;
+        gap: 3px;
+      }
+      .gate-card dt {
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .gate-card dd {
+        margin: 0;
+        color: var(--ink);
+        font-size: 14px;
+        font-weight: 650;
+      }
+      .captcha-box {
+        min-height: 64px;
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr);
+        gap: 8px 10px;
+        align-items: center;
+        border: 1px solid var(--line);
+        border-radius: 5px;
+        padding: 10px;
+        background: var(--faint);
+      }
+      .captcha-box span {
+        width: 22px;
+        height: 22px;
+        display: grid;
+        place-items: center;
+        border-radius: 4px;
+        border: 1px solid #b9c2cf;
+        color: var(--green);
+        font-weight: 900;
+      }
+      .captcha-box strong {
+        font-size: 12px;
+      }
+      .captcha-box small {
+        grid-column: 2;
+        color: var(--muted);
+      }
+      .gate-card button {
+        width: 100%;
+        min-height: 44px;
+        margin-top: 14px;
+        border: 0;
+        border-radius: 5px;
+        font-weight: 820;
+        cursor: pointer;
+      }
+      .timeline-section,
+      .integration-section,
+      .roadmap-section {
+        margin-top: 46px;
+      }
+      .timeline-section,
+      .integration-section {
+        padding: 30px;
+      }
+      .timeline-section h2,
+      .integration-section h2,
+      .roadmap-section h2 {
+        margin: 0 0 28px;
+        color: var(--ink);
+        font-size: 36px;
+        line-height: 1.1;
+        text-align: center;
+      }
+      .timeline {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 20px;
+      }
+      .timeline-item {
+        position: relative;
+        min-height: 190px;
+        padding: 20px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: #ffffff;
+      }
+      .timeline-item span,
+      .roadmap-title span {
+        display: inline-grid;
+        place-items: center;
+        width: 30px;
+        height: 30px;
+        border-radius: 999px;
+        background: var(--ink);
+        color: #ffffff;
+        font-weight: 850;
+      }
+      .timeline-item h3 {
+        margin: 28px 0 10px;
+        color: var(--ink);
+        font-size: 17px;
+        line-height: 1.25;
+      }
+      .timeline-item p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.55;
+      }
+      .comparison-wrap {
+        overflow-x: auto;
+        border: 1px solid var(--line);
+        border-radius: 7px;
+      }
+      .integration-mobile {
+        display: none;
+      }
+      .comparison-table {
+        width: 100%;
+        min-width: 860px;
+        border-collapse: collapse;
+        background: #ffffff;
+      }
+      .comparison-table th,
+      .comparison-table td {
+        border: 1px solid var(--line);
+        padding: 18px;
+        vertical-align: top;
+        text-align: left;
+        font-size: 14px;
+        line-height: 1.5;
+      }
+      .comparison-table thead th {
+        color: var(--ink);
+        background: #fbfcfd;
+        font-size: 16px;
+      }
+      .comparison-table tbody th {
+        width: 160px;
+        color: var(--ink);
+        background: #fbfcfd;
+        font-weight: 800;
+      }
+      .yes,
+      .partial,
+      .no {
+        font-weight: 850;
+      }
+      .yes {
+        color: var(--green);
+      }
+      .partial {
+        color: #a66d00;
+      }
+      .no {
+        color: var(--muted);
+      }
+      .security-band {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(360px, 0.76fr);
+        gap: 34px;
+        align-items: center;
+        margin-top: 46px;
+        padding: 34px;
+        border-radius: 7px;
+        background: #0a1118;
+        color: #ffffff;
+      }
+      .security-band h2 {
+        margin: 0 0 12px;
+        font-size: 34px;
+        line-height: 1.12;
+      }
+      .security-band p {
+        margin: 0;
+        max-width: 660px;
+        color: #c3ccd7;
+        font-size: 17px;
+        line-height: 1.6;
+      }
+      .security-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+      .security-grid span {
+        min-height: 48px;
+        display: flex;
+        align-items: center;
+        border: 1px solid #24303d;
+        border-radius: 6px;
+        padding: 0 14px;
+        background: #101a24;
+        color: #dce4ed;
+        font-weight: 720;
+      }
+      .roadmap-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 28px;
+      }
+      .roadmap-card {
+        padding: 22px;
+      }
+      .roadmap-title {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 18px;
+      }
+      .roadmap-title h3 {
+        margin: 0;
+        color: var(--ink);
+        font-size: 20px;
+      }
+      .roadmap-card ul {
+        display: grid;
+        gap: 9px;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+      .roadmap-card li {
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.45;
+      }
+      .roadmap-card li::before {
+        content: "✓";
+        color: var(--green);
+        font-weight: 900;
+        margin-right: 8px;
+      }
+      .roadmap-card p {
+        margin: 18px 0 0;
+        color: var(--ink);
+        font-size: 14px;
+        font-weight: 780;
+        line-height: 1.45;
+      }
+      .site-footer {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(360px, 1fr) auto;
+        gap: 34px;
+        align-items: center;
+        margin-bottom: 30px;
+        padding: 30px;
+        border-radius: 7px;
+        background: #071018;
+        color: #ffffff;
+      }
+      .footer-brand {
+        color: #ffffff;
+      }
+      .site-footer p {
+        margin: 14px 0;
+        color: #b8c4d2;
+      }
+      .site-footer strong {
+        color: #53d084;
+      }
+      .footer-points {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+      .footer-points span {
+        min-height: 42px;
+        display: flex;
+        align-items: center;
+        border: 1px solid #25313d;
+        border-radius: 6px;
+        padding: 0 12px;
+        background: #0d1822;
+      }
+      .footer-actions {
+        display: grid;
+        gap: 10px;
+      }
+      .light-on-dark {
+        background: #ffffff;
+        color: var(--ink);
+      }
+      .ghost-on-dark {
+        border-color: #394758;
+        color: #ffffff;
       }
       .gate-page {
         min-height: 100vh;
         display: grid;
         place-items: center;
         padding: 48px 20px;
-      }
-      .landing-hero {
-        display: grid;
-        grid-template-columns: minmax(0, 1.02fr) minmax(440px, 0.98fr);
-        gap: 58px;
-        align-items: center;
-        min-height: calc(100vh - 116px);
-        padding: 38px 0 46px;
-      }
-      .hero-copy h1 {
-        margin: 0 0 22px;
-        max-width: 660px;
-        font-size: clamp(50px, 6.4vw, 78px);
-        line-height: 0.96;
-        letter-spacing: 0;
-      }
-      .hero-copy p {
-        max-width: 660px;
-        margin: 0;
-        color: var(--muted);
-        font-size: 21px;
-        line-height: 1.5;
-      }
-      .proof-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 24px;
-        margin-top: 44px;
-      }
-      .proof-grid div {
-        display: grid;
-        gap: 8px;
-      }
-      .proof-grid strong {
-        font-size: 14px;
-      }
-      .proof-grid small {
-        color: var(--muted);
-        font-size: 13px;
-        line-height: 1.45;
-      }
-      .pr-preview,
-      .section,
-      .mode-card,
-      .roadmap-card {
-        border: 1px solid var(--border);
-        border-radius: 8px;
-        background: #ffffff;
-      }
-      .pr-preview {
-        padding: 18px;
-        box-shadow: 0 22px 60px rgba(15, 23, 32, 0.08);
-      }
-      .repo-row,
-      .comment-top,
-      .mode-title,
-      .roadmap-title,
-      .status-board div {
-        display: flex;
-        align-items: center;
-      }
-      .repo-row {
-        justify-content: space-between;
-        gap: 16px;
-        margin-bottom: 14px;
-      }
-      .repo-row span {
-        border: 1px solid var(--border);
-        border-radius: 999px;
-        padding: 3px 8px;
-        color: var(--muted);
-        font-size: 12px;
-        font-weight: 700;
-      }
-      .preview-title {
-        margin: 0 0 4px;
-        font-weight: 720;
-      }
-      .preview-subtitle {
-        margin: 0;
-        color: var(--muted);
-        font-size: 13px;
-        line-height: 1.45;
-      }
-      .workflow-hold,
-      .comment-preview {
-        border: 1px solid var(--border);
-        border-radius: 8px;
-        margin-top: 16px;
-        padding: 16px;
-      }
-      .workflow-hold {
-        display: grid;
-        grid-template-columns: auto minmax(0, 1fr) auto;
-        align-items: center;
-        gap: 14px;
-      }
-      .workflow-hold small,
-      .comment-preview p {
-        color: var(--muted);
-        line-height: 1.45;
-      }
-      .workflow-hold button {
-        min-height: 38px;
-        border: 1px solid var(--border);
-        border-radius: 7px;
-        background: #ffffff;
-        color: var(--text);
-        font-weight: 720;
-      }
-      .hold-dot,
-      .ok-dot,
-      .wait-dot {
-        display: inline-block;
-        flex: 0 0 auto;
-        border-radius: 999px;
-      }
-      .hold-dot {
-        width: 11px;
-        height: 11px;
-        background: #f2b84b;
-      }
-      .comment-top {
-        justify-content: space-between;
-        gap: 12px;
-        color: var(--muted);
-        font-size: 13px;
-      }
-      .comment-top strong {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        color: var(--text);
-      }
-      .comment-preview h2 {
-        margin: 14px 0 8px;
-        font-size: 19px;
-        line-height: 1.2;
-      }
-      .comment-preview p {
-        margin: 0 0 14px;
-        font-size: 14px;
-      }
-      .button.compact {
-        min-height: 38px;
-        margin-bottom: 12px;
-        padding: 0 14px;
-        font-size: 14px;
-      }
-      .section {
-        margin-top: 26px;
-        padding: 28px;
-      }
-      .section-heading {
-        display: grid;
-        grid-template-columns: 1fr auto 1fr;
-        align-items: center;
-        gap: 28px;
-        margin-bottom: 26px;
-        text-align: center;
-      }
-      .section-heading span {
-        height: 1px;
-        background: var(--border);
-      }
-      .section-heading h2 {
-        margin: 0;
-        font-size: 26px;
-        line-height: 1.1;
-      }
-      .flow-grid {
-        display: grid;
-        grid-template-columns: repeat(5, minmax(0, 1fr));
-        gap: 18px;
-      }
-      .flow-step {
-        min-height: 178px;
-        border: 1px solid var(--border);
-        border-radius: 8px;
-        padding: 18px;
-        display: grid;
-        align-content: start;
-        gap: 14px;
-      }
-      .flow-step span,
-      .icon-box,
-      .roadmap-title > span {
-        display: inline-grid;
-        place-items: center;
-        width: 30px;
-        height: 30px;
-        border: 1px solid var(--border);
-        border-radius: 7px;
-        background: var(--soft);
-        font-weight: 800;
-      }
-      .flow-step h3,
-      .mode-card h3,
-      .roadmap-card h3 {
-        margin: 0;
-        font-size: 17px;
-        line-height: 1.25;
-      }
-      .flow-step p,
-      .mode-card p,
-      .roadmap-card li,
-      .mode-card li {
-        color: var(--muted);
-        font-size: 14px;
-        line-height: 1.5;
-      }
-      .flow-step p,
-      .mode-card p {
-        margin: 0;
-      }
-      .mode-grid,
-      .roadmap-grid {
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 20px;
-      }
-      .mode-card,
-      .roadmap-card {
-        padding: 22px;
-      }
-      .mode-card.recommended {
-        box-shadow: inset 0 0 0 1px rgba(8, 127, 63, 0.18);
-      }
-      .mode-title,
-      .roadmap-title {
-        gap: 12px;
-        margin-bottom: 16px;
-      }
-      .mode-card ul,
-      .roadmap-card ul {
-        list-style: none;
-        margin: 18px 0 0;
-        padding: 0;
-        display: grid;
-        gap: 8px;
-      }
-      .mode-card li::before,
-      .roadmap-card li::before {
-        content: "✓";
-        color: var(--accent);
-        font-weight: 900;
-        margin-right: 8px;
-      }
-      pre {
-        margin: 20px 0 0;
-        border-radius: 8px;
-        background: #111820;
-        color: #f8fafc;
-        overflow: auto;
-        padding: 16px;
-        white-space: pre-wrap;
-      }
-      pre code {
-        padding: 0;
-        border: 0;
-        background: transparent;
-        color: inherit;
-        font-size: 13px;
-        line-height: 1.5;
-        white-space: pre-wrap;
-      }
-      .status-board {
-        margin-top: 20px;
-        border-radius: 8px;
-        background: #111820;
-        color: #f8fafc;
-        padding: 14px;
-      }
-      .status-board div {
-        justify-content: space-between;
-        gap: 10px;
-        min-height: 36px;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-        font-size: 13px;
-      }
-      .status-board div:last-child {
-        border-bottom: 0;
-      }
-      .ok-dot,
-      .wait-dot {
-        width: 12px;
-        height: 12px;
-        border: 2px solid currentColor;
-      }
-      .ok-dot {
-        background: var(--accent);
-        border-color: var(--accent);
-      }
-      .wait-dot {
-        color: #f2b84b;
-      }
-      .wait-dot.muted {
-        color: #768191;
-      }
-      .status-board span:last-child {
-        color: #8ee6a8;
-      }
-      .security-strip {
-        display: flex;
-        gap: 10px;
-        margin-top: 22px;
-        border: 1px solid #c9ecd5;
-        border-radius: 8px;
-        background: #f0fdf4;
-        color: #17452c;
-        padding: 16px 18px;
-        font-size: 14px;
-        line-height: 1.5;
-      }
-      .roadmap-title > span {
-        border-radius: 999px;
-        background: var(--text);
-        color: #ffffff;
-      }
-      .roadmap-title small {
-        color: var(--muted);
-        font-weight: 720;
-      }
-      .site-footer {
-        width: min(1180px, calc(100% - 48px));
-        margin: 0 auto;
-        border-top: 1px solid var(--border);
-        padding: 28px 0 34px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 24px;
-      }
-      .site-footer p {
-        margin: 0;
-        color: var(--muted);
-        font-size: 14px;
-      }
-      .footer-tagline {
-        color: var(--accent);
-        font-size: 18px;
-        font-weight: 800;
-      }
-      .hero {
-        width: min(760px, 100%);
-      }
-      .hero h1 {
-        margin: 28px 0 16px;
-        max-width: 680px;
-        font-size: clamp(40px, 7vw, 76px);
-        line-height: 0.98;
-      }
-      .hero p {
-        max-width: 620px;
-        color: var(--muted);
-        font-size: 20px;
-        line-height: 1.55;
-      }
-      .brand {
-        display: inline-flex;
-        align-items: center;
-        gap: 12px;
-        font-size: 28px;
-        font-weight: 760;
-      }
-      .brand.centered {
-        display: flex;
-        justify-content: center;
-      }
-      .shield,
-      .mini-shield {
-        display: inline-grid;
-        place-items: center;
-        border: 2px solid currentColor;
-        color: var(--accent);
-        font-weight: 900;
-      }
-      .shield {
-        width: 36px;
-        height: 36px;
-        border-radius: 11px;
-      }
-      .mini-shield {
-        width: 22px;
-        height: 22px;
-        border-radius: 7px;
-        font-size: 13px;
-      }
-      .actions {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 12px;
-        margin-top: 32px;
-      }
-      .button {
-        border: 0;
-        border-radius: 8px;
-        background: var(--accent);
-        color: white;
-        cursor: pointer;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        min-height: 48px;
-        padding: 0 20px;
-        font-size: 16px;
-        font-weight: 740;
-        text-decoration: none;
-        box-shadow: 0 12px 24px rgba(8, 127, 63, 0.18);
-      }
-      .button:hover {
-        background: var(--accent-dark);
-      }
-      .button.secondary {
-        background: var(--soft);
-        border: 1px solid var(--border);
-        color: var(--text);
-        box-shadow: none;
-      }
-      .button.full {
-        width: 100%;
-        min-height: 58px;
-        margin-top: 22px;
-        font-size: 19px;
       }
       .gate {
         width: min(590px, 100%);
@@ -770,6 +1002,7 @@ function layout(title: string, body: string): string {
       }
       .gate h1 {
         margin: 28px 0 12px;
+        color: var(--ink);
         font-size: clamp(32px, 7vw, 42px);
         line-height: 1.08;
       }
@@ -791,10 +1024,11 @@ function layout(title: string, body: string): string {
       .status-strip {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        border: 1px solid var(--border);
+        border: 1px solid var(--line);
         border-radius: 6px;
         overflow: hidden;
         margin-bottom: 20px;
+        background: #ffffff;
       }
       .status-strip span {
         display: flex;
@@ -802,25 +1036,26 @@ function layout(title: string, body: string): string {
         justify-content: center;
         gap: 10px;
         min-height: 56px;
-        color: var(--accent);
+        color: var(--green);
         font-size: 17px;
-        font-weight: 720;
+        font-weight: 760;
       }
       .status-strip span + span {
-        border-left: 1px solid var(--border);
+        border-left: 1px solid var(--line);
       }
       .meta-table {
-        border: 1px solid var(--border);
+        border: 1px solid var(--line);
         border-radius: 6px;
         overflow: hidden;
         text-align: left;
+        background: #ffffff;
       }
       .meta-row {
         display: grid;
         grid-template-columns: 1fr 1.05fr;
       }
       .meta-row + .meta-row {
-        border-top: 1px solid var(--border);
+        border-top: 1px solid var(--line);
       }
       .meta-row > div {
         min-height: 54px;
@@ -832,29 +1067,27 @@ function layout(title: string, body: string): string {
       .meta-row > div:first-child {
         color: #27303b;
         background: #fcfdff;
-        border-right: 1px solid var(--border);
-        font-weight: 620;
-      }
-      code {
-        padding: 3px 8px;
-        border: 1px solid var(--border);
-        border-radius: 5px;
-        background: var(--soft);
-        color: var(--text);
-        font-size: 15px;
+        border-right: 1px solid var(--line);
+        font-weight: 680;
       }
       .turnstile-wrap {
         display: grid;
         place-items: center;
         min-height: 112px;
         margin-top: 18px;
-        border: 1px solid var(--border);
+        border: 1px solid var(--line);
         border-radius: 6px;
         background: linear-gradient(#ffffff, #fbfcfd);
       }
+      .button.full {
+        width: 100%;
+        min-height: 58px;
+        margin-top: 22px;
+        font-size: 19px;
+      }
       .notice {
         margin: 0 0 18px;
-        border: 1px solid var(--border);
+        border: 1px solid var(--line);
         border-radius: 6px;
         padding: 14px 16px;
         font-size: 15px;
@@ -862,23 +1095,20 @@ function layout(title: string, body: string): string {
         text-align: left;
       }
       .notice.error {
-        background: var(--danger-bg);
+        background: var(--red-bg);
         border-color: #ffcdc9;
-        color: var(--danger);
+        color: var(--red);
       }
       .notice.success {
         background: var(--success-bg);
         border-color: #b7efc9;
-        color: var(--accent-dark);
+        color: var(--green-dark);
       }
-      @media (max-width: 560px) {
-        .gate-page {
-          align-items: start;
-          padding: 30px 16px;
-        }
+      @media (max-width: 980px) {
         .site-header,
+        .home,
         .site-footer {
-          width: min(100% - 32px, 1180px);
+          width: min(100% - 32px, 1200px);
         }
         .site-header {
           align-items: flex-start;
@@ -886,60 +1116,120 @@ function layout(title: string, body: string): string {
           padding: 18px 0;
         }
         .site-nav {
+          flex-wrap: wrap;
           gap: 18px;
         }
         .header-cta {
           width: 100%;
         }
-        .home {
-          width: min(100% - 32px, 1180px);
-          padding-top: 22px;
-        }
-        .landing-hero,
-        .mode-grid,
-        .roadmap-grid,
-        .flow-grid {
+        .hero,
+        .security-band,
+        .site-footer {
           grid-template-columns: 1fr;
         }
-        .landing-hero {
+        .hero {
           min-height: auto;
-          gap: 30px;
+          gap: 34px;
+        }
+        .product-stage {
+          min-height: auto;
+          display: grid;
+          gap: 14px;
+        }
+        .repo-shell,
+        .workflow-card,
+        .check-card,
+        .comment-card,
+        .gate-card {
+          position: static;
+          width: 100%;
+        }
+        .timeline,
+        .roadmap-grid {
+          grid-template-columns: 1fr;
+        }
+        .security-grid,
+        .footer-points {
+          grid-template-columns: 1fr;
+        }
+      }
+      @media (max-width: 720px) {
+        .comparison-wrap {
+          display: none;
+        }
+        .integration-mobile {
+          display: grid;
+          gap: 14px;
+        }
+        .integration-card {
+          border: 1px solid var(--line);
+          border-radius: 6px;
+          background: #ffffff;
+          padding: 18px;
+        }
+        .integration-card h3 {
+          margin: 0 0 14px;
+          color: var(--ink);
+          font-size: 18px;
+        }
+        .integration-card ul {
+          display: grid;
+          gap: 9px;
+          list-style: none;
+          margin: 0;
+          padding: 0;
+        }
+        .integration-card li {
+          color: var(--muted);
+          font-size: 14px;
+          line-height: 1.45;
+        }
+        .integration-card li::before {
+          content: "✓";
+          color: var(--green);
+          font-weight: 900;
+          margin-right: 8px;
+        }
+      }
+      @media (max-width: 560px) {
+        body {
+          background-size: 52px 52px;
+        }
+        .brand {
+          font-size: 24px;
         }
         .hero-copy h1 {
-          font-size: clamp(42px, 14vw, 62px);
+          font-size: clamp(48px, 15vw, 64px);
         }
         .hero-copy p {
           font-size: 18px;
         }
-        .proof-grid {
-          grid-template-columns: 1fr;
-          gap: 16px;
-          margin-top: 30px;
+        .actions,
+        .button {
+          width: 100%;
         }
-        .workflow-hold {
-          grid-template-columns: auto minmax(0, 1fr);
+        .timeline-section,
+        .integration-section {
+          padding: 18px;
         }
-        .workflow-hold button {
-          grid-column: 1 / -1;
-        }
-        .section {
-          padding: 20px;
-        }
-        .section-heading {
-          grid-template-columns: 1fr;
-          gap: 12px;
+        .timeline-section h2,
+        .integration-section h2,
+        .roadmap-section h2,
+        .security-band h2 {
+          font-size: 30px;
           text-align: left;
         }
-        .section-heading span {
-          display: none;
+        .comparison-table th,
+        .comparison-table td {
+          padding: 14px;
         }
-        .security-strip,
+        .security-band,
         .site-footer {
-          flex-direction: column;
-          align-items: flex-start;
+          padding: 22px;
         }
-        .brand {
-          font-size: 24px;
+        .gate-page {
+          align-items: start;
+          padding: 30px 16px;
         }
         .status-strip,
         .meta-row {
@@ -949,11 +1239,11 @@ function layout(title: string, body: string): string {
         .meta-row > div:first-child {
           border-left: 0;
           border-right: 0;
-          border-top: 1px solid var(--border);
+          border-top: 1px solid var(--line);
         }
         .meta-row > div:first-child {
           min-height: 42px;
-          background: var(--soft);
+          background: var(--faint);
         }
         .meta-row > div {
           padding: 0 16px;
