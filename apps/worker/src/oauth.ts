@@ -5,7 +5,7 @@ import { signPayload, verifyPayload } from "./crypto";
 
 type AppContext = Context<{ Bindings: Env; Variables: AppVariables }>;
 
-const sessionCookieName = "ci_captcha_session";
+const sessionCookieName = "pr_captcha_session";
 
 export async function startGitHubOAuth(c: AppContext): Promise<Response> {
   const returnTo = c.req.query("return_to") ?? "/";
@@ -105,7 +105,7 @@ async function fetchGitHubUser(
     headers: {
       Accept: "application/vnd.github+json",
       Authorization: `Bearer ${accessToken}`,
-      "User-Agent": "ci-captcha",
+      "User-Agent": "pr-captcha",
       "X-GitHub-Api-Version": "2022-11-28",
     },
   });

@@ -53,7 +53,7 @@ app.get("/favicon.ico", (c) => c.body(null, 204));
 app.get("/health", (c) =>
   c.json({
     ok: true,
-    service: "ci-captcha",
+    service: "pr-captcha",
   }),
 );
 
@@ -96,7 +96,7 @@ app.get("/gate/:id", async (c) => {
     return c.html(
       renderMessagePage(
         "Invalid verification link",
-        "This ci-captcha link is invalid or expired.",
+        "This pr-captcha link is invalid or expired.",
         "error",
       ),
       400,
@@ -138,7 +138,7 @@ app.post("/gate/:id", async (c) => {
     return c.html(
       renderMessagePage(
         "Invalid verification link",
-        "This ci-captcha link is invalid or expired.",
+        "This pr-captcha link is invalid or expired.",
         "error",
       ),
       400,
@@ -208,7 +208,7 @@ app.post("/gate/:id", async (c) => {
         session,
         turnstileSiteKey: c.env.TURNSTILE_SITE_KEY,
         error:
-          "This pull request has a newer commit. Use the newest ci-captcha link on the PR.",
+          "This pull request has a newer commit. Use the newest pr-captcha link on the PR.",
       }),
       409,
     );
@@ -421,7 +421,7 @@ async function loadConfig(
     token,
     owner,
     repo,
-    ".github/ci-captcha.yml",
+    ".github/pr-captcha.yml",
     ref,
   );
   return parseRepoConfig(raw);
@@ -433,7 +433,7 @@ async function publishPendingCheck(
   config: CiCaptchaConfig,
   reasons: string[],
 ): Promise<number> {
-  const summary = `ci-captcha is waiting for a human check before CI starts. Reason: ${reasons.join(", ")}.`;
+  const summary = `pr-captcha is waiting for a human check before CI starts. Reason: ${reasons.join(", ")}.`;
   if (gate.check_run_id) {
     await updateCheckRun(token, {
       owner: gate.owner,
@@ -472,7 +472,7 @@ async function publishVerifiedCheck(
     checkRunId: gate.check_run_id,
     detailsUrl: gate.gate_url,
     title: "Human check passed",
-    summary: `ci-captcha verified a GitHub-authenticated human for commit ${gate.head_sha.slice(0, 7)}.`,
+    summary: `pr-captcha verified a GitHub-authenticated human for commit ${gate.head_sha.slice(0, 7)}.`,
     conclusion: "success",
   });
 }
@@ -523,7 +523,7 @@ function pendingComment(gate: GateRecord, reasons: string[]): string {
   return `${commentMarker(gate.owner, gate.repo, gate.pr_number)}
 ## Human check required before CI starts
 
-This repository uses ci-captcha to protect maintainer time and CI minutes.
+This repository uses pr-captcha to protect maintainer time and CI minutes.
 
 Please complete a quick browser verification before GitHub Actions runs.
 
@@ -549,11 +549,11 @@ CI has been released for commit \`${gate.head_sha.slice(0, 7)}\`.
 
 Verified GitHub user: \`${solver.login}\`
 
-If a new commit is pushed, ci-captcha will require verification again.`;
+If a new commit is pushed, pr-captcha will require verification again.`;
 }
 
 function commentMarker(owner: string, repo: string, prNumber: number): string {
-  return `<!-- ci-captcha:${owner}/${repo}#${prNumber} -->`;
+  return `<!-- pr-captcha:${owner}/${repo}#${prNumber} -->`;
 }
 
 function asString(value: unknown): string {

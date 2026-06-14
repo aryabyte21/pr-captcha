@@ -1,5 +1,5 @@
 {
-  "name": "@ci-captcha/worker",
+  "name": "@pr-captcha/worker",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -9,7 +9,7 @@
     "build": "wrangler deploy --dry-run --outdir dist",
     "check": "tsc --noEmit",
     "test": "vitest run",
-    "db:migrate:local": "wrangler d1 migrations apply ci-captcha --local"
+    "db:migrate:local": "wrangler d1 migrations apply pr-captcha --local"
   },
   "dependencies": {
     "hono": "^4.8.4",

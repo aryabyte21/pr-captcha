@@ -1,6 +1,6 @@
 # Repository Config
 
-Add this file at `.github/ci-captcha.yml`:
+Add this file at `.github/pr-captcha.yml`:
 
 ```yaml
 mode: hybrid
@@ -29,7 +29,7 @@ skip:
 
 checks:
   create_required_check: true
-  name: ci-captcha/human
+  name: pr-captcha/human
 
 comment:
   enabled: true

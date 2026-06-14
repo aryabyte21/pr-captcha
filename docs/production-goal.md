@@ -2,7 +2,7 @@
 
 ## Objective
 
-Turn ci-captcha from an MVP into the default human gate for open-source repositories that want to stop suspicious, first-time, and fork pull requests from burning GitHub Actions minutes before a human shows up.
+Turn pr-captcha from an MVP into the default human gate for open-source repositories that want to stop suspicious, first-time, and fork pull requests from burning GitHub Actions minutes before a human shows up.
 
 The production product should let a maintainer install a GitHub App, enable a clear policy, and trust that CI is released only after a GitHub-authenticated, CAPTCHA-verified user approves the exact pull request head SHA.
 
@@ -10,14 +10,14 @@ The production product should let a maintainer install a GitHub App, enable a cl
 
 No CAPTCHA, no CI.
 
-ci-captcha should make agent-generated PR spam more expensive without adding maintainer toil.
+pr-captcha should make agent-generated PR spam more expensive without adding maintainer toil.
 
 ## Production Definition
 
-ci-captcha is production-ready when:
+pr-captcha is production-ready when:
 
 - A maintainer can install the GitHub App in under five minutes.
-- A fork pull request can be held by GitHub and released by ci-captcha without maintainer action.
+- A fork pull request can be held by GitHub and released by pr-captcha without maintainer action.
 - Verification is bound to repository, PR number, PR author, and exact head SHA.
 - A new commit always requires a new verification.
 - The app never checks out, builds, tests, or executes untrusted pull request code.
@@ -37,7 +37,7 @@ The MVP includes:
 - D1 verification store.
 - SHA-bound signed verification links.
 - PR comments with a gate URL.
-- `ci-captcha/human` check runs.
+- `pr-captcha/human` check runs.
 - Native fork workflow approval.
 - Optional universal Action gate.
 - Basic docs and examples.
@@ -98,7 +98,7 @@ Goal: make installation and debugging self-serve.
 Required work:
 
 - Add a setup wizard for repository owners.
-- Add a config preview page for `.github/ci-captcha.yml`.
+- Add a config preview page for `.github/pr-captcha.yml`.
 - Add a diagnostic endpoint for installed repositories.
 - Add clearer PR comment updates with one persistent comment per PR.
 - Add maintainer override labels and audit logs.
@@ -108,9 +108,9 @@ Required work:
 
 Exit criteria:
 
-- A maintainer can install, configure, and validate ci-captcha without support.
+- A maintainer can install, configure, and validate pr-captcha without support.
 - The PR UI always shows the next required action.
-- A failed gate can be diagnosed from GitHub UI plus ci-captcha logs.
+- A failed gate can be diagnosed from GitHub UI plus pr-captcha logs.
 
 ## Phase 4: Public Launch
 

@@ -1,5 +1,5 @@
 {
-  "name": "ci-captcha",
+  "name": "pr-captcha",
   "version": "0.1.0",
   "private": true,
   "description": "CAPTCHA before CI for GitHub Actions.",

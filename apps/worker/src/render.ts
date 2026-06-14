@@ -3,12 +3,12 @@ import type { SessionUser } from "./env";
 
 export function renderHome(): string {
   return layout(
-    "ci-captcha",
+    "pr-captcha",
     `<header class="site-header">
-      <a class="brand" href="/"><span class="shield">✓</span><span>ci-captcha</span></a>
+      <a class="brand" href="/"><span class="shield">✓</span><span>pr-captcha</span></a>
       <nav class="site-nav" aria-label="Primary navigation">
         <a href="#docs">Docs</a>
-        <a href="https://github.com/aryabyte21/ci-captcha">GitHub</a>
+        <a href="https://github.com/aryabyte21/pr-captcha">GitHub</a>
         <a href="#roadmap">Roadmap</a>
       </nav>
       <a class="button header-cta" href="https://github.com/apps">Install GitHub App</a>
@@ -28,9 +28,9 @@ export function renderHome(): string {
             <div><span class="mini-shield">✓</span><strong>Security-first</strong><small>Never runs untrusted PR code</small></div>
           </div>
         </div>
-        <div class="pr-preview" aria-label="ci-captcha pull request preview">
+        <div class="pr-preview" aria-label="pr-captcha pull request preview">
           <div class="repo-row">
-            <strong>ci-captcha-demo</strong>
+            <strong>pr-captcha-demo</strong>
             <span>Public</span>
           </div>
           <p class="preview-title">Update README.md</p>
@@ -45,7 +45,7 @@ export function renderHome(): string {
           </div>
           <div class="comment-preview">
             <div class="comment-top">
-              <strong><span class="mini-shield">✓</span> ci-captcha</strong>
+              <strong><span class="mini-shield">✓</span> pr-captcha</strong>
               <span>bot just now</span>
             </div>
             <h2>Human check required before CI starts</h2>
@@ -65,7 +65,7 @@ export function renderHome(): string {
           ${flowStep("1", "PR opened", "Contributor opens a PR from a fork or for the first time.")}
           ${flowStep("2", "CI paused", "GitHub holds the workflow run awaiting approval.")}
           ${flowStep("3", "CAPTCHA solved", "Contributor logs in with GitHub and solves the browser CAPTCHA.")}
-          ${flowStep("4", "Workflow approved", "ci-captcha approves the exact workflow run through GitHub.")}
+          ${flowStep("4", "Workflow approved", "pr-captcha approves the exact workflow run through GitHub.")}
           ${flowStep("5", "CI starts", "GitHub Actions starts and runs the repository workflow.")}
         </div>
       </section>
@@ -78,7 +78,7 @@ export function renderHome(): string {
         <div class="mode-grid">
           <article class="mode-card recommended">
             <div class="mode-title"><span class="icon-box">1</span><h3>Native fork gate</h3></div>
-            <p>Use GitHub's native awaiting approval state for fork workflows. ci-captcha approves the run after a human verification.</p>
+            <p>Use GitHub's native awaiting approval state for fork workflows. pr-captcha approves the run after a human verification.</p>
             <ul>
               <li>Saves CI minutes</li>
               <li>Zero runner minutes spent</li>
@@ -99,18 +99,18 @@ Require approval for outside contributors</code></pre>
             <pre><code>jobs:
   human-gate:
     steps:
-      - uses: ci-captcha/gate@v1</code></pre>
+      - uses: pr-captcha/gate@v1</code></pre>
           </article>
           <article class="mode-card">
             <div class="mode-title"><span class="icon-box">3</span><h3>Required check</h3></div>
-            <p>ci-captcha creates a SHA-bound check named <code>ci-captcha/human</code> that branch protection can require.</p>
+            <p>pr-captcha creates a SHA-bound check named <code>pr-captcha/human</code> that branch protection can require.</p>
             <ul>
               <li>Branch protection friendly</li>
               <li>Clear reviewer signal</li>
               <li>Commit-specific status</li>
             </ul>
             <div class="status-board">
-              <div><span class="ok-dot"></span><strong>ci-captcha/human</strong><span>Success</span></div>
+              <div><span class="ok-dot"></span><strong>pr-captcha/human</strong><span>Success</span></div>
               <div><span class="wait-dot"></span><strong>ci / build</strong><span>Pending</span></div>
               <div><span class="wait-dot muted"></span><strong>ci / test</strong><span>Pending</span></div>
             </div>
@@ -118,7 +118,7 @@ Require approval for outside contributors</code></pre>
         </div>
         <div class="security-strip">
           <strong>Security first:</strong>
-          <span>ci-captcha never checks out untrusted PR code and never executes the patch from a privileged context.</span>
+          <span>pr-captcha never checks out untrusted PR code and never executes the patch from a privileged context.</span>
         </div>
       </section>
       <section class="section" id="roadmap">
@@ -156,7 +156,7 @@ Require approval for outside contributors</code></pre>
       </section>
     </main>
     <footer class="site-footer">
-      <div class="brand"><span class="shield">✓</span><span>ci-captcha</span></div>
+      <div class="brand"><span class="shield">✓</span><span>pr-captcha</span></div>
       <p>Human gate before GitHub Actions burns CI minutes.</p>
       <strong class="footer-tagline">No CAPTCHA, no CI.</strong>
     </footer>`,
@@ -218,7 +218,7 @@ export function renderGatePage(input: {
     "Run CI for this pull request?",
     `<main class="gate-page">
       <section class="gate">
-        <div class="brand centered"><span class="shield">✓</span><span>ci-captcha</span></div>
+        <div class="brand centered"><span class="shield">✓</span><span>pr-captcha</span></div>
         <h1>Run CI for this pull request?</h1>
         <p class="intro">To help protect repository CI from unauthorized usage, verify that you are human.</p>
         <div class="status-strip">
@@ -253,7 +253,7 @@ export function renderMessagePage(
     title,
     `<main class="gate-page">
       <section class="gate small">
-        <div class="brand centered"><span class="shield">✓</span><span>ci-captcha</span></div>
+        <div class="brand centered"><span class="shield">✓</span><span>pr-captcha</span></div>
         <h1>${escapeHtml(title)}</h1>
         <div class="notice ${status}">${escapeHtml(message)}</div>
       </section>

@@ -1,6 +1,6 @@
 # Architecture
 
-ci-captcha has one privileged control plane and several integration surfaces.
+pr-captcha has one privileged control plane and several integration surfaces.
 
 ## Control Plane
 
@@ -32,7 +32,7 @@ Non-responsibilities:
 
 This is the primary product.
 
-GitHub holds fork PR workflow runs until they are approved. ci-captcha becomes the approval layer and calls the workflow-run approval API only after human verification.
+GitHub holds fork PR workflow runs until they are approved. pr-captcha becomes the approval layer and calls the workflow-run approval API only after human verification.
 
 Benefits:
 
@@ -47,7 +47,7 @@ Limitations:
 
 ### Universal Gate Action
 
-The Action checks whether ci-captcha already has a verification for the current PR and SHA.
+The Action checks whether pr-captcha already has a verification for the current PR and SHA.
 
 If no verification exists, it fails quickly and prints the verification URL. Expensive jobs depend on this gate job.
 
@@ -63,7 +63,7 @@ Limitations:
 
 ### Required Check
 
-The GitHub App creates `ci-captcha/human` for each gated PR SHA.
+The GitHub App creates `pr-captcha/human` for each gated PR SHA.
 
 Before verification:
 

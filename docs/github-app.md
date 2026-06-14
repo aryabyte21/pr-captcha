@@ -7,9 +7,9 @@ Create a GitHub App with these permissions:
 | Metadata      | Read   | Required by GitHub Apps.                                               |
 | Pull requests | Read   | Read PR author, head SHA, labels, fork state, and author association.  |
 | Issues        | Write  | Create or update the PR comment with the verification link.            |
-| Checks        | Write  | Create `ci-captcha/human` check runs for branch protection.            |
+| Checks        | Write  | Create `pr-captcha/human` check runs for branch protection.            |
 | Actions       | Write  | Approve held fork PR workflow runs and rerun universal-gate workflows. |
-| Contents      | Read   | Optional `.github/ci-captcha.yml` config loading.                      |
+| Contents      | Read   | Optional `.github/pr-captcha.yml` config loading.                      |
 
 Subscribe to these webhook events:
 

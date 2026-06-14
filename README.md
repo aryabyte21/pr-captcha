@@ -1,4 +1,4 @@
-# ci-captcha
+# pr-captcha
 
 CAPTCHA before CI for GitHub Actions.
 
@@ -8,22 +8,22 @@ A contributor opens a PR. GitHub Actions stays paused. They solve a browser CAPT
 
 ## Integration Modes
 
-ci-captcha supports multiple maintainer setups:
+pr-captcha supports multiple maintainer setups:
 
 1. **Native fork gate**
    - Best for public open-source repositories.
    - Maintainers enable GitHub's required approval for fork PR workflows.
-   - ci-captcha approves held workflow runs only after GitHub login, CAPTCHA, and head SHA verification.
+   - pr-captcha approves held workflow runs only after GitHub login, CAPTCHA, and head SHA verification.
    - This is the only mode that starts at zero runner minutes.
 
 2. **Universal gate Action**
    - Best for same-repo PRs, private repos, or repositories that cannot rely on fork approvals.
    - Add a tiny `human-gate` job before expensive jobs.
-   - The job exits quickly until ci-captcha has a verification for the exact PR head SHA.
+   - The job exits quickly until pr-captcha has a verification for the exact PR head SHA.
 
 3. **Required check only**
    - Best when the goal is merge protection rather than CI-minute protection.
-   - ci-captcha creates a `ci-captcha/human` check on the PR head SHA.
+   - pr-captcha creates a `pr-captcha/human` check on the PR head SHA.
    - Maintainers can require this check in branch protection.
 
 4. **Hybrid**
@@ -97,12 +97,12 @@ on:
 
 jobs:
   human-gate:
-    name: ci-captcha / human gate
+    name: pr-captcha / human gate
     runs-on: ubuntu-latest
     steps:
-      - uses: yourname/ci-captcha/packages/action@v1
+      - uses: yourname/pr-captcha/packages/action@v1
         with:
-          api-url: https://ci-captcha.example.com
+          api-url: https://pr-captcha.example.com
 
   test:
     needs: human-gate

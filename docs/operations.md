@@ -19,14 +19,14 @@ The Worker rejects unsigned webhook payloads. Use a real GitHub App test deliver
 
 ## Required Repository Setting
 
-For native fork gate mode, maintainers must enable GitHub's fork workflow approval behavior. ci-captcha does not replace that setting. It automates the approval after verification.
+For native fork gate mode, maintainers must enable GitHub's fork workflow approval behavior. pr-captcha does not replace that setting. It automates the approval after verification.
 
 ## Branch Protection
 
 Require this check when using required-check mode:
 
 ```txt
-ci-captcha/human
+pr-captcha/human
 ```
 
 ## Turnstile Test Keys

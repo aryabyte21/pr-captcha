@@ -23,7 +23,7 @@ export const defaultConfig: CiCaptchaConfig = {
   },
   checks: {
     create_required_check: true,
-    name: "ci-captcha/human",
+    name: "pr-captcha/human",
   },
   comment: {
     enabled: true,

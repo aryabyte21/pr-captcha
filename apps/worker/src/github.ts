@@ -65,7 +65,7 @@ export async function githubRequest<T>(
       Accept: "application/vnd.github+json",
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
-      "User-Agent": "ci-captcha",
+      "User-Agent": "pr-captcha",
       "X-GitHub-Api-Version": "2022-11-28",
     },
   };

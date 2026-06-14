@@ -3,7 +3,7 @@ import { readFileSync } from "fs";
 async function run() {
   const event = readEvent();
   if (!event.pull_request) {
-    info("No pull request context found. ci-captcha gate is not required.");
+    info("No pull request context found. pr-captcha gate is not required.");
     return;
   }
   const repository = event.repository ?? repositoryFromEnv();
@@ -20,12 +20,12 @@ async function run() {
   const status = await response.json();
   if (!response.ok) {
     throw new Error(
-      status.error ?? `ci-captcha status request failed with ${response.status}`
+      status.error ?? `pr-captcha status request failed with ${response.status}`
     );
   }
   if (status.verified) {
     info(
-      `ci-captcha verified by ${status.solver_login ?? "unknown"} at ${status.captcha_passed_at ?? "unknown time"}.`
+      `pr-captcha verified by ${status.solver_login ?? "unknown"} at ${status.captcha_passed_at ?? "unknown time"}.`
     );
     return;
   }
@@ -36,7 +36,7 @@ async function run() {
     return;
   }
   setFailed(
-    "Human verification required, but ci-captcha has not created a gate for this SHA yet."
+    "Human verification required, but pr-captcha has not created a gate for this SHA yet."
   );
 }
 function readEvent() {
