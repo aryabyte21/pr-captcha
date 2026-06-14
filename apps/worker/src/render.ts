@@ -33,40 +33,37 @@ export function renderHome(): string {
               <span>Pull requests 184</span>
             </div>
             <div class="repo-pr">
-              <h2>Add feature</h2>
+              <h2>Add feature <span class="pr-num">#184</span></h2>
               <p><strong>Open</strong> some-user wants to merge 3 commits into <code>main</code> from <code>some-user:feature</code></p>
             </div>
-          </div>
-          <div class="workflow-card">
-            <div class="card-top"><strong>GitHub Actions / ci.yml</strong><span>2m ago</span></div>
-            <h3>Workflow run 1234567890</h3>
-            <div class="approval-box">
-              <span class="warn-dot"></span>
-              <div>
-                <strong>Awaiting approval</strong>
-                <p>This workflow run is waiting for approval to run from a public fork.</p>
+            <div class="checks">
+              <div class="check-row warn">
+                <span class="check-icon warn-dot"></span>
+                <div class="check-body">
+                  <div class="check-head"><strong>GitHub Actions / ci.yml</strong><span>2m ago</span></div>
+                  <p>Awaiting approval to run from a public fork.</p>
+                </div>
+              </div>
+              <div class="check-row">
+                <span class="check-icon req-dot">p</span>
+                <div class="check-body">
+                  <div class="check-head"><strong>pr-captcha / human</strong><span>Required</span></div>
+                  <p>Human verification required to allow CI to run.</p>
+                </div>
+                <button type="button">Verify</button>
               </div>
             </div>
-          </div>
-          <div class="check-card">
-            <div class="card-top"><strong>pr-captcha / human</strong><span>Required</span></div>
-            <h3>Human verification required</h3>
-            <p>Solve pr-captcha to allow CI to run.</p>
-            <button type="button">Verify human</button>
-          </div>
-          <div class="comment-card">
-            <div class="card-top"><strong>pr-captcha</strong><span>bot · now</span></div>
-            <h3>Human check required before CI starts</h3>
-            <p>This repository uses pr-captcha to protect maintainer time and CI minutes.</p>
-            <a class="button dark compact" href="#how">Run CI after human check</a>
+            <div class="bot-comment">
+              <div class="card-top"><span class="brand-mark small">p</span><strong>pr-captcha</strong><span>bot · now</span></div>
+              <p>This repository uses pr-captcha to protect maintainer time and CI minutes. CI starts only after a human shows up.</p>
+            </div>
           </div>
           <div class="gate-card">
             <div class="gate-brand"><span class="brand-mark small">p</span><strong>pr-captcha</strong></div>
             <h3>Verify to run CI</h3>
             <dl>
               <div><dt>Repository</dt><dd>octo-org/awesome-repo</dd></div>
-              <div><dt>Pull request</dt><dd>#184</dd></div>
-              <div><dt>Commit</dt><dd>8f31c9a</dd></div>
+              <div><dt>Commit</dt><dd><code>8f31c9a</code></dd></div>
               <div><dt>GitHub user</dt><dd>some-user</dd></div>
             </dl>
             <div class="captcha-box">
@@ -480,42 +477,42 @@ function layout(title: string, body: string): string {
         min-height: 42px;
       }
       .home {
-        padding: 30px 0 46px;
+        padding: 24px 0 46px;
       }
       .hero {
-        min-height: calc(100vh - 108px);
+        min-height: min(700px, calc(100vh - 172px));
         display: grid;
-        grid-template-columns: minmax(0, 0.86fr) minmax(560px, 1.14fr);
+        grid-template-columns: minmax(0, 0.9fr) minmax(520px, 1.1fr);
         align-items: center;
-        gap: 58px;
-        padding: 34px 0 52px;
+        gap: 48px;
+        padding: 28px 0 34px;
       }
       .hero-copy h1 {
-        max-width: 620px;
+        max-width: 560px;
         margin: 0 0 26px;
         color: var(--ink);
-        font-size: clamp(58px, 6.8vw, 92px);
-        line-height: 0.94;
+        font-size: clamp(52px, 6.1vw, 84px);
+        line-height: 0.96;
         letter-spacing: 0;
       }
       .hero-copy p {
-        max-width: 570px;
+        max-width: 540px;
         margin: 0;
         color: #3e4957;
-        font-size: 21px;
+        font-size: 20px;
         line-height: 1.55;
       }
       .actions {
         display: flex;
         flex-wrap: wrap;
         gap: 18px;
-        margin-top: 36px;
+        margin-top: 30px;
       }
       .proof-line {
         display: flex;
         align-items: center;
         gap: 12px;
-        margin-top: 40px !important;
+        margin-top: 30px !important;
         color: var(--ink) !important;
         font-size: 22px !important;
         font-weight: 850;
@@ -540,26 +537,23 @@ function layout(title: string, body: string): string {
         font-size: 12px;
       }
       .product-stage {
-        position: relative;
-        min-height: 700px;
+        display: grid;
+        grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+        align-items: start;
+        gap: 16px;
+        width: 100%;
       }
       .repo-shell,
-      .workflow-card,
-      .check-card,
-      .comment-card,
+      .bot-comment,
       .gate-card,
       .timeline-section,
       .integration-section,
       .roadmap-card {
-        background: rgba(255, 255, 255, 0.96);
+        background: #ffffff;
         border: 1px solid var(--line);
-        border-radius: 7px;
+        border-radius: 10px;
       }
       .repo-shell {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 118px;
         overflow: hidden;
         box-shadow: var(--shadow);
       }
@@ -581,9 +575,6 @@ function layout(title: string, body: string): string {
         padding: 18px;
       }
       .repo-pr h2,
-      .workflow-card h3,
-      .check-card h3,
-      .comment-card h3,
       .gate-card h3 {
         margin: 0;
         color: var(--ink);
@@ -592,10 +583,11 @@ function layout(title: string, body: string): string {
       .repo-pr h2 {
         font-size: 21px;
       }
+      .pr-num {
+        color: var(--muted);
+        font-weight: 600;
+      }
       .repo-pr p,
-      .workflow-card p,
-      .check-card p,
-      .comment-card p,
       .gate-card p {
         margin: 8px 0 0;
         color: var(--muted);
@@ -621,72 +613,105 @@ function layout(title: string, body: string): string {
         color: var(--ink);
         font-size: 0.92em;
       }
-      .workflow-card,
-      .check-card,
-      .comment-card {
-        position: absolute;
-        left: 0;
-        width: calc(100% - 286px);
-        padding: 18px;
-        box-shadow: 0 16px 36px rgba(8, 13, 20, 0.08);
-      }
-      .workflow-card {
-        top: 172px;
-      }
-      .check-card {
-        top: 350px;
-      }
-      .comment-card {
-        top: 520px;
-      }
-      .card-top {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 14px;
-        margin-bottom: 14px;
-        color: #2a3542;
-        font-size: 13px;
-      }
-      .card-top span {
-        color: var(--muted);
-      }
-      .approval-box {
-        display: grid;
-        grid-template-columns: auto minmax(0, 1fr);
-        gap: 12px;
-        margin-top: 18px;
-        padding: 15px;
+      .checks {
+        margin: 0 18px 18px;
         border: 1px solid var(--line);
-        border-radius: 6px;
+        border-radius: 8px;
+        overflow: hidden;
+      }
+      .check-row {
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 14px;
+        padding: 14px 16px;
+      }
+      .check-row + .check-row {
+        border-top: 1px solid var(--line);
+      }
+      .check-row.warn {
         background: #fffdf8;
+      }
+      .check-icon {
+        align-self: start;
+        margin-top: 1px;
       }
       .warn-dot {
         width: 18px;
         height: 18px;
         border: 2px solid var(--amber);
         border-radius: 999px;
-        margin-top: 2px;
       }
-      .approval-box strong {
-        color: #9a6500;
+      .req-dot {
+        width: 22px;
+        height: 22px;
+        display: grid;
+        place-items: center;
+        border-radius: 6px;
+        background: var(--ink);
+        color: #ffffff;
+        font-weight: 900;
+        font-size: 12px;
       }
-      .check-card button {
+      .check-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+      .check-head strong {
+        color: var(--ink);
+        font-size: 14px;
+      }
+      .check-head span {
+        color: var(--muted);
+        font-size: 12px;
+        white-space: nowrap;
+      }
+      .check-body p {
+        margin: 4px 0 0;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.45;
+      }
+      .check-row button {
         min-height: 34px;
-        margin-top: 14px;
         border: 1px solid var(--line);
-        border-radius: 5px;
+        border-radius: 6px;
         background: #ffffff;
         color: var(--ink);
-        padding: 0 13px;
+        padding: 0 16px;
         font-weight: 760;
         cursor: pointer;
+        white-space: nowrap;
+      }
+      .check-row button:hover {
+        border-color: #aeb7c2;
+      }
+      .bot-comment {
+        margin: 0 18px 18px;
+        padding: 16px;
+      }
+      .bot-comment p {
+        margin: 8px 0 0;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.5;
+      }
+      .card-top {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #2a3542;
+        font-size: 13px;
+        font-weight: 760;
+      }
+      .card-top span:last-child {
+        margin-left: auto;
+        color: var(--muted);
+        font-weight: 400;
       }
       .gate-card {
-        position: absolute;
-        top: 168px;
-        right: 0;
-        width: 260px;
         padding: 18px;
         box-shadow: 0 24px 60px rgba(8, 13, 20, 0.14);
       }
@@ -1116,8 +1141,12 @@ function layout(title: string, body: string): string {
           padding: 18px 0;
         }
         .site-nav {
+          width: 100%;
           flex-wrap: wrap;
           gap: 18px;
+        }
+        .site-nav a {
+          flex: 0 0 auto;
         }
         .header-cta {
           width: 100%;
@@ -1132,17 +1161,7 @@ function layout(title: string, body: string): string {
           gap: 34px;
         }
         .product-stage {
-          min-height: auto;
-          display: grid;
-          gap: 14px;
-        }
-        .repo-shell,
-        .workflow-card,
-        .check-card,
-        .comment-card,
-        .gate-card {
-          position: static;
-          width: 100%;
+          grid-template-columns: 1fr;
         }
         .timeline,
         .roadmap-grid {
@@ -1194,6 +1213,16 @@ function layout(title: string, body: string): string {
       @media (max-width: 560px) {
         body {
           background-size: 52px 52px;
+        }
+        .site-header {
+          gap: 16px;
+        }
+        .site-nav {
+          flex-wrap: nowrap;
+          overflow-x: auto;
+          gap: 10px;
+          padding-bottom: 4px;
+          font-size: 13px;
         }
         .brand {
           font-size: 24px;
