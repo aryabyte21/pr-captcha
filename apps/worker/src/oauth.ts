@@ -61,7 +61,23 @@ export async function handleGitHubOAuthCallback(
     path: "/",
     maxAge: 7 * 24 * 60 * 60,
   });
-  return c.redirect(statePayload.return_to, 302);
+  return c.redirect(
+    safeReturnTo(statePayload.return_to, c.env.APP_BASE_URL),
+    302,
+  );
+}
+
+function safeReturnTo(returnTo: string, baseUrl: string): string {
+  try {
+    const base = new URL(baseUrl);
+    const resolved = new URL(returnTo, base);
+    if (resolved.origin === base.origin) {
+      return resolved.pathname + resolved.search + resolved.hash;
+    }
+  } catch {
+    // fall through to default
+  }
+  return "/";
 }
 
 export async function getSession(c: AppContext): Promise<SessionUser | null> {

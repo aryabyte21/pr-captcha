@@ -17,7 +17,7 @@ async function run() {
   statusUrl.searchParams.set("pr", String(event.pull_request.number));
   statusUrl.searchParams.set("sha", event.pull_request.head.sha);
   const response = await fetch(statusUrl);
-  const status = await response.json();
+  const status = await readStatusResponse(response);
   if (!response.ok) {
     throw new Error(
       status.error ?? `pr-captcha status request failed with ${response.status}`
@@ -38,6 +38,16 @@ async function run() {
   setFailed(
     "Human verification required, but pr-captcha has not created a gate for this SHA yet."
   );
+}
+async function readStatusResponse(response) {
+  const contentType = response.headers.get("content-type") ?? "";
+  if (contentType.toLowerCase().includes("application/json")) {
+    return await response.json();
+  }
+  return {
+    verified: false,
+    error: await response.text()
+  };
 }
 function readEvent() {
   const eventPath = process.env.GITHUB_EVENT_PATH;

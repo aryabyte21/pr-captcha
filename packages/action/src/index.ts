@@ -43,7 +43,7 @@ async function run(): Promise<void> {
   statusUrl.searchParams.set("sha", event.pull_request.head.sha);
 
   const response = await fetch(statusUrl);
-  const status = (await response.json()) as StatusResponse;
+  const status = await readStatusResponse(response);
   if (!response.ok) {
     throw new Error(
       status.error ??
@@ -68,6 +68,17 @@ async function run(): Promise<void> {
   setFailed(
     "Human verification required, but pr-captcha has not created a gate for this SHA yet.",
   );
+}
+
+async function readStatusResponse(response: Response): Promise<StatusResponse> {
+  const contentType = response.headers.get("content-type") ?? "";
+  if (contentType.toLowerCase().includes("application/json")) {
+    return (await response.json()) as StatusResponse;
+  }
+  return {
+    verified: false,
+    error: await response.text(),
+  };
 }
 
 function readEvent(): PullRequestEvent {

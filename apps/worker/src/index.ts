@@ -334,6 +334,7 @@ async function processPullRequestWebhook(
   const config = await loadConfig(installationToken, owner, repo, pr.base.ref);
   const decision = shouldGatePullRequest(pr, config);
   if (!decision.gate) {
+    await resolveSkippedGate(env, installationToken, owner, repo, pr);
     return { ok: true, gated: false };
   }
 
@@ -380,13 +381,17 @@ async function processPullRequestWebhook(
   });
 
   if (config.checks.create_required_check) {
-    const checkRunId = await publishPendingCheck(
-      installationToken,
-      gate,
-      config,
-      decision.reasons,
-    );
-    await setGateCheckRunId(env.DB, gate.id, checkRunId);
+    const checkRunId = existingVerification
+      ? await publishVerifiedCheck(installationToken, gate, config)
+      : await publishPendingCheck(
+          installationToken,
+          gate,
+          config,
+          decision.reasons,
+        );
+    if (checkRunId) {
+      await setGateCheckRunId(env.DB, gate.id, checkRunId);
+    }
   }
 
   if (config.comment.enabled) {
@@ -462,17 +467,59 @@ async function publishVerifiedCheck(
   token: string,
   gate: GateRecord,
   config: CiCaptchaConfig,
+): Promise<number | null> {
+  if (!config.checks.create_required_check) {
+    return null;
+  }
+  const summary = `pr-captcha verified a GitHub-authenticated human for commit ${gate.head_sha.slice(0, 7)}.`;
+  if (gate.check_run_id) {
+    await updateCheckRun(token, {
+      owner: gate.owner,
+      repo: gate.repo,
+      checkRunId: gate.check_run_id,
+      detailsUrl: gate.gate_url,
+      title: "Human check passed",
+      summary,
+      conclusion: "success",
+    });
+    return gate.check_run_id;
+  }
+  return createCheckRun(token, {
+    owner: gate.owner,
+    repo: gate.repo,
+    name: config.checks.name,
+    headSha: gate.head_sha,
+    detailsUrl: gate.gate_url,
+    title: "Human check passed",
+    summary,
+    conclusion: "success",
+  });
+}
+
+async function resolveSkippedGate(
+  env: Env,
+  token: string,
+  owner: string,
+  repo: string,
+  pr: PullRequestWebhook["pull_request"],
 ): Promise<void> {
-  if (!config.checks.create_required_check || !gate.check_run_id) {
+  const existing = await getGateByIdentity(
+    env.DB,
+    owner,
+    repo,
+    pr.number,
+    pr.head.sha,
+  );
+  if (!existing?.check_run_id) {
     return;
   }
   await updateCheckRun(token, {
-    owner: gate.owner,
-    repo: gate.repo,
-    checkRunId: gate.check_run_id,
-    detailsUrl: gate.gate_url,
-    title: "Human check passed",
-    summary: `pr-captcha verified a GitHub-authenticated human for commit ${gate.head_sha.slice(0, 7)}.`,
+    owner,
+    repo,
+    checkRunId: existing.check_run_id,
+    detailsUrl: existing.gate_url,
+    title: "Human check not required",
+    summary: "pr-captcha is no longer gating this pull request.",
     conclusion: "success",
   });
 }
