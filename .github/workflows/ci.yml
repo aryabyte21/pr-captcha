@@ -1,0 +1,63 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run check
+
+      - name: Test
+        run: npm test
+
+      - name: Build
+        run: npm run build
+
+      - name: Generated artifacts
+        run: git diff --exit-code -- packages/action/dist
+
+      - name: Format
+        run: npm run format
+
+      - name: Whitespace
+        run: git diff --check
+
+      - name: Text policy
+        run: |
+          node - <<'NODE'
+          const { execFileSync } = require("node:child_process");
+          const { readFileSync } = require("node:fs");
+          const files = execFileSync("git", ["ls-files", "README.md", "docs", "apps", "packages", "examples", "package.json"], { encoding: "utf8" })
+            .trim()
+            .split("\n")
+            .filter(Boolean);
+          const bad = files.filter((file) => readFileSync(file, "utf8").includes("\u2014"));
+          if (bad.length) {
+            console.error(`Disallowed punctuation found in ${bad.join(", ")}`);
+            process.exit(1);
+          }
+          NODE

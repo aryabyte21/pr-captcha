@@ -1,0 +1,6 @@
+Contact: https://github.com/aryabyte21/pr-captcha/security/advisories/new
+Contact: https://github.com/aryabyte21/pr-captcha/issues/new
+Expires: 2026-12-31T00:00:00Z
+Canonical: https://aryabyte21.github.io/pr-captcha/.well-known/security.txt
+Policy: https://aryabyte21.github.io/pr-captcha/security.md
+Preferred-Languages: en

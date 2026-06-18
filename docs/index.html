@@ -1,0 +1,1396 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Stop suspicious PRs before CI runs | pr-captcha</title>
+    <meta
+      name="description"
+      content="Public launch page for pr-captcha, the GitHub pull request human-origin gate for suspicious PRs."
+    />
+    <link rel="canonical" href="https://aryabyte21.github.io/pr-captcha/" />
+    <meta property="og:type" content="website" />
+    <meta
+      property="og:url"
+      content="https://aryabyte21.github.io/pr-captcha/"
+    />
+    <meta property="og:site_name" content="pr-captcha" />
+    <meta property="og:title" content="Stop suspicious PRs before CI runs." />
+    <meta
+      property="og:description"
+      content="A SHA-bound human check for fork, first-time, outside, and bot pull requests."
+    />
+    <meta
+      property="og:image"
+      content="https://aryabyte21.github.io/pr-captcha/og.png"
+    />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="pr-captcha pull request gate preview"
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Stop suspicious PRs before CI runs." />
+    <meta
+      name="twitter:description"
+      content="A SHA-bound human check for fork, first-time, outside, and bot pull requests."
+    />
+    <meta
+      name="twitter:image"
+      content="https://aryabyte21.github.io/pr-captcha/og.png"
+    />
+    <meta
+      name="twitter:image:alt"
+      content="pr-captcha pull request gate preview"
+    />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23070b12'/%3E%3Cpath d='M18 35h28v8H18zM18 21h20v8H18z' fill='%23ffffff'/%3E%3Ccircle cx='47' cy='25' r='6' fill='%230f766e'/%3E%3C/svg%3E"
+    />
+    <style>
+      :root {
+        color-scheme: light;
+        --ink: #070b12;
+        --muted: #4a5565;
+        --line: #d8e1dc;
+        --green: #0f766e;
+        --green-soft: #edfdf3;
+        --blue: #2563eb;
+        --blue-soft: #eff6ff;
+        --amber-soft: #fffbeb;
+        --red-soft: #fff1f2;
+        font-family:
+          Inter,
+          ui-sans-serif,
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          sans-serif;
+        background: #ffffff;
+        color: var(--ink);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background:
+          linear-gradient(#ffffff, rgba(255, 255, 255, 0.94)),
+          linear-gradient(90deg, rgba(216, 225, 220, 0.5) 1px, transparent 1px),
+          linear-gradient(rgba(216, 225, 220, 0.5) 1px, transparent 1px);
+        background-size:
+          auto,
+          72px 72px,
+          72px 72px;
+      }
+
+      a {
+        color: inherit;
+      }
+
+      .site-header,
+      main {
+        width: min(1200px, calc(100% - 40px));
+        margin: 0 auto;
+      }
+
+      .site-header {
+        min-height: 78px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        color: var(--ink);
+        font-size: 28px;
+        font-weight: 900;
+        text-decoration: none;
+      }
+
+      .mark {
+        display: grid;
+        width: 34px;
+        height: 34px;
+        place-items: center;
+        border-radius: 8px;
+        background: var(--ink);
+        color: #ffffff;
+        font-size: 19px;
+        line-height: 1;
+      }
+
+      .mark::after {
+        content: "";
+        width: 8px;
+        height: 8px;
+        margin: -6px 0 0 14px;
+        border-radius: 999px;
+        background: #22c55e;
+      }
+
+      .nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 18px;
+        align-items: center;
+        color: #1f2937;
+        font-size: 14px;
+        font-weight: 820;
+      }
+
+      .nav a {
+        text-decoration: none;
+      }
+
+      main {
+        padding: 42px 0 58px;
+      }
+
+      .hero {
+        display: grid;
+        grid-template-columns: minmax(0, 0.98fr) minmax(380px, 0.82fr);
+        gap: 28px;
+        align-items: stretch;
+      }
+
+      .panel,
+      .route-grid a,
+      .worker-form {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.94);
+        box-shadow: 0 18px 44px rgba(8, 13, 20, 0.08);
+      }
+
+      .receipt-stack {
+        display: grid;
+        gap: 14px;
+        align-self: center;
+      }
+
+      .hero-copy {
+        display: grid;
+        align-content: center;
+        padding: 24px 0;
+      }
+
+      h1 {
+        max-width: 760px;
+        margin: 0;
+        color: var(--ink);
+        font-size: clamp(44px, 6vw, 78px);
+        line-height: 0.98;
+        letter-spacing: 0;
+      }
+
+      .hero-copy p {
+        max-width: 700px;
+        margin: 18px 0 0;
+        color: #354052;
+        font-size: 18px;
+        line-height: 1.56;
+      }
+
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 28px;
+      }
+
+      .button {
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid #bdc9c3;
+        border-radius: 8px;
+        padding: 0 18px;
+        background: #ffffff;
+        color: var(--ink);
+        font-size: 14px;
+        font-weight: 850;
+        text-decoration: none;
+      }
+
+      .button.primary {
+        border-color: var(--blue);
+        background: var(--blue);
+        color: #ffffff;
+      }
+
+      .button.subtle {
+        border-color: transparent;
+        background: #eef2f7;
+        color: #253244;
+      }
+
+      .proof-strip {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 28px;
+      }
+
+      .proof-strip span {
+        min-height: 36px;
+        display: inline-flex;
+        align-items: center;
+        border: 1px solid #b7efc9;
+        border-radius: 999px;
+        padding: 0 12px;
+        background: var(--green-soft);
+        color: #087a3f;
+        font-size: 13px;
+        font-weight: 850;
+      }
+
+      .proof-strip span[data-tone="blue"] {
+        border-color: #bfdbfe;
+        background: var(--blue-soft);
+        color: #1d4ed8;
+      }
+
+      .proof-strip span[data-tone="amber"] {
+        border-color: #fde68a;
+        background: var(--amber-soft);
+        color: #92400e;
+      }
+
+      .receipt-body,
+      .issue-body {
+        display: grid;
+        gap: 14px;
+        padding: 16px;
+      }
+
+      .receipt-pr {
+        display: grid;
+        gap: 6px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 14px;
+        background: #fbfcfd;
+      }
+
+      .receipt-pr span {
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 900;
+        text-transform: uppercase;
+      }
+
+      .receipt-pr strong {
+        color: var(--ink);
+        font-size: 18px;
+        line-height: 1.22;
+      }
+
+      .signal-badges {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .signal-badges span,
+      .receipt-check,
+      .receipt-meta div {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #ffffff;
+      }
+
+      .signal-badges span {
+        min-height: 30px;
+        display: inline-flex;
+        align-items: center;
+        padding: 0 10px;
+        color: #92400e;
+        background: var(--amber-soft);
+        border-color: #fde68a;
+        font-size: 12px;
+        font-weight: 900;
+      }
+
+      .receipt-check {
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr);
+        gap: 10px;
+        align-items: start;
+        padding: 12px;
+        background: #fffdf8;
+        border-color: #fde68a;
+      }
+
+      .receipt-check b {
+        display: grid;
+        width: 24px;
+        height: 24px;
+        place-items: center;
+        border-radius: 7px;
+        background: #f59e0b;
+        color: #ffffff;
+        font-size: 13px;
+      }
+
+      .receipt-check strong,
+      .receipt-meta dt,
+      .issue-body label {
+        color: var(--ink);
+        font-size: 13px;
+        font-weight: 900;
+      }
+
+      .receipt-check span {
+        display: block;
+        margin-top: 3px;
+        color: #694d11;
+        font-size: 13px;
+        line-height: 1.42;
+      }
+
+      .receipt-meta {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        margin: 0;
+      }
+
+      .receipt-meta div {
+        display: grid;
+        gap: 4px;
+        min-height: 62px;
+        align-content: center;
+        padding: 10px;
+        background: #fbfcfd;
+      }
+
+      .receipt-meta dd {
+        margin: 0;
+        color: var(--muted);
+        font:
+          13px ui-monospace,
+          SFMono-Regular,
+          Menlo,
+          Monaco,
+          Consolas,
+          "Liberation Mono",
+          monospace;
+        overflow-wrap: anywhere;
+      }
+
+      .issue-field {
+        min-height: 44px;
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr);
+        align-items: center;
+        gap: 8px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 0 12px;
+        background: #fbfcfd;
+      }
+
+      .issue-field span {
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 800;
+      }
+
+      .issue-field input {
+        width: 100%;
+        min-width: 0;
+        border: 0;
+        outline: none;
+        background: transparent;
+        color: var(--ink);
+        font: inherit;
+        font-size: 14px;
+        font-weight: 800;
+      }
+
+      .issue-field:focus-within {
+        border-color: #93c5fd;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+      }
+
+      .issue-actions {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .issue-preview {
+        max-height: 172px;
+        margin: 0;
+        overflow: auto;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 12px;
+        background: #071018;
+        color: #e5f4ff;
+        font:
+          12px/1.55 ui-monospace,
+          SFMono-Regular,
+          Menlo,
+          Monaco,
+          Consolas,
+          "Liberation Mono",
+          monospace;
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+      }
+
+      .evidence-panel {
+        display: grid;
+        gap: 16px;
+        padding: 18px;
+      }
+
+      .repo-line {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+      }
+
+      .repo-line strong {
+        color: var(--ink);
+        font-size: 15px;
+      }
+
+      .repo-line span {
+        border: 1px solid #fde68a;
+        border-radius: 999px;
+        padding: 5px 9px;
+        background: var(--amber-soft);
+        color: #92400e;
+        font-size: 11px;
+        font-weight: 900;
+        text-transform: uppercase;
+      }
+
+      .metric-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 1px;
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--line);
+      }
+
+      .metric-grid div {
+        display: grid;
+        gap: 6px;
+        min-height: 78px;
+        align-content: center;
+        padding: 12px;
+        background: #ffffff;
+      }
+
+      .metric-grid dt {
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 900;
+      }
+
+      .metric-grid dd {
+        margin: 0;
+        color: var(--ink);
+        font-size: 24px;
+        font-weight: 950;
+        line-height: 1;
+      }
+
+      .recommendation {
+        margin: 0;
+        border: 1px solid #fde68a;
+        border-radius: 8px;
+        padding: 12px;
+        background: var(--amber-soft);
+        color: #5c3f05;
+        font-size: 13px;
+        font-weight: 760;
+        line-height: 1.45;
+      }
+
+      .policy-snippet {
+        margin: 0;
+        overflow: auto;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 14px;
+        background: #071018;
+        color: #e5f4ff;
+        font:
+          12px/1.6 ui-monospace,
+          SFMono-Regular,
+          Menlo,
+          Monaco,
+          Consolas,
+          "Liberation Mono",
+          monospace;
+      }
+
+      .panel {
+        overflow: hidden;
+      }
+
+      .panel-top {
+        min-height: 54px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 0 18px;
+        background: #071018;
+        color: #ffffff;
+      }
+
+      .panel-top strong {
+        font-size: 15px;
+      }
+
+      .panel-top span {
+        color: #cbd5e1;
+        font-size: 13px;
+        font-weight: 700;
+      }
+
+      .steps {
+        display: grid;
+        gap: 1px;
+        margin: 0;
+        padding: 0;
+        background: var(--line);
+        list-style: none;
+      }
+
+      .steps li {
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr);
+        gap: 12px;
+        min-height: 74px;
+        align-items: center;
+        padding: 14px 18px;
+        background: #ffffff;
+      }
+
+      .steps b {
+        display: grid;
+        width: 32px;
+        height: 32px;
+        place-items: center;
+        border-radius: 8px;
+        background: var(--blue-soft);
+        color: #1d4ed8;
+        font-size: 13px;
+      }
+
+      .steps strong {
+        display: block;
+        color: var(--ink);
+        font-size: 14px;
+      }
+
+      .steps span {
+        display: block;
+        margin-top: 4px;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.42;
+      }
+
+      .worker-form {
+        display: grid;
+        gap: 14px;
+        margin-top: 18px;
+        padding: 18px;
+      }
+
+      .worker-form label {
+        display: grid;
+        gap: 8px;
+        color: var(--ink);
+        font-size: 13px;
+        font-weight: 850;
+      }
+
+      .worker-field {
+        min-height: 46px;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 8px;
+      }
+
+      .worker-field input {
+        width: 100%;
+        min-height: 44px;
+        min-width: 0;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 0 12px;
+        background: #fbfcfd;
+        color: var(--ink);
+        font: inherit;
+        font-size: 14px;
+        font-weight: 760;
+        outline: none;
+      }
+
+      .worker-field input:focus {
+        border-color: #93c5fd;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+      }
+
+      .worker-form p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.46;
+      }
+
+      .worker-status {
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr);
+        gap: 10px;
+        align-items: start;
+        border: 1px solid #fde68a;
+        border-radius: 8px;
+        padding: 12px;
+        background: var(--amber-soft);
+      }
+
+      .worker-status b {
+        display: grid;
+        width: 26px;
+        height: 26px;
+        place-items: center;
+        border-radius: 7px;
+        background: #f59e0b;
+        color: #ffffff;
+        font-size: 13px;
+      }
+
+      .worker-status strong {
+        display: block;
+        color: var(--ink);
+        font-size: 14px;
+      }
+
+      .worker-status span {
+        display: block;
+        margin-top: 3px;
+        color: #694d11;
+        font-size: 13px;
+        line-height: 1.42;
+      }
+
+      .worker-form[data-state="connected"] .worker-status {
+        border-color: #b7efc9;
+        background: var(--green-soft);
+      }
+
+      .worker-form[data-state="connected"] .worker-status b {
+        background: #109b55;
+      }
+
+      .worker-form[data-state="connected"] .worker-status span {
+        color: #087a3f;
+      }
+
+      .route-section {
+        margin-top: 20px;
+      }
+
+      .route-section h2 {
+        margin: 0 0 12px;
+        color: var(--ink);
+        font-size: 28px;
+      }
+
+      .route-grid {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .route-grid a {
+        min-height: 132px;
+        display: grid;
+        align-content: start;
+        gap: 10px;
+        padding: 16px;
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .route-grid a[data-state="locked"] {
+        background: #fbfcfd;
+        color: #5b6472;
+      }
+
+      .route-grid a[data-state="locked"] strong {
+        color: #313b49;
+      }
+
+      .route-grid a[data-state="locked"] code {
+        background: #f3f6f4;
+        color: #526171;
+      }
+
+      .route-grid strong {
+        color: var(--ink);
+        font-size: 15px;
+      }
+
+      .route-grid span {
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.42;
+      }
+
+      .route-grid code {
+        width: fit-content;
+        max-width: 100%;
+        border-radius: 6px;
+        background: var(--blue-soft);
+        padding: 4px 7px;
+        color: #1d4ed8;
+        font:
+          12px ui-monospace,
+          SFMono-Regular,
+          Menlo,
+          Monaco,
+          Consolas,
+          "Liberation Mono",
+          monospace;
+        overflow-wrap: anywhere;
+      }
+
+      .static-note {
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr);
+        gap: 12px;
+        align-items: start;
+        margin-top: 20px;
+        border: 1px solid #fde68a;
+        border-radius: 8px;
+        padding: 16px;
+        background: var(--amber-soft);
+      }
+
+      .static-note b {
+        display: grid;
+        width: 32px;
+        height: 32px;
+        place-items: center;
+        border-radius: 8px;
+        background: #f59e0b;
+        color: #ffffff;
+      }
+
+      .static-note strong {
+        display: block;
+        color: var(--ink);
+        font-size: 15px;
+      }
+
+      .static-note span {
+        display: block;
+        margin-top: 4px;
+        color: #694d11;
+        font-size: 14px;
+        line-height: 1.45;
+      }
+
+      @media (max-width: 980px) {
+        .site-header,
+        main {
+          width: min(100% - 32px, 1200px);
+        }
+
+        .site-header {
+          align-items: flex-start;
+          flex-direction: column;
+          padding: 18px 0;
+        }
+
+        .hero,
+        .route-grid,
+        .metric-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .receipt-stack {
+          align-self: stretch;
+        }
+      }
+
+      @media (max-width: 560px) {
+        body {
+          background-size:
+            auto,
+            52px 52px,
+            52px 52px;
+        }
+
+        .nav {
+          width: 100%;
+          display: grid;
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+          gap: 8px;
+          font-size: 13px;
+          text-align: center;
+        }
+
+        .hero-copy {
+          padding: 12px 0;
+        }
+
+        h1 {
+          font-size: 36px;
+          line-height: 1.08;
+        }
+
+        .actions,
+        .worker-field,
+        .issue-actions,
+        .receipt-meta {
+          grid-template-columns: 1fr;
+        }
+
+        .actions {
+          display: grid;
+        }
+
+        .button {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="./index.html"
+        ><span class="mark">P</span>pr-captcha</a
+      >
+      <nav class="nav" aria-label="Documentation">
+        <a href="./setup.md">Setup</a>
+        <a href="./trust.md">Trust</a>
+        <a href="./github-app.md">GitHub App</a>
+        <a href="./operations.md">Operations</a>
+        <a href="https://github.com/aryabyte21/pr-captcha">GitHub</a>
+      </nav>
+    </header>
+    <main>
+      <section class="hero" aria-label="pr-captcha launch">
+        <div class="hero-copy">
+          <h1>Stop suspicious PRs before CI runs.</h1>
+          <p>
+            A SHA-bound human check for fork, first-time, outside, and bot pull
+            requests.
+          </p>
+          <div class="actions">
+            <a class="button primary" href="#maintainer-issue"
+              >Generate maintainer issue</a
+            >
+            <a class="button" href="#connect-worker">Connect Worker URL</a>
+            <a class="button" href="./setup.md">Read setup docs</a>
+          </div>
+          <div class="proof-strip" aria-label="pr-captcha properties">
+            <span data-tone="blue">GitHub Pages live</span>
+            <span>SHA-bound</span>
+            <span>No patch checkout</span>
+            <span>pr-captcha/human</span>
+          </div>
+        </div>
+        <aside
+          class="receipt-stack"
+          aria-label="PR intake receipt and maintainer issue generator"
+        >
+          <section class="panel intake-receipt">
+            <div class="panel-top">
+              <strong>PR intake receipt</strong>
+              <span>before CI</span>
+            </div>
+            <div class="receipt-body">
+              <div class="repo-line">
+                <strong>kubernetes/kubernetes</strong>
+                <span>held</span>
+              </div>
+              <div class="receipt-pr">
+                <span>Pull request</span>
+                <strong>#184 Add generated SDK helper</strong>
+              </div>
+              <div class="signal-badges" aria-label="Risk signals">
+                <span>fork</span>
+                <span>first-time</span>
+                <span>unknown author</span>
+              </div>
+              <div class="receipt-check">
+                <b>!</b>
+                <span>
+                  <strong>pr-captcha/human: action required</strong>
+                  <span>GitHub login plus CAPTCHA required for this SHA.</span>
+                </span>
+              </div>
+              <dl class="receipt-meta">
+                <div>
+                  <dt>Head SHA</dt>
+                  <dd>8f31c9a</dd>
+                </div>
+                <div>
+                  <dt>Code execution</dt>
+                  <dd>none</dd>
+                </div>
+              </dl>
+              <a
+                class="button primary"
+                data-worker-route="/gate-trace"
+                data-worker-label="Trace gate flow"
+                data-worker-locked-label="Connect Worker URL"
+                href="#connect-worker"
+                >Trace gate flow</a
+              >
+            </div>
+          </section>
+          <section class="panel issue-card" id="maintainer-issue">
+            <div class="panel-top">
+              <strong>Maintainer issue draft</strong>
+              <span>no login needed</span>
+            </div>
+            <div class="issue-body">
+              <label for="issue-repo">GitHub repository</label>
+              <div class="issue-field">
+                <span>github.com/</span>
+                <input
+                  id="issue-repo"
+                  value="tldraw/tldraw"
+                  autocomplete="off"
+                  spellcheck="false"
+                  data-issue-repo
+                />
+              </div>
+              <div class="issue-actions">
+                <a
+                  class="button primary"
+                  href="https://github.com/tldraw/tldraw/issues/new"
+                  target="_blank"
+                  rel="noreferrer"
+                  data-issue-open
+                  >Open issue</a
+                >
+                <button class="button subtle" type="button" data-issue-copy>
+                  Copy pitch
+                </button>
+                <button class="button subtle" type="button" data-share-copy>
+                  Copy launch link
+                </button>
+              </div>
+              <pre class="issue-preview" data-issue-preview></pre>
+            </div>
+          </section>
+        </aside>
+      </section>
+
+      <form class="worker-form" id="connect-worker" data-worker-form>
+        <label for="worker-url">Worker URL</label>
+        <div class="worker-field">
+          <input
+            id="worker-url"
+            name="worker_url"
+            type="url"
+            placeholder="https://your-pr-captcha-worker.example.workers.dev"
+            spellcheck="false"
+            data-worker-url
+          />
+          <button class="button primary" type="submit">Update links</button>
+        </div>
+        <div class="worker-status" role="status" aria-live="polite">
+          <b data-worker-status-icon>!</b>
+          <span>
+            <strong data-worker-status-title>Worker not connected</strong>
+            <span data-worker-status-body
+              >Deploy the Cloudflare Worker, then paste its public URL here to
+              unlock live repo scans, scorecards, pilot plans, setup, radar, and
+              rehearsal checks.</span
+            >
+          </span>
+        </div>
+        <p>
+          The value is stored in this browser only. GitHub Pages serves this
+          static launcher, but every live workflow opens on the Worker.
+        </p>
+      </form>
+
+      <section class="route-section" aria-label="Worker routes">
+        <h2>Live Worker routes</h2>
+        <div class="route-grid">
+          <a data-worker-route="/radar" href="#connect-worker">
+            <strong>Open PR spam radar</strong>
+            <span>Show live public PR spam labels across open source.</span>
+            <code>/radar</code>
+          </a>
+          <a data-worker-route="/evidence" href="#connect-worker">
+            <strong>Scan repo evidence</strong>
+            <span>Pull live GitHub signals before installing anything.</span>
+            <code>/evidence</code>
+          </a>
+          <a data-worker-route="/pilot" href="#connect-worker">
+            <strong>Plan 7-day pilot</strong>
+            <span>Turn live evidence into branch protection timing.</span>
+            <code>/pilot</code>
+          </a>
+          <a data-worker-route="/scorecard-builder" href="#connect-worker">
+            <strong>Share scorecard</strong>
+            <span>Generate an embeddable PR queue risk card.</span>
+            <code>/scorecard-builder</code>
+          </a>
+          <a data-worker-route="/launch" href="#connect-worker">
+            <strong>Open launch cockpit</strong>
+            <span>Track production gates and copy deploy commands.</span>
+            <code>/launch</code>
+          </a>
+          <a data-worker-route="/rehearsal" href="#connect-worker">
+            <strong>Rehearse fork PR</strong>
+            <span>Prove the gate before branch protection.</span>
+            <code>/rehearsal</code>
+          </a>
+          <a data-worker-route="/gate-trace" href="#connect-worker">
+            <strong>Trace gate flow</strong>
+            <span>Copy a webhook-to-check smoke test.</span>
+            <code>/gate-trace</code>
+          </a>
+          <a data-worker-route="/trust" href="#connect-worker">
+            <strong>Open Trust Center</strong>
+            <span
+              >Review security, privacy, terms, support, and beta policy.</span
+            >
+            <code>/trust</code>
+          </a>
+          <a data-worker-route="/github-app-manifest" href="#connect-worker">
+            <strong>Create GitHub App</strong>
+            <span>Generate the manifest with webhook and callback URLs.</span>
+            <code>/github-app-manifest</code>
+          </a>
+          <a data-worker-route="/status" href="#connect-worker">
+            <strong>Run readiness check</strong>
+            <span>Verify Worker heartbeat, D1, and required config.</span>
+            <code>/status</code>
+          </a>
+          <a data-worker-route="/setup-wizard" href="#connect-worker">
+            <strong>Generate policy</strong>
+            <span>Create the first <code>pr-captcha.yml</code> safely.</span>
+            <code>/setup-wizard</code>
+          </a>
+        </div>
+      </section>
+
+      <div class="static-note" role="note">
+        <b>!</b>
+        <span
+          ><strong>Static launch page</strong>This file is safe for GitHub
+          Pages. It does not process webhooks, verify challenges, or store
+          secrets. The production app still runs on Cloudflare Workers.</span
+        >
+      </div>
+    </main>
+    <script>
+      (function () {
+        var storageKey = "pr-captcha-worker-url";
+        var form = document.querySelector("[data-worker-form]");
+        var input = document.querySelector("[data-worker-url]");
+        var statusIcon = document.querySelector("[data-worker-status-icon]");
+        var statusTitle = document.querySelector("[data-worker-status-title]");
+        var statusBody = document.querySelector("[data-worker-status-body]");
+        var routes = Array.prototype.slice.call(
+          document.querySelectorAll("[data-worker-route]"),
+        );
+        var issueRepo = document.querySelector("[data-issue-repo]");
+        var issueOpen = document.querySelector("[data-issue-open]");
+        var issueCopy = document.querySelector("[data-issue-copy]");
+        var shareCopy = document.querySelector("[data-share-copy]");
+        var issuePreview = document.querySelector("[data-issue-preview]");
+        if (!form || !input) return;
+
+        function origin(value) {
+          var trimmed = String(value || "").trim();
+          if (!trimmed || trimmed.indexOf("pr-captcha.example.") !== -1) {
+            return null;
+          }
+          try {
+            var url = new URL(trimmed);
+            if (!/^https?:$/.test(url.protocol)) return null;
+            return url.origin;
+          } catch (_) {
+            return null;
+          }
+        }
+
+        function normalizeRepo(value) {
+          var raw = String(value || "")
+            .trim()
+            .replace(/^https?:\/\/github\.com\//i, "")
+            .replace(/^github\.com\//i, "")
+            .replace(/\/pulls?\/?.*$/i, "")
+            .replace(/\/issues?\/?.*$/i, "")
+            .replace(/^\/+|\/+$/g, "");
+          var parts = raw.split("/");
+          if (parts.length < 2 || !parts[0] || !parts[1]) {
+            return "tldraw/tldraw";
+          }
+          return parts[0] + "/" + parts[1];
+        }
+
+        function fallbackCopy(value) {
+          var textarea = document.createElement("textarea");
+          var copied = false;
+          textarea.value = value;
+          textarea.setAttribute("readonly", "");
+          textarea.style.position = "fixed";
+          textarea.style.left = "-9999px";
+          document.body.appendChild(textarea);
+          textarea.select();
+          try {
+            copied = document.execCommand("copy");
+          } finally {
+            document.body.removeChild(textarea);
+          }
+          return copied
+            ? Promise.resolve()
+            : Promise.reject(new Error("Copy failed"));
+        }
+
+        function copyText(value) {
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            return navigator.clipboard.writeText(value).catch(function () {
+              return fallbackCopy(value);
+            });
+          }
+          return fallbackCopy(value);
+        }
+
+        function staticUrl(path) {
+          return new URL(path, window.location.href).toString();
+        }
+
+        function workerLink(base, path, repo) {
+          if (!base) return null;
+          var url = new URL(path, base);
+          if (repo) url.searchParams.set("repo", repo);
+          return url.toString();
+        }
+
+        function launcherLink(repo, base) {
+          var url = new URL("./index.html", window.location.href);
+          url.search = "";
+          url.searchParams.set("repo", repo);
+          if (base) url.searchParams.set("worker_url", base);
+          return url.toString();
+        }
+
+        function issuePitch(repo, base) {
+          var evidence = workerLink(base, "/evidence", repo);
+          var pilot = workerLink(base, "/pilot", repo);
+          var setup = workerLink(base, "/setup-wizard", repo);
+          var lines = [
+            "## Add pr-captcha before suspicious PRs burn CI",
+            "",
+            "This repo can pilot a SHA-bound human check for fork, first-time, outside, and bot pull requests before expensive CI or maintainer review starts.",
+            "",
+            "Suggested first scope",
+            "- Gate fork PRs and first-time contributors first.",
+            "- Require the check name `pr-captcha/human` only after a 7-day pilot.",
+            "- Bind every solve to repository, PR number, author, and exact head SHA.",
+            "- Keep pr-captcha from checking out or executing pull request code.",
+            "",
+            "Why this is low-risk",
+            "- New commits require a new verification.",
+            "- GitHub login and CAPTCHA are verified server-side.",
+            "- Failed gates are visible and retryable.",
+            "- Rollback is just removing `pr-captcha/human` from required checks.",
+            "",
+            "Links",
+            "- Public launcher: " + launcherLink(repo, base),
+            "- Setup docs: " + staticUrl("./setup.md"),
+          ];
+          if (evidence && pilot && setup) {
+            lines.push("- Live evidence scan: " + evidence);
+            lines.push("- 7-day pilot planner: " + pilot);
+            lines.push("- Policy generator: " + setup);
+          } else {
+            lines.push(
+              "- Connect the deployed Worker URL on the launcher to unlock live evidence and pilot links.",
+            );
+          }
+          return lines.join("\n");
+        }
+
+        function renderIssue(base) {
+          if (!issueRepo || !issueOpen || !issuePreview) return;
+          var repo = normalizeRepo(issueRepo.value);
+          var title = "Pilot pr-captcha for suspicious pull requests";
+          var body = issuePitch(repo, base);
+          var parts = repo.split("/");
+          var url = new URL(
+            "https://github.com/" +
+              encodeURIComponent(parts[0]) +
+              "/" +
+              encodeURIComponent(parts[1]) +
+              "/issues/new",
+          );
+          url.searchParams.set("title", title);
+          url.searchParams.set("body", body);
+          issueOpen.href = url.toString();
+          issuePreview.textContent = body;
+          try {
+            window.localStorage.setItem("pr-captcha-issue-repo", repo);
+          } catch (_) {}
+        }
+
+        function renderStatus(base) {
+          var connected = Boolean(base);
+          form.setAttribute("data-state", connected ? "connected" : "locked");
+          if (statusIcon) statusIcon.textContent = connected ? "✓" : "!";
+          if (statusTitle) {
+            statusTitle.textContent = connected
+              ? "Worker connected"
+              : "Worker not connected";
+          }
+          if (statusBody) {
+            statusBody.textContent = connected
+              ? "Live routes now open on " + base + "."
+              : "Deploy the Cloudflare Worker, then paste its public URL here to unlock live repo scans, scorecards, pilot plans, setup, radar, and rehearsal checks.";
+          }
+        }
+
+        function update(value) {
+          var base = origin(value);
+          input.value = base || "";
+          renderStatus(base);
+          routes.forEach(function (link) {
+            var connectedLabel = link.getAttribute("data-worker-label");
+            var lockedLabel = link.getAttribute("data-worker-locked-label");
+            if (base) {
+              link.href = base + link.getAttribute("data-worker-route");
+              link.removeAttribute("aria-disabled");
+              link.removeAttribute("title");
+              link.setAttribute("data-state", "connected");
+              if (connectedLabel) link.textContent = connectedLabel;
+            } else {
+              link.href = "#connect-worker";
+              link.setAttribute("aria-disabled", "true");
+              link.setAttribute(
+                "title",
+                "Connect a deployed Worker URL first.",
+              );
+              link.setAttribute("data-state", "locked");
+              if (lockedLabel) link.textContent = lockedLabel;
+            }
+          });
+          renderIssue(base);
+          try {
+            if (base) {
+              window.localStorage.setItem(storageKey, base);
+            } else {
+              window.localStorage.removeItem(storageKey);
+            }
+          } catch (_) {}
+        }
+
+        try {
+          var params = new URLSearchParams(window.location.search);
+          var repoParam =
+            params.get("repo") ||
+            params.get("repository") ||
+            params.get("github_repo");
+          var workerParam =
+            params.get("worker_url") ||
+            params.get("worker") ||
+            params.get("base_url");
+          if (issueRepo) {
+            issueRepo.value =
+              (repoParam && normalizeRepo(repoParam)) ||
+              window.localStorage.getItem("pr-captcha-issue-repo") ||
+              issueRepo.value;
+          }
+          update(
+            origin(workerParam) ||
+              window.localStorage.getItem(storageKey) ||
+              "",
+          );
+        } catch (_) {
+          update("");
+        }
+
+        if (issueRepo) {
+          issueRepo.addEventListener("input", function () {
+            renderIssue(origin(input.value));
+          });
+          issueRepo.addEventListener("blur", function () {
+            issueRepo.value = normalizeRepo(issueRepo.value);
+            renderIssue(origin(input.value));
+          });
+        }
+        if (issueCopy) {
+          issueCopy.addEventListener("click", function () {
+            var value = issuePreview ? issuePreview.textContent || "" : "";
+            var finish = function (label) {
+              issueCopy.textContent = label;
+              window.setTimeout(function () {
+                issueCopy.textContent = "Copy pitch";
+              }, 1500);
+            };
+            copyText(value)
+              .then(function () {
+                finish("Copied");
+              })
+              .catch(function () {
+                finish("Copy failed");
+              });
+          });
+        }
+        if (shareCopy) {
+          shareCopy.addEventListener("click", function () {
+            var repo = issueRepo
+              ? normalizeRepo(issueRepo.value)
+              : "tldraw/tldraw";
+            var value = launcherLink(repo, origin(input.value));
+            var finish = function (label) {
+              shareCopy.textContent = label;
+              window.setTimeout(function () {
+                shareCopy.textContent = "Copy launch link";
+              }, 1500);
+            };
+            copyText(value)
+              .then(function () {
+                finish("Copied link");
+              })
+              .catch(function () {
+                finish("Copy failed");
+              });
+          });
+        }
+        form.addEventListener("submit", function (event) {
+          event.preventDefault();
+          update(input.value);
+        });
+      })();
+    </script>
+  </body>
+</html>

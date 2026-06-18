@@ -1,0 +1,104 @@
+{
+  "action": "opened",
+  "number": 184,
+  "installation": {
+    "id": 123
+  },
+  "repository": {
+    "id": 1296269,
+    "node_id": "MDEwOlJlcG9zaXRvcnkxMjk2MjY5",
+    "name": "awesome-repo",
+    "full_name": "octo-org/awesome-repo",
+    "private": false,
+    "owner": {
+      "login": "octo-org",
+      "id": 583231,
+      "type": "Organization"
+    },
+    "html_url": "https://github.com/octo-org/awesome-repo",
+    "default_branch": "main",
+    "visibility": "public"
+  },
+  "pull_request": {
+    "id": 100184,
+    "node_id": "PR_kwDOAA0aBc5test",
+    "number": 184,
+    "state": "open",
+    "locked": false,
+    "title": "Add generated SDK helper",
+    "user": {
+      "login": "some-user",
+      "id": 424242,
+      "type": "User",
+      "site_admin": false
+    },
+    "body": "Adds a generated helper for the public SDK.",
+    "created_at": "2026-06-18T12:00:00Z",
+    "updated_at": "2026-06-18T12:00:00Z",
+    "html_url": "https://github.com/octo-org/awesome-repo/pull/184",
+    "diff_url": "https://github.com/octo-org/awesome-repo/pull/184.diff",
+    "patch_url": "https://github.com/octo-org/awesome-repo/pull/184.patch",
+    "issue_url": "https://api.github.com/repos/octo-org/awesome-repo/issues/184",
+    "commits_url": "https://api.github.com/repos/octo-org/awesome-repo/pulls/184/commits",
+    "statuses_url": "https://api.github.com/repos/octo-org/awesome-repo/statuses/8f31c9a",
+    "draft": false,
+    "author_association": "FIRST_TIME_CONTRIBUTOR",
+    "mergeable": null,
+    "requested_reviewers": [],
+    "labels": [],
+    "head": {
+      "label": "some-user:feature",
+      "ref": "feature",
+      "sha": "8f31c9a",
+      "user": {
+        "login": "some-user",
+        "id": 424242,
+        "type": "User"
+      },
+      "repo": {
+        "id": 991184,
+        "name": "awesome-repo",
+        "full_name": "some-user/awesome-repo",
+        "private": false,
+        "fork": true,
+        "owner": {
+          "login": "some-user",
+          "id": 424242,
+          "type": "User"
+        },
+        "html_url": "https://github.com/some-user/awesome-repo",
+        "default_branch": "main"
+      }
+    },
+    "base": {
+      "label": "octo-org:main",
+      "ref": "main",
+      "sha": "mainsha123",
+      "user": {
+        "login": "octo-org",
+        "id": 583231,
+        "type": "Organization"
+      },
+      "repo": {
+        "id": 1296269,
+        "name": "awesome-repo",
+        "full_name": "octo-org/awesome-repo",
+        "private": false,
+        "fork": false,
+        "owner": {
+          "login": "octo-org",
+          "id": 583231,
+          "type": "Organization"
+        },
+        "html_url": "https://github.com/octo-org/awesome-repo",
+        "default_branch": "main"
+      }
+    }
+  },
+  "sender": {
+    "login": "some-user",
+    "id": 424242,
+    "type": "User",
+    "site_admin": false
+  }
+}

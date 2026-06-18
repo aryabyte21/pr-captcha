@@ -8,7 +8,7 @@ jobs:
     name: pr-captcha / human gate
     runs-on: ubuntu-latest
     steps:
-      - uses: yourname/pr-captcha/packages/action@v1
+      - uses: aryabyte21/pr-captcha/packages/action@v1
         with:
           api-url: https://pr-captcha.example.com
 

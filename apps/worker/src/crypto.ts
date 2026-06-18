@@ -51,39 +51,60 @@ async function hmac(secret: string, value: string): Promise<string> {
 
 export async function signPayload(
   payload: unknown,
-  secret: string,
+  secret: string | null | undefined,
 ): Promise<string> {
+  if (!configuredSecret(secret)) {
+    throw new Error("Signing secret is not configured");
+  }
   const body = base64UrlEncode(JSON.stringify(payload));
   return `${body}.${await hmac(secret, body)}`;
 }
 
 export async function verifyPayload<T>(
   token: string,
-  secret: string,
+  secret: string | null | undefined,
+  validate?: (payload: unknown) => payload is T,
 ): Promise<T | null> {
-  const [body, signature] = token.split(".");
-  if (!body || !signature) {
+  const parts = token.split(".");
+  if (parts.length !== 2) {
+    return null;
+  }
+  const [body, signature] = parts;
+  if (!body || !signature || !configuredSecret(secret)) {
     return null;
   }
   const expected = await hmac(secret, body);
   if (!constantTimeEqual(signature, expected)) {
     return null;
   }
-  const payload = JSON.parse(
-    new TextDecoder().decode(base64UrlDecode(body)),
-  ) as T & { exp?: number };
-  if (payload.exp && payload.exp < Math.floor(Date.now() / 1000)) {
+  let payload: unknown;
+  try {
+    payload = JSON.parse(new TextDecoder().decode(base64UrlDecode(body)));
+  } catch {
     return null;
   }
-  return payload;
+  if (!payload || typeof payload !== "object" || Array.isArray(payload)) {
+    return null;
+  }
+  const exp = (payload as { exp?: unknown }).exp;
+  if (exp !== undefined && typeof exp !== "number") {
+    return null;
+  }
+  if (exp !== undefined && exp < Math.floor(Date.now() / 1000)) {
+    return null;
+  }
+  if (validate && !validate(payload)) {
+    return null;
+  }
+  return payload as T;
 }
 
 export async function verifyGitHubWebhook(
   body: string,
   signatureHeader: string | null,
-  secret: string,
+  secret: string | null | undefined,
 ): Promise<boolean> {
-  if (!signatureHeader?.startsWith("sha256=")) {
+  if (!signatureHeader?.startsWith("sha256=") || !configuredSecret(secret)) {
     return false;
   }
   const expected = `sha256=${await githubWebhookHmac(secret, body)}`;
@@ -116,4 +137,8 @@ function constantTimeEqual(left: string, right: string): boolean {
     mismatch |= left.charCodeAt(index) ^ right.charCodeAt(index);
   }
   return mismatch === 0;
+}
+
+function configuredSecret(secret: string | null | undefined): secret is string {
+  return typeof secret === "string" && secret.trim().length > 0;
 }

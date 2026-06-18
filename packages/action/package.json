@@ -6,7 +6,8 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "tsup src/index.ts --format esm --target node20 --out-dir dist --clean",
-    "check": "tsc --noEmit"
+    "check": "tsc --noEmit",
+    "test": "rm -rf ../../tmp/action-test-dist && tsup src/index.ts --format esm --target node20 --out-dir ../../tmp/action-test-dist --clean && ACTION_BUILD_DIR=../../tmp/action-test-dist node --test test/*.test.mjs"
   },
   "devDependencies": {
     "@types/node": "^22.15.32",
