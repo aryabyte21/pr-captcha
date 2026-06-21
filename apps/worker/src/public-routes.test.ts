@@ -133,7 +133,7 @@ describe("public launch routes", () => {
 
     expect(response.status).toBe(200);
     const html = await response.text();
-    expect(html).toContain("Scan a repo before spam hits CI");
+    expect(html).toContain("Would this repo benefit?");
     expect(html).toContain("data-evidence-form");
     expect(html).toContain("Maintainer evidence brief");
     expect(html).toContain("data-evidence-brief");
@@ -345,15 +345,15 @@ describe("public launch routes", () => {
 
     expect(response.status).toBe(200);
     const html = await response.text();
-    expect(html).toContain("Launch pr-captcha without guessing");
+    expect(html).toContain("Make AI slop knock first.");
     expect(html).toContain("data-launch-form");
     expect(html).toContain("data-launch-commands");
     expect(html).toContain("Pages URL");
     expect(html).toContain("https://aryabyte21.github.io/pr-captcha/");
     expect(html).toContain("build_type=workflow");
-    expect(html).toContain("Ship readiness");
+    expect(html).toContain("Step 1");
     expect(html).toContain("data-launch-decision");
-    expect(html).toContain("Launch blockers");
+    expect(html).toContain("Before requiring the check");
     expect(html).toContain("data-launch-blocker-list");
     expect(html).toContain("Fork PR proof lane");
     expect(html).toContain("data-launch-proof-stage");
@@ -363,7 +363,7 @@ describe("public launch routes", () => {
     expect(html).toContain("data-launch-issue");
     expect(html).toContain("data-launch-badge");
     expect(html).toContain("/api/public/launch-readiness");
-    expect(html).toContain("Production gaps");
+    expect(html).toContain("Advanced proof list");
     expect(html).toContain(
       '<link rel="canonical" href="https://captcha.example.test/launch" />',
     );
@@ -374,8 +374,8 @@ describe("public launch routes", () => {
 
     expect(response.status).toBe(200);
     const html = await response.text();
-    expect(html).toContain("Fork PR rehearsal");
-    expect(html).toContain("Prove the gate before branch protection");
+    expect(html).toContain("Run one harmless test PR.");
+    expect(html).toContain("Before the check becomes required");
     expect(html).toContain("data-rehearsal-form");
     expect(html).toContain("data-rehearsal-progress");
     expect(html).toContain("data-rehearsal-runbook");
@@ -392,8 +392,8 @@ describe("public launch routes", () => {
 
     expect(response.status).toBe(200);
     const html = await response.text();
-    expect(html).toContain("Trace a PR gate from webhook to check");
-    expect(html).toContain("Replay the path before protecting a branch");
+    expect(html).toContain("Trace one receipt end to end.");
+    expect(html).toContain("Advanced debugging");
     expect(html).toContain("data-trace-form");
     expect(html).toContain("data-trace-progress");
     expect(html).toContain("data-trace-curl");
@@ -411,10 +411,8 @@ describe("public launch routes", () => {
 
     expect(response.status).toBe(200);
     const html = await response.text();
-    expect(html).toContain("Setup wizard");
-    expect(html).toContain(
-      "Generate a repository policy from live PR evidence",
-    );
+    expect(html).toContain("Choose who has to knock.");
+    expect(html).toContain("Start simple");
     expect(html).toContain("data-wizard-repository");
     expect(html).toContain("data-wizard-scan");
     expect(html).toContain("data-wizard-evidence");
@@ -454,7 +452,7 @@ describe("public launch routes", () => {
 
     expect(response.status).toBe(200);
     const html = await response.text();
-    expect(html).toContain("Service status");
+    expect(html).toContain("Is the little gate awake?");
     expect(html).toContain("data-refresh-status");
     expect(html).toContain("/health/ready");
     expect(html).toContain(
@@ -506,6 +504,35 @@ comment:
     });
   });
 
+  it("previews repository config when preview rate-limit storage is unavailable", async () => {
+    const response = await app.request(
+      "/api/public/config-preview",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          config: "mode: required_check\n",
+        }),
+      },
+      {
+        ...env,
+        DB: failingRateLimitDb(),
+      } as unknown as Env,
+    );
+
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toMatchObject({
+      ok: true,
+      config_source: "repository",
+      config_valid: true,
+      config: {
+        mode: "required_check",
+      },
+    });
+  });
+
   it("rejects oversized config preview bodies", async () => {
     const response = await app.request(
       "/api/public/config-preview",
@@ -529,6 +556,14 @@ comment:
     });
   });
 });
+
+function failingRateLimitDb(): D1Database {
+  return {
+    prepare() {
+      throw new Error("rate limit store unavailable");
+    },
+  } as unknown as D1Database;
+}
 
 function rateLimitDb(): D1Database {
   const buckets = new Map<

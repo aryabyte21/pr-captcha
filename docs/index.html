@@ -3,10 +3,10 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Stop suspicious PRs before CI runs | pr-captcha</title>
+    <title>Human receipts for AI slop PRs | pr-captcha</title>
     <meta
       name="description"
-      content="Public launch page for pr-captcha, the GitHub pull request human-origin gate for suspicious PRs."
+      content="pr-captcha makes AI slop and PR spam knock before CI by recording a GitHub-authenticated human receipt for the exact pull request commit asking for maintainer attention."
     />
     <link rel="canonical" href="https://aryabyte21.github.io/pr-captcha/" />
     <meta property="og:type" content="website" />
@@ -15,10 +15,13 @@
       content="https://aryabyte21.github.io/pr-captcha/"
     />
     <meta property="og:site_name" content="pr-captcha" />
-    <meta property="og:title" content="Stop suspicious PRs before CI runs." />
+    <meta
+      property="og:title"
+      content="Human receipts before AI slop reaches maintainers."
+    />
     <meta
       property="og:description"
-      content="A SHA-bound human check for fork, first-time, outside, and bot pull requests."
+      content="Make AI slop and PR spam knock before CI."
     />
     <meta
       property="og:image"
@@ -29,13 +32,16 @@
     <meta property="og:image:height" content="630" />
     <meta
       property="og:image:alt"
-      content="pr-captcha pull request gate preview"
+      content="pr-captcha pull request human receipt preview"
     />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Stop suspicious PRs before CI runs." />
+    <meta
+      name="twitter:title"
+      content="Human receipts before AI slop reaches maintainers."
+    />
     <meta
       name="twitter:description"
-      content="A SHA-bound human check for fork, first-time, outside, and bot pull requests."
+      content="Make AI slop and PR spam knock before CI."
     />
     <meta
       name="twitter:image"
@@ -43,33 +49,41 @@
     />
     <meta
       name="twitter:image:alt"
-      content="pr-captcha pull request gate preview"
+      content="pr-captcha pull request human receipt preview"
     />
-    <link
-      rel="icon"
-      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23070b12'/%3E%3Cpath d='M18 35h28v8H18zM18 21h20v8H18z' fill='%23ffffff'/%3E%3Ccircle cx='47' cy='25' r='6' fill='%230f766e'/%3E%3C/svg%3E"
-    />
+    <link rel="icon" href="./assets/pr-captcha-mark.svg" />
     <style>
       :root {
         color-scheme: light;
-        --ink: #070b12;
-        --muted: #4a5565;
+        --bg: #f8faf9;
+        --surface: #ffffff;
+        --surface-soft: #f1f5f3;
+        --ink: #08111a;
+        --ink-soft: #1d2936;
+        --muted: #586474;
         --line: #d8e1dc;
+        --line-strong: #bac8c2;
         --green: #0f766e;
-        --green-soft: #edfdf3;
-        --blue: #2563eb;
-        --blue-soft: #eff6ff;
-        --amber-soft: #fffbeb;
-        --red-soft: #fff1f2;
+        --green-dark: #0a5d56;
+        --green-soft: #e9f8ef;
+        --amber: #966500;
+        --amber-soft: #fff8df;
+        --dark: #071018;
+        --dark-soft: #111b27;
+        --shadow: 0 22px 58px rgba(8, 17, 26, 0.08);
+        --mono:
+          "SF Mono", SFMono-Regular, ui-monospace, Menlo, Monaco, Consolas,
+          "Liberation Mono", monospace;
         font-family:
-          Inter,
+          Geist,
+          "SF Pro Display",
           ui-sans-serif,
           system-ui,
           -apple-system,
           BlinkMacSystemFont,
           "Segoe UI",
           sans-serif;
-        background: #ffffff;
+        background: var(--bg);
         color: var(--ink);
       }
 
@@ -77,591 +91,820 @@
         box-sizing: border-box;
       }
 
+      html {
+        scroll-behavior: smooth;
+      }
+
       body {
         margin: 0;
         min-height: 100vh;
+        overflow-x: hidden;
+        background: var(--bg);
+      }
+
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        z-index: -1;
+        pointer-events: none;
         background:
-          linear-gradient(#ffffff, rgba(255, 255, 255, 0.94)),
-          linear-gradient(90deg, rgba(216, 225, 220, 0.5) 1px, transparent 1px),
-          linear-gradient(rgba(216, 225, 220, 0.5) 1px, transparent 1px);
-        background-size:
-          auto,
-          72px 72px,
-          72px 72px;
+          linear-gradient(rgba(8, 17, 26, 0.025) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(8, 17, 26, 0.025) 1px, transparent 1px);
+        background-size: 72px 72px;
+        mask-image: linear-gradient(to bottom, #000 0%, transparent 78%);
       }
 
       a {
         color: inherit;
       }
 
-      .site-header,
-      main {
-        width: min(1200px, calc(100% - 40px));
+      button,
+      input {
+        font: inherit;
+      }
+
+      :focus-visible {
+        outline: 3px solid rgba(15, 118, 110, 0.25);
+        outline-offset: 3px;
+      }
+
+      .skip-link {
+        position: fixed;
+        left: 16px;
+        top: 16px;
+        z-index: 20;
+        transform: translateY(-150%);
+        border-radius: 8px;
+        padding: 10px 12px;
+        background: var(--dark);
+        color: #ffffff;
+        font-size: 14px;
+        font-weight: 800;
+        text-decoration: none;
+      }
+
+      .skip-link:focus {
+        transform: translateY(0);
+      }
+
+      .shell,
+      .site-header {
+        width: min(1180px, calc(100% - 40px));
         margin: 0 auto;
       }
 
       .site-header {
-        min-height: 78px;
-        display: flex;
+        position: sticky;
+        top: 12px;
+        z-index: 10;
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr) auto;
         align-items: center;
-        justify-content: space-between;
-        gap: 24px;
-        border-bottom: 1px solid var(--line);
+        gap: 18px;
+        min-height: 64px;
+        margin-top: 12px;
+        border: 1px solid rgba(216, 225, 220, 0.92);
+        border-radius: 8px;
+        padding: 0 14px;
+        background: rgba(255, 255, 255, 0.86);
+        box-shadow:
+          0 18px 46px rgba(8, 17, 26, 0.08),
+          inset 0 1px 0 rgba(255, 255, 255, 0.82);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
       }
 
       .brand {
         display: inline-flex;
         align-items: center;
-        gap: 12px;
+        gap: 10px;
         color: var(--ink);
-        font-size: 28px;
+        font-size: 21px;
         font-weight: 900;
         text-decoration: none;
       }
 
-      .mark {
-        display: grid;
+      .brand img {
         width: 34px;
         height: 34px;
-        place-items: center;
         border-radius: 8px;
-        background: var(--ink);
-        color: #ffffff;
-        font-size: 19px;
-        line-height: 1;
-      }
-
-      .mark::after {
-        content: "";
-        width: 8px;
-        height: 8px;
-        margin: -6px 0 0 14px;
-        border-radius: 999px;
-        background: #22c55e;
+        box-shadow: 0 12px 26px rgba(8, 17, 26, 0.16);
       }
 
       .nav {
         display: flex;
-        flex-wrap: wrap;
+        justify-content: center;
         gap: 18px;
-        align-items: center;
-        color: #1f2937;
-        font-size: 14px;
-        font-weight: 820;
+        color: #324154;
+        font-size: 13px;
+        font-weight: 780;
       }
 
       .nav a {
         text-decoration: none;
+        white-space: nowrap;
+      }
+
+      .nav a:hover {
+        color: var(--green);
+      }
+
+      .button,
+      .header-action {
+        min-height: 46px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid var(--line-strong);
+        border-radius: 8px;
+        padding: 0 16px;
+        background: var(--surface);
+        color: var(--ink);
+        font-size: 14px;
+        font-weight: 850;
+        text-decoration: none;
+        white-space: nowrap;
+        touch-action: manipulation;
+        transition:
+          transform 180ms ease,
+          border-color 180ms ease,
+          background 180ms ease,
+          box-shadow 180ms ease;
+      }
+
+      .button:hover,
+      .header-action:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 14px 28px rgba(8, 17, 26, 0.1);
+      }
+
+      .button:active,
+      .header-action:active {
+        transform: translateY(0) scale(0.99);
+      }
+
+      .button.primary,
+      .header-action {
+        border-color: var(--green);
+        background: var(--green);
+        color: #ffffff;
+      }
+
+      .button.primary:hover,
+      .header-action:hover {
+        background: var(--green-dark);
+      }
+
+      .button.dark {
+        border-color: var(--dark);
+        background: var(--dark);
+        color: #ffffff;
+      }
+
+      .button.subtle {
+        border-color: transparent;
+        background: #e9efec;
+        color: #253244;
       }
 
       main {
-        padding: 42px 0 58px;
+        padding: 64px 0 0;
       }
 
       .hero {
-        display: grid;
-        grid-template-columns: minmax(0, 0.98fr) minmax(380px, 0.82fr);
-        gap: 28px;
-        align-items: stretch;
-      }
-
-      .panel,
-      .route-grid a,
-      .worker-form {
-        border: 1px solid var(--line);
-        border-radius: 8px;
-        background: rgba(255, 255, 255, 0.94);
-        box-shadow: 0 18px 44px rgba(8, 13, 20, 0.08);
-      }
-
-      .receipt-stack {
-        display: grid;
-        gap: 14px;
-        align-self: center;
+        padding: 42px 0 70px;
       }
 
       .hero-copy {
-        display: grid;
-        align-content: center;
-        padding: 24px 0;
+        max-width: 990px;
+      }
+
+      .kicker {
+        width: fit-content;
+        margin: 0 0 24px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 8px 10px;
+        background: rgba(255, 255, 255, 0.72);
+        color: #405064;
+        font: 12px var(--mono);
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin: 0;
       }
 
       h1 {
-        max-width: 760px;
-        margin: 0;
+        max-width: 980px;
         color: var(--ink);
-        font-size: clamp(44px, 6vw, 78px);
+        font-size: 76px;
         line-height: 0.98;
-        letter-spacing: 0;
+        font-weight: 920;
+        text-wrap: balance;
       }
 
       .hero-copy p {
-        max-width: 700px;
-        margin: 18px 0 0;
-        color: #354052;
-        font-size: 18px;
-        line-height: 1.56;
+        max-width: 690px;
+        margin-top: 24px;
+        color: #475569;
+        font-size: 21px;
+        line-height: 1.55;
       }
 
       .actions {
         display: flex;
         flex-wrap: wrap;
         gap: 12px;
-        margin-top: 28px;
+        margin-top: 34px;
       }
 
-      .button {
-        min-height: 44px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        border: 1px solid #bdc9c3;
-        border-radius: 8px;
-        padding: 0 18px;
-        background: #ffffff;
-        color: var(--ink);
-        font-size: 14px;
-        font-weight: 850;
-        text-decoration: none;
-      }
-
-      .button.primary {
-        border-color: var(--blue);
-        background: var(--blue);
-        color: #ffffff;
-      }
-
-      .button.subtle {
-        border-color: transparent;
-        background: #eef2f7;
-        color: #253244;
-      }
-
-      .proof-strip {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        margin-top: 28px;
-      }
-
-      .proof-strip span {
-        min-height: 36px;
-        display: inline-flex;
-        align-items: center;
-        border: 1px solid #b7efc9;
-        border-radius: 999px;
-        padding: 0 12px;
-        background: var(--green-soft);
-        color: #087a3f;
-        font-size: 13px;
-        font-weight: 850;
-      }
-
-      .proof-strip span[data-tone="blue"] {
-        border-color: #bfdbfe;
-        background: var(--blue-soft);
-        color: #1d4ed8;
-      }
-
-      .proof-strip span[data-tone="amber"] {
-        border-color: #fde68a;
-        background: var(--amber-soft);
-        color: #92400e;
-      }
-
-      .receipt-body,
-      .issue-body {
+      .service-board {
         display: grid;
+        grid-template-columns: minmax(0, 1.1fr) minmax(330px, 0.74fr);
+        gap: 1px;
+        overflow: hidden;
+        margin-top: 54px;
+        border: 1px solid #1e2b38;
+        border-radius: 8px;
+        background: #1e2b38;
+        box-shadow: 0 26px 70px rgba(8, 17, 26, 0.18);
+      }
+
+      .receipt-stage,
+      .board-aside {
+        background: var(--dark);
+        color: #eef7f5;
+      }
+
+      .receipt-stage {
+        min-height: 470px;
+        padding: 28px;
+      }
+
+      .service-topline,
+      .receipt-meta,
+      .receipt-row,
+      .aside-row,
+      .route-card,
+      .proof-row {
+        display: grid;
+        align-items: center;
+      }
+
+      .service-topline {
+        grid-template-columns: auto 1fr auto;
+        gap: 12px;
+        margin-bottom: 26px;
+        color: #aab9c9;
+        font: 12px var(--mono);
+      }
+
+      .signal-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: #38d17d;
+        box-shadow: 0 0 0 6px rgba(56, 209, 125, 0.12);
+      }
+
+      .receipt {
+        max-width: 740px;
+        border: 1px solid rgba(216, 225, 220, 0.15);
+        border-radius: 8px;
+        background:
+          linear-gradient(rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0)),
+          #0b1520;
+        box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.08),
+          0 22px 46px rgba(0, 0, 0, 0.22);
+      }
+
+      .receipt-header {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
         gap: 14px;
-        padding: 16px;
-      }
-
-      .receipt-pr {
-        display: grid;
-        gap: 6px;
-        border: 1px solid var(--line);
-        border-radius: 8px;
-        padding: 14px;
-        background: #fbfcfd;
-      }
-
-      .receipt-pr span {
-        color: var(--muted);
-        font-size: 12px;
-        font-weight: 900;
-        text-transform: uppercase;
-      }
-
-      .receipt-pr strong {
-        color: var(--ink);
-        font-size: 18px;
-        line-height: 1.22;
-      }
-
-      .signal-badges {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-      }
-
-      .signal-badges span,
-      .receipt-check,
-      .receipt-meta div {
-        border: 1px solid var(--line);
-        border-radius: 8px;
-        background: #ffffff;
-      }
-
-      .signal-badges span {
-        min-height: 30px;
-        display: inline-flex;
-        align-items: center;
-        padding: 0 10px;
-        color: #92400e;
-        background: var(--amber-soft);
-        border-color: #fde68a;
-        font-size: 12px;
-        font-weight: 900;
-      }
-
-      .receipt-check {
-        display: grid;
-        grid-template-columns: auto minmax(0, 1fr);
-        gap: 10px;
         align-items: start;
-        padding: 12px;
-        background: #fffdf8;
-        border-color: #fde68a;
+        border-bottom: 1px solid rgba(216, 225, 220, 0.14);
+        padding: 22px;
       }
 
-      .receipt-check b {
-        display: grid;
-        width: 24px;
-        height: 24px;
-        place-items: center;
-        border-radius: 7px;
-        background: #f59e0b;
+      .receipt-header h2 {
         color: #ffffff;
-        font-size: 13px;
+        font-size: 29px;
+        line-height: 1.08;
       }
 
-      .receipt-check strong,
-      .receipt-meta dt,
-      .issue-body label {
-        color: var(--ink);
-        font-size: 13px;
-        font-weight: 900;
+      .receipt-header p {
+        margin-top: 8px;
+        color: #9fb0c2;
+        line-height: 1.55;
       }
 
-      .receipt-check span {
-        display: block;
-        margin-top: 3px;
-        color: #694d11;
-        font-size: 13px;
-        line-height: 1.42;
+      .receipt-badge {
+        border: 1px solid rgba(56, 209, 125, 0.42);
+        border-radius: 999px;
+        padding: 7px 10px;
+        background: rgba(56, 209, 125, 0.1);
+        color: #b8f8cf;
+        font: 12px var(--mono);
       }
 
       .receipt-meta {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 8px;
-        margin: 0;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        border-bottom: 1px solid rgba(216, 225, 220, 0.14);
       }
 
       .receipt-meta div {
-        display: grid;
-        gap: 4px;
-        min-height: 62px;
-        align-content: center;
-        padding: 10px;
-        background: #fbfcfd;
+        min-height: 96px;
+        border-left: 1px solid rgba(216, 225, 220, 0.14);
+        padding: 18px;
       }
 
-      .receipt-meta dd {
-        margin: 0;
+      .receipt-meta div:first-child {
+        border-left: 0;
+      }
+
+      .receipt-meta span,
+      .receipt-row span,
+      .aside-row span,
+      .proof-row span,
+      .fineprint {
         color: var(--muted);
-        font:
-          13px ui-monospace,
-          SFMono-Regular,
-          Menlo,
-          Monaco,
-          Consolas,
-          "Liberation Mono",
-          monospace;
-        overflow-wrap: anywhere;
+        line-height: 1.5;
       }
 
-      .issue-field {
-        min-height: 44px;
+      .receipt-meta span {
+        display: block;
+        color: #8fa1b4;
+        font-size: 12px;
+        font-weight: 760;
+      }
+
+      .receipt-meta strong {
+        display: block;
+        margin-top: 8px;
+        color: #ffffff;
+        font: 14px var(--mono);
+      }
+
+      .receipt-flow {
+        display: grid;
+      }
+
+      .receipt-row {
+        grid-template-columns: 38px minmax(0, 1fr) auto;
+        gap: 14px;
+        min-height: 84px;
+        border-top: 1px solid rgba(216, 225, 220, 0.14);
+        padding: 16px 22px;
+      }
+
+      .receipt-row:first-child {
+        border-top: 0;
+      }
+
+      .node {
+        display: grid;
+        width: 34px;
+        height: 34px;
+        place-items: center;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.08);
+        color: #dce9ee;
+        font: 12px var(--mono);
+      }
+
+      .node.pass {
+        background: #1f9d65;
+        color: #ffffff;
+      }
+
+      .receipt-row strong {
+        display: block;
+        color: #ffffff;
+        font-size: 15px;
+      }
+
+      .receipt-row span {
+        display: block;
+        margin-top: 4px;
+        color: #99abba;
+        font-size: 14px;
+      }
+
+      .state {
+        border-radius: 999px;
+        padding: 6px 9px;
+        background: rgba(255, 255, 255, 0.08);
+        color: #d7e3eb;
+        font: 11px var(--mono);
+        white-space: nowrap;
+      }
+
+      .state.pass {
+        background: rgba(56, 209, 125, 0.13);
+        color: #b8f8cf;
+      }
+
+      .state.wait {
+        background: rgba(255, 204, 74, 0.12);
+        color: #ffe29a;
+      }
+
+      .board-aside {
+        display: grid;
+        align-content: stretch;
+      }
+
+      .aside-row {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 8px;
+        border-top: 1px solid rgba(216, 225, 220, 0.14);
+        padding: 24px;
+      }
+
+      .aside-row:first-child {
+        border-top: 0;
+      }
+
+      .aside-row strong {
+        color: #ffffff;
+        font-size: 18px;
+      }
+
+      .aside-row span {
+        color: #9fb0c2;
+        font-size: 14px;
+      }
+
+      .aside-row code,
+      .route-card code,
+      .code-chip {
+        width: fit-content;
+        border-radius: 7px;
+        padding: 5px 8px;
+        background: rgba(255, 255, 255, 0.08);
+        color: inherit;
+        font: 12px var(--mono);
+      }
+
+      .section {
+        padding: 112px 0 0;
+      }
+
+      .section-head {
+        display: grid;
+        grid-template-columns: minmax(0, 0.8fr) minmax(0, 0.65fr);
+        gap: 28px;
+        align-items: end;
+        margin-bottom: 26px;
+      }
+
+      .section-head h2,
+      .issue-panel h2 {
+        color: var(--ink);
+        font-size: 44px;
+        line-height: 1.04;
+        font-weight: 900;
+        text-wrap: balance;
+      }
+
+      .section-head p,
+      .issue-panel p,
+      .self-host-panel p {
+        color: var(--muted);
+        font-size: 16px;
+        line-height: 1.62;
+      }
+
+      .bento-grid {
+        display: grid;
+        grid-template-columns: repeat(12, minmax(0, 1fr));
+        grid-auto-flow: dense;
+        gap: 12px;
+      }
+
+      .bento-card,
+      .issue-panel,
+      .self-host-panel,
+      .static-note,
+      .route-card {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.92);
+        box-shadow:
+          0 20px 46px rgba(8, 17, 26, 0.06),
+          inset 0 1px 0 rgba(255, 255, 255, 0.9);
+      }
+
+      .bento-card {
+        min-height: 260px;
+        padding: 24px;
+      }
+
+      .span-7 {
+        grid-column: span 7;
+      }
+
+      .span-5 {
+        grid-column: span 5;
+      }
+
+      .span-4 {
+        grid-column: span 4;
+      }
+
+      .bento-card h3,
+      .issue-panel h3 {
+        color: var(--ink);
+        font-size: 22px;
+        line-height: 1.12;
+      }
+
+      .bento-card p {
+        margin-top: 10px;
+        color: var(--muted);
+        line-height: 1.58;
+      }
+
+      .proof-list {
+        display: grid;
+        margin-top: 22px;
+        border-top: 1px solid var(--line);
+      }
+
+      .proof-row {
+        grid-template-columns: 150px minmax(0, 1fr) auto;
+        gap: 16px;
+        min-height: 72px;
+        border-bottom: 1px solid var(--line);
+        padding: 14px 0;
+      }
+
+      .proof-row strong {
+        color: var(--ink);
+      }
+
+      .proof-row span {
+        font-size: 14px;
+      }
+
+      .boundary-list {
+        display: grid;
+        gap: 12px;
+        margin-top: 24px;
+      }
+
+      .boundary-list div {
+        border-top: 1px solid var(--line);
+        padding-top: 14px;
+      }
+
+      .boundary-list strong,
+      .rollout-step strong {
+        display: block;
+        color: var(--ink);
+        font-size: 16px;
+      }
+
+      .boundary-list span,
+      .rollout-step span {
+        display: block;
+        margin-top: 5px;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.5;
+      }
+
+      .metric {
+        display: grid;
+        align-content: space-between;
+      }
+
+      .metric-value {
+        margin-top: 28px;
+        color: var(--green);
+        font-size: 42px;
+        font-weight: 900;
+      }
+
+      .flow-section {
+        display: grid;
+        grid-template-columns: minmax(260px, 0.68fr) minmax(0, 1fr);
+        gap: 34px;
+        align-items: start;
+      }
+
+      .flow-sticky {
+        position: sticky;
+        top: 104px;
+      }
+
+      .flow-sticky h2 {
+        color: var(--ink);
+        font-size: 42px;
+        line-height: 1.06;
+      }
+
+      .flow-sticky p {
+        margin-top: 16px;
+        color: var(--muted);
+        line-height: 1.62;
+      }
+
+      .rollout {
+        display: grid;
+        gap: 14px;
+      }
+
+      .rollout-step {
+        display: grid;
+        grid-template-columns: 42px minmax(0, 1fr);
+        gap: 16px;
+        align-items: start;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 18px;
+        background: rgba(255, 255, 255, 0.92);
+        box-shadow: 0 14px 34px rgba(8, 17, 26, 0.05);
+      }
+
+      .step-num {
+        display: grid;
+        width: 38px;
+        height: 38px;
+        place-items: center;
+        border-radius: 8px;
+        background: var(--dark);
+        color: #ffffff;
+        font: 13px var(--mono);
+      }
+
+      .issue-panel {
+        display: grid;
+        gap: 18px;
+        padding: 26px;
+      }
+
+      .issue-shell {
+        display: grid;
+        grid-template-columns: minmax(280px, 0.68fr) minmax(0, 1fr);
+        gap: 18px;
+        align-items: stretch;
+      }
+
+      .field-group {
+        display: grid;
+        gap: 8px;
+      }
+
+      .field-group label,
+      .custom-worker label {
+        color: var(--ink);
+        font-size: 14px;
+        font-weight: 850;
+      }
+
+      .helper {
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.45;
+      }
+
+      .issue-field,
+      .worker-field {
+        min-height: 52px;
         display: grid;
         grid-template-columns: auto minmax(0, 1fr);
         align-items: center;
         gap: 8px;
         border: 1px solid var(--line);
         border-radius: 8px;
-        padding: 0 12px;
+        padding: 0 14px;
         background: #fbfcfd;
       }
 
       .issue-field span {
         color: var(--muted);
         font-size: 13px;
-        font-weight: 800;
+        font-weight: 820;
       }
 
-      .issue-field input {
+      .issue-field input,
+      .worker-field input {
         width: 100%;
         min-width: 0;
         border: 0;
         outline: none;
         background: transparent;
         color: var(--ink);
-        font: inherit;
         font-size: 14px;
-        font-weight: 800;
+        font-weight: 820;
       }
 
-      .issue-field:focus-within {
-        border-color: #93c5fd;
-        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+      .issue-field:focus-within,
+      .worker-field:focus-within {
+        border-color: #8fcbbf;
+        box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.12);
       }
 
       .issue-actions {
         display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-template-columns: 1fr;
         gap: 10px;
+        margin-top: 14px;
       }
 
       .issue-preview {
-        max-height: 172px;
+        min-height: 330px;
+        max-height: 430px;
         margin: 0;
         overflow: auto;
-        border: 1px solid var(--line);
+        border: 1px solid #1e2b38;
         border-radius: 8px;
-        padding: 12px;
-        background: #071018;
-        color: #e5f4ff;
-        font:
-          12px/1.55 ui-monospace,
-          SFMono-Regular,
-          Menlo,
-          Monaco,
-          Consolas,
-          "Liberation Mono",
-          monospace;
+        padding: 18px;
+        background: var(--dark);
+        color: #e7f2f4;
+        font: 12px/1.68 var(--mono);
         white-space: pre-wrap;
         overflow-wrap: anywhere;
       }
 
-      .evidence-panel {
-        display: grid;
-        gap: 16px;
-        padding: 18px;
-      }
-
-      .repo-line {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        justify-content: space-between;
-        gap: 10px;
-      }
-
-      .repo-line strong {
-        color: var(--ink);
-        font-size: 15px;
-      }
-
-      .repo-line span {
-        border: 1px solid #fde68a;
-        border-radius: 999px;
-        padding: 5px 9px;
-        background: var(--amber-soft);
-        color: #92400e;
-        font-size: 11px;
-        font-weight: 900;
-        text-transform: uppercase;
-      }
-
-      .metric-grid {
+      .routes-grid {
         display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 1px;
-        overflow: hidden;
-        border: 1px solid var(--line);
-        border-radius: 8px;
-        background: var(--line);
+        gap: 12px;
       }
 
-      .metric-grid div {
+      .route-card {
         display: grid;
-        gap: 6px;
-        min-height: 78px;
-        align-content: center;
-        padding: 12px;
-        background: #ffffff;
+        gap: 12px;
+        align-content: start;
+        min-height: 182px;
+        padding: 20px;
+        color: inherit;
+        text-decoration: none;
       }
 
-      .metric-grid dt {
+      .route-card:hover {
+        border-color: var(--line-strong);
+        transform: translateY(-1px);
+      }
+
+      .route-card strong {
+        color: var(--ink);
+        font-size: 17px;
+      }
+
+      .route-card span {
         color: var(--muted);
-        font-size: 11px;
-        font-weight: 900;
-      }
-
-      .metric-grid dd {
-        margin: 0;
-        color: var(--ink);
-        font-size: 24px;
-        font-weight: 950;
-        line-height: 1;
-      }
-
-      .recommendation {
-        margin: 0;
-        border: 1px solid #fde68a;
-        border-radius: 8px;
-        padding: 12px;
-        background: var(--amber-soft);
-        color: #5c3f05;
-        font-size: 13px;
-        font-weight: 760;
-        line-height: 1.45;
-      }
-
-      .policy-snippet {
-        margin: 0;
-        overflow: auto;
-        border: 1px solid var(--line);
-        border-radius: 8px;
-        padding: 14px;
-        background: #071018;
-        color: #e5f4ff;
-        font:
-          12px/1.6 ui-monospace,
-          SFMono-Regular,
-          Menlo,
-          Monaco,
-          Consolas,
-          "Liberation Mono",
-          monospace;
-      }
-
-      .panel {
-        overflow: hidden;
-      }
-
-      .panel-top {
-        min-height: 54px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 12px;
-        padding: 0 18px;
-        background: #071018;
-        color: #ffffff;
-      }
-
-      .panel-top strong {
-        font-size: 15px;
-      }
-
-      .panel-top span {
-        color: #cbd5e1;
-        font-size: 13px;
-        font-weight: 700;
-      }
-
-      .steps {
-        display: grid;
-        gap: 1px;
-        margin: 0;
-        padding: 0;
-        background: var(--line);
-        list-style: none;
-      }
-
-      .steps li {
-        display: grid;
-        grid-template-columns: auto minmax(0, 1fr);
-        gap: 12px;
-        min-height: 74px;
-        align-items: center;
-        padding: 14px 18px;
-        background: #ffffff;
-      }
-
-      .steps b {
-        display: grid;
-        width: 32px;
-        height: 32px;
-        place-items: center;
-        border-radius: 8px;
-        background: var(--blue-soft);
-        color: #1d4ed8;
-        font-size: 13px;
-      }
-
-      .steps strong {
-        display: block;
-        color: var(--ink);
         font-size: 14px;
+        line-height: 1.5;
       }
 
-      .steps span {
-        display: block;
-        margin-top: 4px;
-        color: var(--muted);
+      .route-card small {
+        color: var(--green);
+        font-size: 12px;
+        font-weight: 860;
+      }
+
+      .route-card .route-action {
+        width: fit-content;
+        margin-top: auto;
+        border-radius: 8px;
+        padding: 9px 11px;
+        background: var(--green);
+        color: #ffffff;
         font-size: 13px;
-        line-height: 1.42;
+        font-weight: 860;
       }
 
-      .worker-form {
+      .self-host-panel {
+        margin-top: 18px;
+        overflow: hidden;
+      }
+
+      .self-host-panel summary {
+        cursor: pointer;
+        padding: 18px 20px;
+        color: var(--ink);
+        font-size: 15px;
+        font-weight: 860;
+      }
+
+      .custom-worker {
         display: grid;
         gap: 14px;
-        margin-top: 18px;
-        padding: 18px;
+        border-top: 1px solid var(--line);
+        padding: 0 20px 20px;
       }
 
-      .worker-form label {
-        display: grid;
-        gap: 8px;
-        color: var(--ink);
-        font-size: 13px;
-        font-weight: 850;
-      }
-
-      .worker-field {
-        min-height: 46px;
-        display: grid;
+      .custom-worker .worker-field {
         grid-template-columns: minmax(0, 1fr) auto;
-        gap: 8px;
-      }
-
-      .worker-field input {
-        width: 100%;
-        min-height: 44px;
-        min-width: 0;
-        border: 1px solid var(--line);
-        border-radius: 8px;
-        padding: 0 12px;
-        background: #fbfcfd;
-        color: var(--ink);
-        font: inherit;
-        font-size: 14px;
-        font-weight: 760;
-        outline: none;
-      }
-
-      .worker-field input:focus {
-        border-color: #93c5fd;
-        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
-      }
-
-      .worker-form p {
-        margin: 0;
-        color: var(--muted);
-        font-size: 13px;
-        line-height: 1.46;
       }
 
       .worker-status {
@@ -669,21 +912,21 @@
         grid-template-columns: auto minmax(0, 1fr);
         gap: 10px;
         align-items: start;
-        border: 1px solid #fde68a;
+        border: 1px solid #b7efc9;
         border-radius: 8px;
         padding: 12px;
-        background: var(--amber-soft);
+        background: var(--green-soft);
       }
 
       .worker-status b {
         display: grid;
-        width: 26px;
-        height: 26px;
+        width: 30px;
+        height: 30px;
         place-items: center;
-        border-radius: 7px;
-        background: #f59e0b;
+        border-radius: 8px;
+        background: var(--green);
         color: #ffffff;
-        font-size: 13px;
+        font: 11px var(--mono);
       }
 
       .worker-status strong {
@@ -692,93 +935,12 @@
         font-size: 14px;
       }
 
-      .worker-status span {
+      .worker-status span span {
         display: block;
         margin-top: 3px;
-        color: #694d11;
-        font-size: 13px;
-        line-height: 1.42;
-      }
-
-      .worker-form[data-state="connected"] .worker-status {
-        border-color: #b7efc9;
-        background: var(--green-soft);
-      }
-
-      .worker-form[data-state="connected"] .worker-status b {
-        background: #109b55;
-      }
-
-      .worker-form[data-state="connected"] .worker-status span {
         color: #087a3f;
-      }
-
-      .route-section {
-        margin-top: 20px;
-      }
-
-      .route-section h2 {
-        margin: 0 0 12px;
-        color: var(--ink);
-        font-size: 28px;
-      }
-
-      .route-grid {
-        display: grid;
-        grid-template-columns: repeat(5, minmax(0, 1fr));
-        gap: 12px;
-      }
-
-      .route-grid a {
-        min-height: 132px;
-        display: grid;
-        align-content: start;
-        gap: 10px;
-        padding: 16px;
-        color: inherit;
-        text-decoration: none;
-      }
-
-      .route-grid a[data-state="locked"] {
-        background: #fbfcfd;
-        color: #5b6472;
-      }
-
-      .route-grid a[data-state="locked"] strong {
-        color: #313b49;
-      }
-
-      .route-grid a[data-state="locked"] code {
-        background: #f3f6f4;
-        color: #526171;
-      }
-
-      .route-grid strong {
-        color: var(--ink);
-        font-size: 15px;
-      }
-
-      .route-grid span {
-        color: var(--muted);
         font-size: 13px;
-        line-height: 1.42;
-      }
-
-      .route-grid code {
-        width: fit-content;
-        max-width: 100%;
-        border-radius: 6px;
-        background: var(--blue-soft);
-        padding: 4px 7px;
-        color: #1d4ed8;
-        font:
-          12px ui-monospace,
-          SFMono-Regular,
-          Menlo,
-          Monaco,
-          Consolas,
-          "Liberation Mono",
-          monospace;
+        line-height: 1.45;
         overflow-wrap: anywhere;
       }
 
@@ -787,204 +949,548 @@
         grid-template-columns: auto minmax(0, 1fr);
         gap: 12px;
         align-items: start;
-        margin-top: 20px;
-        border: 1px solid #fde68a;
-        border-radius: 8px;
+        margin: 24px 0 72px;
         padding: 16px;
-        background: var(--amber-soft);
+        background: rgba(255, 255, 255, 0.92);
       }
 
       .static-note b {
         display: grid;
-        width: 32px;
-        height: 32px;
+        width: 30px;
+        height: 30px;
         place-items: center;
         border-radius: 8px;
-        background: #f59e0b;
+        background: var(--dark);
         color: #ffffff;
+        font: 13px var(--mono);
       }
 
       .static-note strong {
         display: block;
         color: var(--ink);
-        font-size: 15px;
+        font-size: 14px;
       }
 
-      .static-note span {
+      .static-note span span {
         display: block;
-        margin-top: 4px;
-        color: #694d11;
-        font-size: 14px;
+        margin-top: 3px;
+        color: #465465;
+        font-size: 13px;
         line-height: 1.45;
       }
 
-      @media (max-width: 980px) {
-        .site-header,
-        main {
-          width: min(100% - 32px, 1200px);
-        }
-
-        .site-header {
-          align-items: flex-start;
-          flex-direction: column;
-          padding: 18px 0;
-        }
-
-        .hero,
-        .route-grid,
-        .metric-grid {
-          grid-template-columns: 1fr;
-        }
-
-        .receipt-stack {
-          align-self: stretch;
-        }
+      .page-footer {
+        border-top: 1px solid var(--line);
+        padding: 26px 0 34px;
+        color: var(--muted);
+        font-size: 13px;
       }
 
-      @media (max-width: 560px) {
-        body {
-          background-size:
-            auto,
-            52px 52px,
-            52px 52px;
+      .page-footer .shell {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 14px;
+      }
+
+      .page-footer nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 14px;
+      }
+
+      .page-footer a {
+        text-decoration: none;
+      }
+
+      .page-footer a:hover {
+        color: var(--green);
+      }
+
+      [data-reveal] {
+        opacity: 1;
+        transform: none;
+        transition:
+          opacity 520ms ease,
+          transform 520ms ease;
+      }
+
+      [data-reveal].is-visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      @media (max-width: 1040px) {
+        .site-header {
+          grid-template-columns: 1fr auto;
         }
 
         .nav {
-          width: 100%;
-          display: grid;
-          grid-template-columns: repeat(3, minmax(0, 1fr));
-          gap: 8px;
-          font-size: 13px;
-          text-align: center;
-        }
-
-        .hero-copy {
-          padding: 12px 0;
+          grid-column: 1 / -1;
+          justify-content: flex-start;
+          overflow-x: auto;
+          padding-bottom: 12px;
         }
 
         h1 {
-          font-size: 36px;
-          line-height: 1.08;
+          font-size: 62px;
         }
 
-        .actions,
-        .worker-field,
-        .issue-actions,
-        .receipt-meta {
+        .service-board,
+        .section-head,
+        .flow-section,
+        .issue-shell {
           grid-template-columns: 1fr;
         }
 
-        .actions {
-          display: grid;
+        .flow-sticky {
+          position: static;
         }
 
+        .span-7,
+        .span-5,
+        .span-4 {
+          grid-column: span 12;
+        }
+
+        .routes-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 680px) {
+        .shell,
+        .site-header {
+          width: min(100% - 28px, 1180px);
+        }
+
+        .site-header {
+          position: static;
+          grid-template-columns: 1fr;
+          padding: 14px;
+        }
+
+        .nav {
+          display: grid;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 9px 12px;
+          overflow: visible;
+          padding-bottom: 0;
+        }
+
+        .header-action,
         .button {
           width: 100%;
+        }
+
+        main {
+          padding-top: 34px;
+        }
+
+        .hero {
+          padding-top: 18px;
+          padding-bottom: 56px;
+        }
+
+        h1 {
+          font-size: 43px;
+          line-height: 1.03;
+        }
+
+        .hero-copy p {
+          font-size: 18px;
+        }
+
+        .receipt-stage {
+          padding: 16px;
+        }
+
+        .receipt-header,
+        .receipt-meta,
+        .receipt-row,
+        .proof-row,
+        .custom-worker .worker-field {
+          grid-template-columns: 1fr;
+        }
+
+        .receipt-meta div {
+          border-top: 1px solid rgba(216, 225, 220, 0.14);
+          border-left: 0;
+        }
+
+        .receipt-meta div:first-child {
+          border-top: 0;
+        }
+
+        .receipt-row {
+          align-items: start;
+        }
+
+        .state {
+          width: fit-content;
+        }
+
+        .section {
+          padding-top: 80px;
+        }
+
+        .section-head h2,
+        .issue-panel h2,
+        .flow-sticky h2 {
+          font-size: 34px;
+        }
+
+        .bento-card,
+        .issue-panel {
+          padding: 18px;
+        }
+
+        .routes-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          scroll-behavior: auto !important;
+          transition-duration: 0.01ms !important;
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+        }
+
+        [data-reveal] {
+          opacity: 1;
+          transform: none;
         }
       }
     </style>
   </head>
   <body>
+    <a class="skip-link" href="#main">Skip to content</a>
     <header class="site-header">
-      <a class="brand" href="./index.html"
-        ><span class="mark">P</span>pr-captcha</a
-      >
-      <nav class="nav" aria-label="Documentation">
-        <a href="./setup.md">Setup</a>
+      <a class="brand" href="./index.html">
+        <img src="./assets/pr-captcha-mark.svg" width="34" height="34" alt="" />
+        <span>pr-captcha</span>
+      </a>
+      <nav class="nav" aria-label="Primary">
+        <a href="#proof">Proof</a>
+        <a href="#setup">Setup</a>
+        <a href="#maintainer-issue">Issue draft</a>
+        <a href="#routes">Operations</a>
         <a href="./trust.md">Trust</a>
-        <a href="./github-app.md">GitHub App</a>
-        <a href="./operations.md">Operations</a>
         <a href="https://github.com/aryabyte21/pr-captcha">GitHub</a>
       </nav>
+      <a
+        class="header-action"
+        href="https://github.com/apps/pr-captcha-aryabyte21/installations/new"
+        >Install GitHub App</a
+      >
     </header>
-    <main>
-      <section class="hero" aria-label="pr-captcha launch">
+
+    <main id="main">
+      <section class="hero shell" aria-label="pr-captcha launch">
         <div class="hero-copy">
-          <h1>Stop suspicious PRs before CI runs.</h1>
+          <p class="kicker">Free hosted GitHub App and Worker</p>
+          <h1>Make PR spam knock before your repo has to care.</h1>
           <p>
-            A SHA-bound human check for fork, first-time, outside, and bot pull
-            requests.
+            Install the app, pick a simple policy, and let our hosted Worker ask
+            untrusted PRs for a GitHub login plus browser check. Good
+            contributors keep moving. Spammy automation has to knock first.
           </p>
           <div class="actions">
-            <a class="button primary" href="#maintainer-issue"
-              >Generate maintainer issue</a
+            <a
+              class="button primary"
+              href="https://github.com/apps/pr-captcha-aryabyte21/installations/new"
+              >Start free</a
             >
-            <a class="button" href="#connect-worker">Connect Worker URL</a>
-            <a class="button" href="./setup.md">Read setup docs</a>
-          </div>
-          <div class="proof-strip" aria-label="pr-captcha properties">
-            <span data-tone="blue">GitHub Pages live</span>
-            <span>SHA-bound</span>
-            <span>No patch checkout</span>
-            <span>pr-captcha/human</span>
+            <a
+              class="button dark"
+              href="https://pr-captcha.aryaabyte.workers.dev/setup-wizard"
+              data-hosted-launch
+              >Make policy</a
+            >
+            <a class="button" href="#setup">See 4 steps</a>
           </div>
         </div>
-        <aside
-          class="receipt-stack"
-          aria-label="PR intake receipt and maintainer issue generator"
-        >
-          <section class="panel intake-receipt">
-            <div class="panel-top">
-              <strong>PR intake receipt</strong>
-              <span>before CI</span>
+
+        <div class="service-board" id="how-it-works" data-reveal>
+          <section class="receipt-stage" aria-label="Verification receipt">
+            <div class="service-topline">
+              <span class="signal-dot" aria-hidden="true"></span>
+              <span>pr-captcha.aryaabyte.workers.dev</span>
+              <span>edge verified</span>
             </div>
-            <div class="receipt-body">
-              <div class="repo-line">
-                <strong>kubernetes/kubernetes</strong>
-                <span>held</span>
-              </div>
-              <div class="receipt-pr">
-                <span>Pull request</span>
-                <strong>#184 Add generated SDK helper</strong>
-              </div>
-              <div class="signal-badges" aria-label="Risk signals">
-                <span>fork</span>
-                <span>first-time</span>
-                <span>unknown author</span>
-              </div>
-              <div class="receipt-check">
-                <b>!</b>
-                <span>
-                  <strong>pr-captcha/human: action required</strong>
-                  <span>GitHub login plus CAPTCHA required for this SHA.</span>
-                </span>
-              </div>
-              <dl class="receipt-meta">
+            <div class="receipt">
+              <div class="receipt-header">
                 <div>
-                  <dt>Head SHA</dt>
-                  <dd>8f31c9a</dd>
+                  <h2>One PR. One commit. One human receipt.</h2>
+                  <p>
+                    The app never checks out contributor code. It verifies
+                    GitHub identity, browser presence, and the exact SHA that is
+                    asking for maintainer time.
+                  </p>
+                </div>
+                <span class="receipt-badge">pr-captcha/human</span>
+              </div>
+              <div class="receipt-meta" aria-label="Receipt fields">
+                <div>
+                  <span>Repository</span>
+                  <strong>owner/project</strong>
                 </div>
                 <div>
-                  <dt>Code execution</dt>
-                  <dd>none</dd>
+                  <span>Pull request</span>
+                  <strong>#184</strong>
                 </div>
-              </dl>
-              <a
-                class="button primary"
-                data-worker-route="/gate-trace"
-                data-worker-label="Trace gate flow"
-                data-worker-locked-label="Connect Worker URL"
-                href="#connect-worker"
-                >Trace gate flow</a
-              >
+                <div>
+                  <span>Head SHA</span>
+                  <strong>f3a5b28</strong>
+                </div>
+              </div>
+              <div class="receipt-flow">
+                <div class="receipt-row">
+                  <span class="node">01</span>
+                  <div>
+                    <strong>Gate opens on the PR</strong>
+                    <span
+                      >GitHub App posts a pending check and verification
+                      link.</span
+                    >
+                  </div>
+                  <span class="state wait">waiting</span>
+                </div>
+                <div class="receipt-row">
+                  <span class="node">02</span>
+                  <div>
+                    <strong>Author verifies in browser</strong>
+                    <span>OAuth and Turnstile are checked on the Worker.</span>
+                  </div>
+                  <span class="state">no code run</span>
+                </div>
+                <div class="receipt-row">
+                  <span class="node pass">OK</span>
+                  <div>
+                    <strong>Receipt is bound to this SHA</strong>
+                    <span>New commits require a fresh verification.</span>
+                  </div>
+                  <span class="state pass">passed</span>
+                </div>
+              </div>
             </div>
           </section>
-          <section class="panel issue-card" id="maintainer-issue">
-            <div class="panel-top">
-              <strong>Maintainer issue draft</strong>
-              <span>no login needed</span>
+
+          <aside class="board-aside" aria-label="Hosted service summary">
+            <div class="aside-row">
+              <strong>Hosted by default</strong>
+              <span>
+                New users install the GitHub App and use our Worker for free. No
+                Worker deploy is required for the normal path.
+              </span>
+              <code>free hosted path</code>
             </div>
-            <div class="issue-body">
-              <label for="issue-repo">GitHub repository</label>
-              <div class="issue-field">
-                <span>github.com/</span>
-                <input
-                  id="issue-repo"
-                  value="tldraw/tldraw"
-                  autocomplete="off"
-                  spellcheck="false"
-                  data-issue-repo
-                />
+            <div class="aside-row">
+              <strong>Branch protection native</strong>
+              <span>
+                Require the same check GitHub already understands:
+                pr-captcha/human.
+              </span>
+              <code>required check</code>
+            </div>
+            <div class="aside-row">
+              <strong>Policy controlled</strong>
+              <span>
+                Gate forks, outside collaborators, first-time contributors,
+                bots, or all PRs.
+              </span>
+              <code>.github/pr-captcha.yml</code>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="section shell" id="proof" aria-label="Product proof">
+        <div class="section-head">
+          <h2>Built for maintainer trust, not AI detection theater.</h2>
+          <p>
+            The product is deliberately narrow. It proves a human GitHub user
+            was present for one PR commit before the queue spends maintainer
+            attention. Greptile's OpenClaw study showed what happens when PR
+            volume starts behaving like email spam. pr-captcha is the cheap
+            knock-before-entry check for that world.
+          </p>
+        </div>
+
+        <div class="bento-grid" data-reveal>
+          <article class="bento-card span-7">
+            <h3>Receipt contract</h3>
+            <p>
+              Every pass is tied to a repository, pull request, GitHub account,
+              Turnstile solve, and exact head SHA.
+            </p>
+            <div class="proof-list">
+              <div class="proof-row">
+                <strong>Identity</strong>
+                <span>Solver is tied to a GitHub account.</span>
+                <code class="code-chip">read:user</code>
+              </div>
+              <div class="proof-row">
+                <strong>Presence</strong>
+                <span>Browser challenge was verified on the Worker.</span>
+                <code class="code-chip">Turnstile</code>
+              </div>
+              <div class="proof-row">
+                <strong>Scope</strong>
+                <span>Receipt applies only to the current head commit.</span>
+                <code class="code-chip">head.sha</code>
+              </div>
+            </div>
+          </article>
+
+          <article class="bento-card span-5">
+            <h3>Clear boundaries</h3>
+            <p>
+              pr-captcha is not a code-quality judge, bot detector, or
+              maintainer replacement.
+            </p>
+            <div class="boundary-list">
+              <div>
+                <strong>No patch checkout</strong>
+                <span
+                  >The Worker never executes untrusted contributor code.</span
+                >
+              </div>
+              <div>
+                <strong>No model guessing</strong>
+                <span>It does not claim to know how a patch was written.</span>
+              </div>
+              <div>
+                <strong>No permanent pass</strong>
+                <span>A pushed update invalidates the old receipt.</span>
+              </div>
+            </div>
+          </article>
+
+          <article class="bento-card span-4 metric">
+            <div>
+              <h3>Default check</h3>
+              <p>The check name is stable and branch protection friendly.</p>
+            </div>
+            <div class="metric-value">human</div>
+            <code class="code-chip">pr-captcha/human</code>
+          </article>
+
+          <article class="bento-card span-4 metric">
+            <div>
+              <h3>Hosted Worker</h3>
+              <p>The public launcher and issue drafts point to production.</p>
+            </div>
+            <div class="metric-value">live</div>
+            <code class="code-chip">workers.dev</code>
+          </article>
+
+          <article class="bento-card span-4 metric">
+            <div>
+              <h3>Audit trail</h3>
+              <p>Verification events are stored server-side for review.</p>
+            </div>
+            <div class="metric-value">D1</div>
+            <code class="code-chip">edge stored</code>
+          </article>
+        </div>
+      </section>
+
+      <section class="section shell flow-section" id="setup">
+        <div class="flow-sticky">
+          <h2>Set it up in four steps.</h2>
+          <p>
+            Use the hosted Worker first. Self-hosting can wait until you have a
+            reason to own the infrastructure.
+          </p>
+          <div class="actions">
+            <a
+              class="button primary"
+              href="https://github.com/apps/pr-captcha-aryabyte21/installations/new"
+              >Install app</a
+            >
+            <a
+              class="button"
+              href="https://pr-captcha.aryaabyte.workers.dev/setup-wizard"
+              >Make policy</a
+            >
+          </div>
+        </div>
+
+        <div class="rollout" data-reveal>
+          <article class="rollout-step">
+            <span class="step-num">01</span>
+            <div>
+              <strong>Install the hosted GitHub App</strong>
+              <span>
+                Pick the repositories you want to protect. This is the normal
+                free path.
+              </span>
+            </div>
+          </article>
+          <article class="rollout-step">
+            <span class="step-num">02</span>
+            <div>
+              <strong>Generate a simple policy</strong>
+              <span>
+                Use the wizard to create .github/pr-captcha.yml. Start with fork
+                PRs and first-time contributors.
+              </span>
+            </div>
+          </article>
+          <article class="rollout-step">
+            <span class="step-num">03</span>
+            <div>
+              <strong>Test one harmless PR</strong>
+              <span>
+                Open a disposable PR and confirm the check appears, the link
+                opens, and the exact commit turns green after verification.
+              </span>
+            </div>
+          </article>
+          <article class="rollout-step">
+            <span class="step-num">04</span>
+            <div>
+              <strong>Require the check when ready</strong>
+              <span>
+                Add pr-captcha/human to required checks. Rollback is removing
+                that single required check.
+              </span>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="section shell" id="maintainer-issue">
+        <div class="issue-panel" data-reveal>
+          <div>
+            <h2>Need buy-in? Generate a maintainer issue.</h2>
+            <p>
+              Paste a repository and get a plain issue draft. It explains the
+              free hosted setup, the rollback path, and what the check proves.
+            </p>
+          </div>
+          <div class="issue-shell">
+            <div>
+              <div class="field-group">
+                <label for="issue-repo">GitHub repository</label>
+                <span class="helper">
+                  Paste owner/repo, a GitHub URL, or a pull request URL.
+                </span>
+                <div class="issue-field">
+                  <span>github.com/</span>
+                  <input
+                    id="issue-repo"
+                    value="tldraw/tldraw"
+                    autocomplete="off"
+                    spellcheck="false"
+                    data-issue-repo
+                  />
+                </div>
               </div>
               <div class="issue-actions">
                 <a
@@ -999,122 +1505,160 @@
                   Copy pitch
                 </button>
                 <button class="button subtle" type="button" data-share-copy>
-                  Copy launch link
+                  Copy launcher link
                 </button>
               </div>
-              <pre class="issue-preview" data-issue-preview></pre>
             </div>
-          </section>
-        </aside>
+            <pre class="issue-preview" data-issue-preview></pre>
+          </div>
+        </div>
       </section>
 
-      <form class="worker-form" id="connect-worker" data-worker-form>
-        <label for="worker-url">Worker URL</label>
-        <div class="worker-field">
-          <input
-            id="worker-url"
-            name="worker_url"
-            type="url"
-            placeholder="https://your-pr-captcha-worker.example.workers.dev"
-            spellcheck="false"
-            data-worker-url
-          />
-          <button class="button primary" type="submit">Update links</button>
+      <section class="section shell" id="routes" aria-label="Free hosted setup">
+        <div class="section-head">
+          <h2>Use our Worker first.</h2>
+          <p>
+            These links go straight to the live hosted Worker. They work even if
+            this static page's JavaScript does not run.
+          </p>
         </div>
-        <div class="worker-status" role="status" aria-live="polite">
-          <b data-worker-status-icon>!</b>
+        <div class="routes-grid" data-reveal>
+          <a
+            class="route-card"
+            data-worker-route="/setup-wizard"
+            href="https://pr-captcha.aryaabyte.workers.dev/setup-wizard"
+          >
+            <code>step 1</code>
+            <strong>Generate policy</strong>
+            <span>Create .github/pr-captcha.yml for your repository.</span>
+            <small>Public hosted Worker</small>
+            <span class="route-action">Open policy wizard</span>
+          </a>
+          <a
+            class="route-card"
+            data-worker-route="/rehearsal"
+            href="https://pr-captcha.aryaabyte.workers.dev/rehearsal"
+          >
+            <code>step 2</code>
+            <strong>Rehearse a fork PR</strong>
+            <span>Walk through the test PR before enforcing anything.</span>
+            <small>Public hosted Worker</small>
+            <span class="route-action">Open rehearsal</span>
+          </a>
+          <a
+            class="route-card"
+            data-worker-route="/status"
+            href="https://pr-captcha.aryaabyte.workers.dev/status"
+          >
+            <code>step 3</code>
+            <strong>Check service status</strong>
+            <span>Confirm the hosted gate is awake before relying on it.</span>
+            <small>Public hosted Worker</small>
+            <span class="route-action">Open status</span>
+          </a>
+          <a
+            class="route-card"
+            data-worker-route="/launch"
+            href="https://pr-captcha.aryaabyte.workers.dev/launch"
+          >
+            <code>step 4</code>
+            <strong>Install checklist</strong>
+            <span>Copy the check name and finish branch protection.</span>
+            <small>Public hosted Worker</small>
+            <span class="route-action">Open checklist</span>
+          </a>
+          <a
+            class="route-card"
+            data-worker-route="/evidence"
+            href="https://pr-captcha.aryaabyte.workers.dev/evidence"
+          >
+            <code>optional</code>
+            <strong>Scan repo evidence</strong>
+            <span>Use public PR signals when a maintainer asks why.</span>
+            <small>Public hosted Worker</small>
+            <span class="route-action">Open evidence scan</span>
+          </a>
+          <a
+            class="route-card"
+            data-worker-route="/trust"
+            href="https://pr-captcha.aryaabyte.workers.dev/trust"
+          >
+            <code>optional</code>
+            <strong>Read trust docs</strong>
+            <span>Review security, privacy, support, and beta policy.</span>
+            <small>Public hosted Worker</small>
+            <span class="route-action">Open trust docs</span>
+          </a>
+        </div>
+
+        <details class="self-host-panel" id="connect-worker" data-worker-form>
+          <summary>Advanced: use a different Worker</summary>
+          <div class="custom-worker">
+            <p>
+              The hosted Worker is the free default. Paste a custom URL only if
+              you are self-hosting.
+            </p>
+            <label for="worker-url">Custom Worker URL</label>
+            <div class="worker-field">
+              <input
+                id="worker-url"
+                name="worker_url"
+                type="url"
+                placeholder="https://your-worker.your-subdomain.workers.dev"
+                spellcheck="false"
+                data-worker-url
+              />
+              <button class="button primary" type="button" data-worker-apply>
+                Use custom Worker
+              </button>
+            </div>
+            <div class="worker-status" role="status" aria-live="polite">
+              <b data-worker-status-icon>OK</b>
+              <span>
+                <strong data-worker-status-title>Hosted Worker active</strong>
+                <span data-worker-status-body>
+                  Links use https://pr-captcha.aryaabyte.workers.dev.
+                </span>
+              </span>
+            </div>
+          </div>
+        </details>
+
+        <div class="static-note" role="note">
+          <b>i</b>
           <span>
-            <strong data-worker-status-title>Worker not connected</strong>
-            <span data-worker-status-body
-              >Deploy the Cloudflare Worker, then paste its public URL here to
-              unlock live repo scans, scorecards, pilot plans, setup, radar, and
-              rehearsal checks.</span
-            >
+            <strong>Static launch page</strong>
+            <span>
+              GitHub Pages serves this front door. It does not process webhooks,
+              verify challenges, or store secrets.
+            </span>
           </span>
         </div>
-        <p>
-          The value is stored in this browser only. GitHub Pages serves this
-          static launcher, but every live workflow opens on the Worker.
-        </p>
-      </form>
-
-      <section class="route-section" aria-label="Worker routes">
-        <h2>Live Worker routes</h2>
-        <div class="route-grid">
-          <a data-worker-route="/radar" href="#connect-worker">
-            <strong>Open PR spam radar</strong>
-            <span>Show live public PR spam labels across open source.</span>
-            <code>/radar</code>
-          </a>
-          <a data-worker-route="/evidence" href="#connect-worker">
-            <strong>Scan repo evidence</strong>
-            <span>Pull live GitHub signals before installing anything.</span>
-            <code>/evidence</code>
-          </a>
-          <a data-worker-route="/pilot" href="#connect-worker">
-            <strong>Plan 7-day pilot</strong>
-            <span>Turn live evidence into branch protection timing.</span>
-            <code>/pilot</code>
-          </a>
-          <a data-worker-route="/scorecard-builder" href="#connect-worker">
-            <strong>Share scorecard</strong>
-            <span>Generate an embeddable PR queue risk card.</span>
-            <code>/scorecard-builder</code>
-          </a>
-          <a data-worker-route="/launch" href="#connect-worker">
-            <strong>Open launch cockpit</strong>
-            <span>Track production gates and copy deploy commands.</span>
-            <code>/launch</code>
-          </a>
-          <a data-worker-route="/rehearsal" href="#connect-worker">
-            <strong>Rehearse fork PR</strong>
-            <span>Prove the gate before branch protection.</span>
-            <code>/rehearsal</code>
-          </a>
-          <a data-worker-route="/gate-trace" href="#connect-worker">
-            <strong>Trace gate flow</strong>
-            <span>Copy a webhook-to-check smoke test.</span>
-            <code>/gate-trace</code>
-          </a>
-          <a data-worker-route="/trust" href="#connect-worker">
-            <strong>Open Trust Center</strong>
-            <span
-              >Review security, privacy, terms, support, and beta policy.</span
-            >
-            <code>/trust</code>
-          </a>
-          <a data-worker-route="/github-app-manifest" href="#connect-worker">
-            <strong>Create GitHub App</strong>
-            <span>Generate the manifest with webhook and callback URLs.</span>
-            <code>/github-app-manifest</code>
-          </a>
-          <a data-worker-route="/status" href="#connect-worker">
-            <strong>Run readiness check</strong>
-            <span>Verify Worker heartbeat, D1, and required config.</span>
-            <code>/status</code>
-          </a>
-          <a data-worker-route="/setup-wizard" href="#connect-worker">
-            <strong>Generate policy</strong>
-            <span>Create the first <code>pr-captcha.yml</code> safely.</span>
-            <code>/setup-wizard</code>
-          </a>
-        </div>
       </section>
-
-      <div class="static-note" role="note">
-        <b>!</b>
-        <span
-          ><strong>Static launch page</strong>This file is safe for GitHub
-          Pages. It does not process webhooks, verify challenges, or store
-          secrets. The production app still runs on Cloudflare Workers.</span
-        >
-      </div>
     </main>
+
+    <footer class="page-footer">
+      <div class="shell">
+        <span
+          >pr-captcha is a free hosted human receipt gate for pull
+          requests.</span
+        >
+        <nav aria-label="Footer">
+          <a href="./privacy.md">Privacy</a>
+          <a href="./security.md">Security</a>
+          <a href="./support.md">Support</a>
+          <a href="./terms.md">Terms</a>
+        </nav>
+      </div>
+    </footer>
+
     <script>
       (function () {
+        var hostedWorker = "https://pr-captcha.aryaabyte.workers.dev";
         var storageKey = "pr-captcha-worker-url";
         var form = document.querySelector("[data-worker-form]");
         var input = document.querySelector("[data-worker-url]");
+        var apply = document.querySelector("[data-worker-apply]");
         var statusIcon = document.querySelector("[data-worker-status-icon]");
         var statusTitle = document.querySelector("[data-worker-status-title]");
         var statusBody = document.querySelector("[data-worker-status-body]");
@@ -1126,7 +1670,9 @@
         var issueCopy = document.querySelector("[data-issue-copy]");
         var shareCopy = document.querySelector("[data-share-copy]");
         var issuePreview = document.querySelector("[data-issue-preview]");
-        if (!form || !input) return;
+        var revealItems = Array.prototype.slice.call(
+          document.querySelectorAll("[data-reveal]"),
+        );
 
         function origin(value) {
           var trimmed = String(value || "").trim();
@@ -1190,7 +1736,6 @@
         }
 
         function workerLink(base, path, repo) {
-          if (!base) return null;
           var url = new URL(path, base);
           if (repo) url.searchParams.set("repo", repo);
           return url.toString();
@@ -1208,10 +1753,10 @@
           var evidence = workerLink(base, "/evidence", repo);
           var pilot = workerLink(base, "/pilot", repo);
           var setup = workerLink(base, "/setup-wizard", repo);
-          var lines = [
-            "## Add pr-captcha before suspicious PRs burn CI",
+          return [
+            "## Add pr-captcha before AI slop burns maintainer time",
             "",
-            "This repo can pilot a SHA-bound human check for fork, first-time, outside, and bot pull requests before expensive CI or maintainer review starts.",
+            "This repo can pilot a free SHA-bound human receipt for fork, first-time, outside, bot, and AI-slop workflows before maintainer review starts.",
             "",
             "Suggested first scope",
             "- Gate fork PRs and first-time contributors first.",
@@ -1221,30 +1766,23 @@
             "",
             "Why this is low-risk",
             "- New commits require a new verification.",
-            "- GitHub login and CAPTCHA are verified server-side.",
+            "- GitHub login and Turnstile are verified server-side.",
             "- Failed gates are visible and retryable.",
             "- Rollback is just removing `pr-captcha/human` from required checks.",
             "",
             "Links",
             "- Public launcher: " + launcherLink(repo, base),
             "- Setup docs: " + staticUrl("./setup.md"),
-          ];
-          if (evidence && pilot && setup) {
-            lines.push("- Live evidence scan: " + evidence);
-            lines.push("- 7-day pilot planner: " + pilot);
-            lines.push("- Policy generator: " + setup);
-          } else {
-            lines.push(
-              "- Connect the deployed Worker URL on the launcher to unlock live evidence and pilot links.",
-            );
-          }
-          return lines.join("\n");
+            "- Live evidence scan: " + evidence,
+            "- 7-day pilot planner: " + pilot,
+            "- Policy generator: " + setup,
+          ].join("\n");
         }
 
         function renderIssue(base) {
           if (!issueRepo || !issueOpen || !issuePreview) return;
           var repo = normalizeRepo(issueRepo.value);
-          var title = "Pilot pr-captcha for suspicious pull requests";
+          var title = "Pilot pr-captcha for AI-slop pull requests";
           var body = issuePitch(repo, base);
           var parts = repo.split("/");
           var url = new URL(
@@ -1264,53 +1802,60 @@
         }
 
         function renderStatus(base) {
-          var connected = Boolean(base);
-          form.setAttribute("data-state", connected ? "connected" : "locked");
-          if (statusIcon) statusIcon.textContent = connected ? "✓" : "!";
+          var custom = base !== hostedWorker;
+          if (input) input.value = custom ? base : "";
+          if (statusIcon) statusIcon.textContent = custom ? "URL" : "OK";
           if (statusTitle) {
-            statusTitle.textContent = connected
-              ? "Worker connected"
-              : "Worker not connected";
+            statusTitle.textContent = custom
+              ? "Custom Worker active"
+              : "Hosted Worker active";
           }
           if (statusBody) {
-            statusBody.textContent = connected
-              ? "Live routes now open on " + base + "."
-              : "Deploy the Cloudflare Worker, then paste its public URL here to unlock live repo scans, scorecards, pilot plans, setup, radar, and rehearsal checks.";
+            statusBody.textContent = "Links use " + base + ".";
           }
         }
 
         function update(value) {
-          var base = origin(value);
-          input.value = base || "";
-          renderStatus(base);
+          var base = origin(value) || hostedWorker;
           routes.forEach(function (link) {
-            var connectedLabel = link.getAttribute("data-worker-label");
-            var lockedLabel = link.getAttribute("data-worker-locked-label");
-            if (base) {
-              link.href = base + link.getAttribute("data-worker-route");
-              link.removeAttribute("aria-disabled");
-              link.removeAttribute("title");
-              link.setAttribute("data-state", "connected");
-              if (connectedLabel) link.textContent = connectedLabel;
-            } else {
-              link.href = "#connect-worker";
-              link.setAttribute("aria-disabled", "true");
-              link.setAttribute(
-                "title",
-                "Connect a deployed Worker URL first.",
-              );
-              link.setAttribute("data-state", "locked");
-              if (lockedLabel) link.textContent = lockedLabel;
-            }
+            link.href = base + link.getAttribute("data-worker-route");
+            link.removeAttribute("aria-disabled");
+            link.removeAttribute("title");
+            link.setAttribute("data-state", "connected");
           });
+          renderStatus(base);
           renderIssue(base);
           try {
-            if (base) {
-              window.localStorage.setItem(storageKey, base);
-            } else {
+            if (base === hostedWorker) {
               window.localStorage.removeItem(storageKey);
+            } else {
+              window.localStorage.setItem(storageKey, base);
             }
           } catch (_) {}
+        }
+
+        function setupReveal() {
+          if (!revealItems.length) return;
+          if (!("IntersectionObserver" in window)) {
+            revealItems.forEach(function (item) {
+              item.classList.add("is-visible");
+            });
+            return;
+          }
+          var observer = new IntersectionObserver(
+            function (entries) {
+              entries.forEach(function (entry) {
+                if (entry.isIntersecting) {
+                  entry.target.classList.add("is-visible");
+                  observer.unobserve(entry.target);
+                }
+              });
+            },
+            { rootMargin: "0px 0px -12% 0px", threshold: 0.12 },
+          );
+          revealItems.forEach(function (item) {
+            observer.observe(item);
+          });
         }
 
         try {
@@ -1329,22 +1874,20 @@
               window.localStorage.getItem("pr-captcha-issue-repo") ||
               issueRepo.value;
           }
-          update(
-            origin(workerParam) ||
-              window.localStorage.getItem(storageKey) ||
-              "",
-          );
+          update(origin(workerParam) || hostedWorker);
         } catch (_) {
-          update("");
+          update(hostedWorker);
         }
+
+        setupReveal();
 
         if (issueRepo) {
           issueRepo.addEventListener("input", function () {
-            renderIssue(origin(input.value));
+            renderIssue(origin(input && input.value) || hostedWorker);
           });
           issueRepo.addEventListener("blur", function () {
             issueRepo.value = normalizeRepo(issueRepo.value);
-            renderIssue(origin(input.value));
+            renderIssue(origin(input && input.value) || hostedWorker);
           });
         }
         if (issueCopy) {
@@ -1370,11 +1913,14 @@
             var repo = issueRepo
               ? normalizeRepo(issueRepo.value)
               : "tldraw/tldraw";
-            var value = launcherLink(repo, origin(input.value));
+            var value = launcherLink(
+              repo,
+              origin(input && input.value) || hostedWorker,
+            );
             var finish = function (label) {
               shareCopy.textContent = label;
               window.setTimeout(function () {
-                shareCopy.textContent = "Copy launch link";
+                shareCopy.textContent = "Copy launcher link";
               }, 1500);
             };
             copyText(value)
@@ -1386,10 +1932,17 @@
               });
           });
         }
-        form.addEventListener("submit", function (event) {
-          event.preventDefault();
-          update(input.value);
-        });
+        if (apply) {
+          apply.addEventListener("click", function () {
+            update(input && input.value);
+          });
+        }
+        if (form) {
+          form.addEventListener("submit", function (event) {
+            event.preventDefault();
+            update(input && input.value);
+          });
+        }
       })();
     </script>
   </body>

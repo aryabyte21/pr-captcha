@@ -1,4 +1,6 @@
 node_modules/
+.agents/
+skills-lock.json
 .playwright-mcp/
 tmp/
 apps/worker/dist/

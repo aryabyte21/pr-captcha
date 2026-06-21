@@ -8,9 +8,9 @@ The production product should let a maintainer install a GitHub App, enable a cl
 
 ## Product Promise
 
-Make AI slop prove it has a human.
+Make AI slop prove a human is present.
 
-pr-captcha should make automated PR spam and AI slop more expensive without adding maintainer toil.
+pr-captcha should make automated PR spam and AI slop slow down without adding maintainer toil.
 
 ## Production Definition
 
@@ -93,7 +93,7 @@ Exit criteria:
 
 ## Phase 2: Security Hardening
 
-Goal: make abuse expensive and make trust boundaries explicit.
+Goal: make abuse harder and make trust boundaries explicit.
 
 Required work:
 
@@ -141,17 +141,17 @@ Required work:
 
 - Public landing page and docs site.
 - Demo repository with fork PR video or GIF.
-- GitHub Marketplace listing.
+- Public install page.
 - Terms, privacy policy, and security contact.
 - Incident process.
-- Billing plan or free beta policy.
+- Free hosted beta policy.
 - Abuse reporting path.
 - Support mailbox and triage process.
 
 Exit criteria:
 
 - Demo flow works from a clean unknown-author PR.
-- Marketplace install path is live.
+- Hosted install path is live.
 - Docs cover every permission and integration mode.
 - Support and incident paths are ready before public traffic.
 
@@ -166,8 +166,8 @@ Required work:
 - Analytics for intake checks, released runs, and saved CI starts.
 - Webhook notification integrations.
 - Multi-region deploy strategy if latency or availability requires it.
-- Billing, quotas, and account management.
-- SLA targets and enterprise export logs.
+- Quotas and account management.
+- uptime targets and organization export logs.
 
 Exit criteria:
 

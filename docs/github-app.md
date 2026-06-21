@@ -8,6 +8,8 @@ https://<worker-domain>/github-app-manifest
 
 The builder computes the webhook URL, OAuth callback URL, setup URL, required permissions, and GitHub App manifest JSON. After GitHub redirects back with a manifest code, exchange that code from an operator shell and store the returned App ID, private key, webhook secret, client ID, and client secret as Worker secrets.
 
+Use `docs/assets/pr-captcha-github-app-icon.png` as the GitHub App logo.
+
 Create a GitHub App with these permissions:
 
 | Permission    | Access | Why                                                                    |

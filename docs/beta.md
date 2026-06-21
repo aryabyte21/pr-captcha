@@ -15,8 +15,8 @@ pr-captcha is currently intended for controlled beta testing.
 ## Beta limits
 
 - No service-level agreement.
-- No paid support.
-- No public Marketplace guarantee.
+- No dedicated support path.
+- No public listing guarantee.
 - Installations may be limited with `ALLOWED_INSTALLATION_IDS`.
 - Behavior, copy, docs, and APIs may change before launch.
 

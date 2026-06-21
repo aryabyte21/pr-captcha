@@ -2,7 +2,7 @@
 
 Last updated: June 19, 2026
 
-These beta terms are for maintainers testing pr-captcha before a public Marketplace launch.
+These beta terms are for maintainers testing the free hosted pr-captcha beta.
 
 ## Beta status
 
@@ -46,4 +46,4 @@ Use GitHub issues for beta support:
 https://github.com/aryabyte21/pr-captcha/issues
 ```
 
-A formal commercial terms page should be finalized before paid plans, enterprise use, or public Marketplace launch.
+A longer public terms page should be finalized before broader public traffic.
