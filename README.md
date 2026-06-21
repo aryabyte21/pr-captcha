@@ -393,7 +393,7 @@ universal_gate:
   rerun_after_verification: true
 ```
 
-`github_login` and `new_sha_requires_new_captcha` are enforced security invariants. False values are ignored so every passed gate is still bound to a GitHub-authenticated user and the exact PR head SHA. Set `solver_must_be_pr_author: false` only if trusted maintainers may verify on behalf of contributors.
+`github_login` and `new_sha_requires_new_captcha` are enforced security invariants. False values are ignored so every passed gate is still bound to a GitHub-authenticated user and the exact PR head SHA. Set `solver_must_be_pr_author: false` only if repository maintainers with write, maintain, or admin access may verify on behalf of contributors. Bot-authored pull requests can also be verified by maintainers because bot accounts cannot complete GitHub OAuth.
 
 `all_pull_requests` gates owner branches, member branches, forks, outside contributors, first-time contributors, and bots. Turn it off only when a repository intentionally wants a narrower policy.
 

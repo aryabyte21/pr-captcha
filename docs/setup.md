@@ -200,7 +200,7 @@ Default `hybrid` mode is not first-time forks only. With `all_pull_requests: tru
 
 `skip.authors` and `skip.labels` are matched case-insensitively.
 
-`github_login` and `new_sha_requires_new_captcha` are enforced even if set to `false`. Set `solver_must_be_pr_author: false` only if trusted maintainers may verify on behalf of contributors.
+`github_login` and `new_sha_requires_new_captcha` are enforced even if set to `false`. Set `solver_must_be_pr_author: false` only if repository maintainers with write, maintain, or admin access may verify on behalf of contributors. Bot-authored pull requests can also be verified by maintainers because bot accounts cannot complete GitHub OAuth.
 
 `required_check` always creates its check run. In `native_fork` and `hybrid`, pr-captcha keeps the PR comment enabled if checks are disabled so the verification link is still visible.
 

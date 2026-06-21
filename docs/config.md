@@ -74,4 +74,4 @@ For `native_fork` and `hybrid`, if checks are disabled and comments are disabled
 
 `github_login` and `new_sha_requires_new_captcha` are always enforced, even if repository config sets them to `false`. pr-captcha is intentionally GitHub-authenticated and exact-SHA-bound.
 
-`solver_must_be_pr_author` is configurable. Set it to `false` only when trusted maintainers may verify on behalf of contributors.
+`solver_must_be_pr_author` is configurable. Set it to `false` only when repository maintainers with write, maintain, or admin access may verify on behalf of contributors. Bot-authored pull requests can also be verified by maintainers because bot accounts cannot complete GitHub OAuth.

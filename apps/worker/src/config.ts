@@ -202,9 +202,9 @@ function configDiagnostics(
   if (!config.require.solver_must_be_pr_author) {
     diagnostics.push({
       level: "warning",
-      code: "broad_solver_policy",
+      code: "maintainer_solver_policy",
       message:
-        "require.solver_must_be_pr_author is false. Any logged-in GitHub user may verify a gated pull request.",
+        "require.solver_must_be_pr_author is false. Non-author solves require repository write, maintain, or admin permission.",
     });
   }
   if (!config.checks.create_required_check && !config.comment.enabled) {

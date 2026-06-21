@@ -49,6 +49,11 @@ type RepositoryMetadata = {
   defaultBranch: string;
 };
 
+export type RepositoryUserPermission = {
+  permission: "admin" | "write" | "read" | "none";
+  roleName: string | null;
+};
+
 export async function getInstallationToken(
   env: Env,
   installationId: string | number,
@@ -171,6 +176,35 @@ export async function getRepositoryMetadata(
     fullName: repository.full_name,
     defaultBranch: repository.default_branch,
   };
+}
+
+export async function getRepositoryUserPermission(
+  token: string,
+  owner: string,
+  repo: string,
+  username: string,
+): Promise<RepositoryUserPermission> {
+  try {
+    const permission = await githubRequest<unknown>(
+      token,
+      `/repos/${owner}/${repo}/collaborators/${encodeURIComponent(username)}/permission`,
+    );
+    if (!isRepositoryPermissionResponse(permission)) {
+      throw new Error("GitHub repository permission response is invalid");
+    }
+    return {
+      permission: permission.permission,
+      roleName: permission.role_name ?? null,
+    };
+  } catch (error) {
+    if (error instanceof GitHubApiError && error.status === 404) {
+      return {
+        permission: "none",
+        roleName: null,
+      };
+    }
+    throw error;
+  }
 }
 
 export async function createCheckRun(
@@ -629,6 +663,17 @@ function isPullRequestLabel(
   value: unknown,
 ): value is PullRequestResponse["labels"][number] {
   return isRecord(value) && typeof value.name === "string";
+}
+
+function isRepositoryPermissionResponse(value: unknown): value is {
+  permission: RepositoryUserPermission["permission"];
+  role_name?: string;
+} {
+  return (
+    isRecord(value) &&
+    ["admin", "write", "read", "none"].includes(String(value.permission)) &&
+    (value.role_name === undefined || typeof value.role_name === "string")
+  );
 }
 
 function isPositiveInteger(value: unknown): value is number {

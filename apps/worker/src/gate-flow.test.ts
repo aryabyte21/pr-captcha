@@ -583,6 +583,343 @@ comment:
     });
   });
 
+  it("rejects non-author verification from users without repository write access", async () => {
+    const token = await gateToken(pendingGate);
+    const gate = {
+      ...pendingGate,
+      gate_token_hash: await sha256(token),
+      gate_nonce_hash: await sha256("nonce"),
+    };
+    const db = gateFlowDb(gate);
+    const env = await envWith(db);
+    const requests: Array<{ method: string; url: URL }> = [];
+
+    vi.stubGlobal(
+      "fetch",
+      async (input: RequestInfo | URL, init?: RequestInit) => {
+        const url = new URL(String(input));
+        const method = init?.method ?? "GET";
+        requests.push({ method, url });
+
+        if (url.hostname === "challenges.cloudflare.com") {
+          return Response.json({ success: true });
+        }
+        if (
+          url.pathname === "/app/installations/123/access_tokens" &&
+          method === "POST"
+        ) {
+          return Response.json({ token: "installation-token" });
+        }
+        if (
+          url.pathname === "/repos/octo-org/awesome-repo/pulls/184" &&
+          method === "GET"
+        ) {
+          return Response.json(pullRequestFor(gate));
+        }
+        if (
+          url.pathname ===
+            "/repos/octo-org/awesome-repo/contents/.github/pr-captcha.yml" &&
+          method === "GET"
+        ) {
+          return Response.json({
+            encoding: "base64",
+            content: btoa(`mode: required_check
+require:
+  solver_must_be_pr_author: false
+comment:
+  enabled: false
+`),
+          });
+        }
+        if (
+          url.pathname ===
+            "/repos/octo-org/awesome-repo/collaborators/random-user/permission" &&
+          method === "GET"
+        ) {
+          return Response.json({
+            permission: "read",
+            role_name: "read",
+          });
+        }
+
+        throw new Error(`Unexpected request: ${method} ${url.href}`);
+      },
+    );
+
+    const session = await sessionCookie("random-user");
+    const gateResponse = await app.request(
+      `/gate/${gate.id}?token=${encodeURIComponent(token)}`,
+      {
+        headers: {
+          cookie: session,
+        },
+      },
+      env,
+    );
+
+    expect(gateResponse.status).toBe(200);
+    const csrfToken = csrfFrom(await gateResponse.text());
+    const solveResponse = await app.request(
+      `/gate/${gate.id}`,
+      {
+        method: "POST",
+        headers: {
+          "content-type": "application/x-www-form-urlencoded",
+          cookie: session,
+          "cf-connecting-ip": "203.0.113.10",
+        },
+        body: new URLSearchParams({
+          token,
+          csrf_token: csrfToken,
+          "cf-turnstile-response": "captcha-token",
+        }),
+      },
+      env,
+    );
+
+    expect(solveResponse.status).toBe(403);
+    await expect(solveResponse.text()).resolves.toContain(
+      "PR author or a repository maintainer",
+    );
+    expect(db.gates.get(gate.id)).toMatchObject({
+      status: "pending",
+      gate_nonce_hash: await sha256("nonce"),
+    });
+    expect(db.verifications.size).toBe(0);
+    expect(
+      requests.some(
+        (request) =>
+          request.url.pathname === "/repos/octo-org/awesome-repo/check-runs",
+      ),
+    ).toBe(false);
+    expect(db.auditRows).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          event: "gate.denied",
+          actor_login: "random-user",
+        }),
+      ]),
+    );
+  });
+
+  it("allows a repository maintainer to verify when maintainer override is configured", async () => {
+    const token = await gateToken(pendingGate);
+    const gate = {
+      ...pendingGate,
+      gate_token_hash: await sha256(token),
+      gate_nonce_hash: await sha256("nonce"),
+    };
+    const db = gateFlowDb(gate);
+    const env = await envWith(db);
+
+    vi.stubGlobal(
+      "fetch",
+      async (input: RequestInfo | URL, init?: RequestInit) => {
+        const url = new URL(String(input));
+        const method = init?.method ?? "GET";
+
+        if (url.hostname === "challenges.cloudflare.com") {
+          return Response.json({ success: true });
+        }
+        if (
+          url.pathname === "/app/installations/123/access_tokens" &&
+          method === "POST"
+        ) {
+          return Response.json({ token: "installation-token" });
+        }
+        if (
+          url.pathname === "/repos/octo-org/awesome-repo/pulls/184" &&
+          method === "GET"
+        ) {
+          return Response.json(pullRequestFor(gate));
+        }
+        if (
+          url.pathname ===
+            "/repos/octo-org/awesome-repo/contents/.github/pr-captcha.yml" &&
+          method === "GET"
+        ) {
+          return Response.json({
+            encoding: "base64",
+            content: btoa(`mode: required_check
+require:
+  solver_must_be_pr_author: false
+comment:
+  enabled: false
+`),
+          });
+        }
+        if (
+          url.pathname ===
+            "/repos/octo-org/awesome-repo/collaborators/maintainer/permission" &&
+          method === "GET"
+        ) {
+          return Response.json({
+            permission: "write",
+            role_name: "maintain",
+          });
+        }
+        if (
+          url.pathname === "/repos/octo-org/awesome-repo/check-runs" &&
+          method === "POST"
+        ) {
+          return Response.json({ id: 987 });
+        }
+
+        throw new Error(`Unexpected request: ${method} ${url.href}`);
+      },
+    );
+
+    const session = await sessionCookie("maintainer");
+    const gateResponse = await app.request(
+      `/gate/${gate.id}?token=${encodeURIComponent(token)}`,
+      {
+        headers: {
+          cookie: session,
+        },
+      },
+      env,
+    );
+
+    expect(gateResponse.status).toBe(200);
+    const csrfToken = csrfFrom(await gateResponse.text());
+    const solveResponse = await app.request(
+      `/gate/${gate.id}`,
+      {
+        method: "POST",
+        headers: {
+          "content-type": "application/x-www-form-urlencoded",
+          cookie: session,
+          "cf-connecting-ip": "203.0.113.10",
+        },
+        body: new URLSearchParams({
+          token,
+          csrf_token: csrfToken,
+          "cf-turnstile-response": "captcha-token",
+        }),
+      },
+      env,
+    );
+
+    expect(solveResponse.status).toBe(200);
+    await expect(solveResponse.text()).resolves.toContain("Human check passed");
+    expect(db.gates.get(gate.id)).toMatchObject({
+      status: "verified",
+      gate_nonce_hash: null,
+      check_run_id: 987,
+    });
+    expect(db.verifications.get(verificationKey(gate))).toMatchObject({
+      solver_login: "maintainer",
+    });
+  });
+
+  it("allows a repository maintainer to verify bot-authored pull requests", async () => {
+    const botGate = {
+      ...pendingGate,
+      pr_author: "dependabot[bot]",
+    };
+    const token = await gateToken(botGate);
+    const gate = {
+      ...botGate,
+      gate_token_hash: await sha256(token),
+      gate_nonce_hash: await sha256("nonce"),
+    };
+    const db = gateFlowDb(gate);
+    const env = await envWith(db);
+
+    vi.stubGlobal(
+      "fetch",
+      async (input: RequestInfo | URL, init?: RequestInit) => {
+        const url = new URL(String(input));
+        const method = init?.method ?? "GET";
+
+        if (url.hostname === "challenges.cloudflare.com") {
+          return Response.json({ success: true });
+        }
+        if (
+          url.pathname === "/app/installations/123/access_tokens" &&
+          method === "POST"
+        ) {
+          return Response.json({ token: "installation-token" });
+        }
+        if (
+          url.pathname === "/repos/octo-org/awesome-repo/pulls/184" &&
+          method === "GET"
+        ) {
+          return Response.json(pullRequestFor(gate, { userType: "Bot" }));
+        }
+        if (
+          url.pathname ===
+            "/repos/octo-org/awesome-repo/contents/.github/pr-captcha.yml" &&
+          method === "GET"
+        ) {
+          return Response.json({
+            encoding: "base64",
+            content: btoa(`mode: required_check
+comment:
+  enabled: false
+`),
+          });
+        }
+        if (
+          url.pathname ===
+            "/repos/octo-org/awesome-repo/collaborators/maintainer/permission" &&
+          method === "GET"
+        ) {
+          return Response.json({
+            permission: "admin",
+            role_name: "admin",
+          });
+        }
+        if (
+          url.pathname === "/repos/octo-org/awesome-repo/check-runs" &&
+          method === "POST"
+        ) {
+          return Response.json({ id: 987 });
+        }
+
+        throw new Error(`Unexpected request: ${method} ${url.href}`);
+      },
+    );
+
+    const session = await sessionCookie("maintainer");
+    const gateResponse = await app.request(
+      `/gate/${gate.id}?token=${encodeURIComponent(token)}`,
+      {
+        headers: {
+          cookie: session,
+        },
+      },
+      env,
+    );
+
+    expect(gateResponse.status).toBe(200);
+    const csrfToken = csrfFrom(await gateResponse.text());
+    const solveResponse = await app.request(
+      `/gate/${gate.id}`,
+      {
+        method: "POST",
+        headers: {
+          "content-type": "application/x-www-form-urlencoded",
+          cookie: session,
+          "cf-connecting-ip": "203.0.113.10",
+        },
+        body: new URLSearchParams({
+          token,
+          csrf_token: csrfToken,
+          "cf-turnstile-response": "captcha-token",
+        }),
+      },
+      env,
+    );
+
+    expect(solveResponse.status).toBe(200);
+    await expect(solveResponse.text()).resolves.toContain("Human check passed");
+    expect(db.verifications.get(verificationKey(gate))).toMatchObject({
+      pr_author: "dependabot[bot]",
+      solver_login: "maintainer",
+    });
+  });
+
   it("rejects failed CAPTCHA submissions before calling GitHub", async () => {
     const token = await gateToken(pendingGate);
     const gate = {
@@ -1135,7 +1472,7 @@ function nullableNumber(value: unknown): number | null {
   return value === null ? null : Number(value);
 }
 
-function pullRequestFor(gate: GateRecord) {
+function pullRequestFor(gate: GateRecord, options: { userType?: string } = {}) {
   return {
     number: gate.pr_number,
     draft: false,
@@ -1143,7 +1480,7 @@ function pullRequestFor(gate: GateRecord) {
     author_association: "FIRST_TIME_CONTRIBUTOR",
     user: {
       login: gate.pr_author,
-      type: "User",
+      type: options.userType ?? "User",
     },
     head: {
       sha: gate.head_sha,

@@ -2558,7 +2558,7 @@ export function renderSetupWizardPage(baseUrl?: string): string {
           <fieldset class="wizard-group">
             <legend>Solver and surfaces</legend>
             <label class="wizard-choice compact"><input type="checkbox" name="require_pr_author" checked /><span><strong>Require PR author</strong><small>Only the contributor can solve.</small></span></label>
-            <label class="wizard-choice compact"><input type="checkbox" name="maintainer_override" /><span><strong>Allow non-author solve</strong><small>Any logged-in GitHub user may verify.</small></span></label>
+            <label class="wizard-choice compact"><input type="checkbox" name="maintainer_override" /><span><strong>Allow non-author solve</strong><small>Repository maintainers may verify.</small></span></label>
             <label class="wizard-choice compact"><input type="checkbox" name="create_required_check" checked /><span><strong>Create required check</strong><small>Publish pr-captcha/human.</small></span></label>
             <label class="wizard-choice compact"><input type="checkbox" name="post_comment" checked /><span><strong>Post PR comment</strong><small>Contributor sees the verification link.</small></span></label>
             <label class="wizard-choice compact"><input type="checkbox" name="rerun_after_verification" checked /><span><strong>Rerun failed workflow gate</strong><small>Useful for universal mode.</small></span></label>
@@ -5125,6 +5125,7 @@ function launchPageScript(): string {
       }
       function renderReadiness(data) {
         var missing = Array.isArray(data.missing) ? data.missing : [];
+        var warnings = Array.isArray(data.warnings) ? data.warnings : [];
         var items = [
           {
             level: data.database ? "info" : "error",
@@ -5147,8 +5148,17 @@ function launchPageScript(): string {
             body: "All required production secrets are present."
           });
         }
-        if (data.ok) {
-          renderReadinessState("ready", "Worker ready", "D1 and required secrets are present on this Worker.", items);
+        warnings.forEach(function (warning) {
+          items.push({
+            level: "warning",
+            title: warning.code || "warning",
+            body: warning.message || "Review this production warning."
+          });
+        });
+        if (data.production_ready) {
+          renderReadinessState("ready", "Production ready", "D1, required secrets, and production checks are passing.", items);
+        } else if (data.ok) {
+          renderReadinessState("warn", "Worker healthy with warnings", "The Worker can serve traffic, but production warnings remain.", items);
         } else {
           renderReadinessState("warn", "Worker not ready", "Fix the listed production gaps before branch protection depends on pr-captcha.", items);
         }
@@ -6685,21 +6695,34 @@ function statusPageScript(): string {
             var health = results[0];
             var readiness = results[1];
             var missing = Array.isArray(readiness.payload.missing) ? readiness.payload.missing : [];
+            var warnings = Array.isArray(readiness.payload.warnings) ? readiness.payload.warnings : [];
             var databaseOk = readiness.payload.database === true;
             var configOk = missing.length === 0;
+            var productionReady = readiness.payload.production_ready === true;
             var workerState = health.ok ? "ready" : "error";
-            var readinessState = readiness.ok ? "ready" : health.ok ? "warn" : "error";
+            var readinessState = readiness.ok ? (productionReady ? "ready" : "warn") : health.ok ? "warn" : "error";
             var databaseState = databaseOk ? "ready" : "error";
-            var configState = configOk ? "ready" : "warn";
+            var configState = configOk && !warnings.length ? "ready" : "warn";
             setTile("worker", workerState, health.ok ? "online" : "failing");
-            setTile("ready", readinessState, readiness.ok ? "ready" : "not ready");
+            setTile("ready", readinessState, productionReady ? "production ready" : readiness.ok ? "warnings" : "not ready");
             setTile("database", databaseState, databaseOk ? "queryable" : "unavailable");
-            setTile("config", configState, configOk ? "complete" : "missing");
-            if (readiness.ok) {
+            setTile("config", configState, configOk && !warnings.length ? "complete" : configOk ? "warnings" : "missing");
+            if (productionReady) {
               setOverall("ready", "Service ready", "Worker, D1, and required configuration checks are passing.");
               renderActions([
                 { level: "info", title: "Ready", body: "Run repository diagnostics before installing branch protection." },
                 { level: "info", title: "Install path", body: "Use the setup wizard, then require pr-captcha/human where appropriate." }
+              ]);
+            } else if (readiness.ok) {
+              setOverall("warn", "Production warnings", "The Worker responds and D1 is queryable, but production warnings remain.");
+              renderActions(warnings.length ? warnings.map(function (warning) {
+                return {
+                  level: "warning",
+                  title: warning.code || "warning",
+                  body: warning.message || "Review this production warning."
+                };
+              }) : [
+                { level: "warning", title: "Inspect readiness", body: "Review /health/ready before requiring the check." }
               ]);
             } else if (health.ok) {
               setOverall("warn", "Setup incomplete", "The Worker responds, but readiness checks are not all passing.");
@@ -6725,6 +6748,8 @@ function statusPageScript(): string {
               ["Readiness", checkedLabel(readiness)],
               ["D1 database", databaseOk ? "queryable" : "not queryable"],
               ["Configuration", configOk ? "all required names present" : "missing: " + missing.join(", ")],
+              ["Production ready", productionReady ? "yes" : "no"],
+              ["Warnings", warnings.length ? warnings.map(function (warning) { return warning.code || "warning"; }).join(", ") : "none"],
               ["Service", readiness.payload.service || health.payload.service || "pr-captcha"]
             ]);
             raw.textContent = JSON.stringify({ health: health, readiness: readiness }, null, 2);

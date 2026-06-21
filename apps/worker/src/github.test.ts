@@ -8,6 +8,7 @@ import {
   getInstallationToken,
   getPullRequest,
   getRepositoryMetadata,
+  getRepositoryUserPermission,
   rerunFailedWorkflowRunsForSha,
   updateCheckRun,
   updateIssueComment,
@@ -278,6 +279,63 @@ describe("GitHub API helpers", () => {
     expect(requests.map((request) => request.url.pathname)).toEqual([
       "/repos/octo-org/awesome-repo",
     ]);
+  });
+
+  it("reads repository user permission for maintainer overrides", async () => {
+    const requests: Array<{ method: string; url: URL }> = [];
+    vi.stubGlobal(
+      "fetch",
+      async (input: RequestInfo | URL, init?: RequestInit) => {
+        const url = new URL(String(input));
+        const method = init?.method ?? "GET";
+        requests.push({ method, url });
+
+        if (
+          url.pathname ===
+          "/repos/octo-org/awesome-repo/collaborators/maintainer/permission"
+        ) {
+          return Response.json({
+            permission: "write",
+            role_name: "maintain",
+          });
+        }
+
+        throw new Error(`Unexpected request: ${method} ${url.pathname}`);
+      },
+    );
+
+    await expect(
+      getRepositoryUserPermission(
+        "token",
+        "octo-org",
+        "awesome-repo",
+        "maintainer",
+      ),
+    ).resolves.toEqual({
+      permission: "write",
+      roleName: "maintain",
+    });
+    expect(requests.map((request) => request.url.pathname)).toEqual([
+      "/repos/octo-org/awesome-repo/collaborators/maintainer/permission",
+    ]);
+  });
+
+  it("treats missing repository user permission as none", async () => {
+    vi.stubGlobal("fetch", async () =>
+      Response.json({ message: "Not Found" }, { status: 404 }),
+    );
+
+    await expect(
+      getRepositoryUserPermission(
+        "token",
+        "octo-org",
+        "awesome-repo",
+        "stranger",
+      ),
+    ).resolves.toEqual({
+      permission: "none",
+      roleName: null,
+    });
   });
 
   it("times out stalled GitHub API requests", async () => {

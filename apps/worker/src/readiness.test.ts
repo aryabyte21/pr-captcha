@@ -9,9 +9,11 @@ describe("readiness health check", () => {
     expect(response.status).toBe(200);
     await expect(response.json()).resolves.toEqual({
       ok: true,
+      production_ready: true,
       service: "pr-captcha",
       missing: [],
       database: true,
+      warnings: [],
     });
   });
 
@@ -29,9 +31,11 @@ describe("readiness health check", () => {
     expect(response.status).toBe(503);
     await expect(response.json()).resolves.toEqual({
       ok: false,
+      production_ready: false,
       service: "pr-captcha",
       missing: ["GITHUB_PRIVATE_KEY", "SESSION_SECRET"],
       database: true,
+      warnings: [],
     });
   });
 
@@ -41,9 +45,11 @@ describe("readiness health check", () => {
     expect(response.status).toBe(503);
     await expect(response.json()).resolves.toEqual({
       ok: false,
+      production_ready: false,
       service: "pr-captcha",
       missing: [],
       database: false,
+      warnings: [],
     });
   });
 
@@ -60,9 +66,39 @@ describe("readiness health check", () => {
     expect(response.status).toBe(503);
     await expect(response.json()).resolves.toEqual({
       ok: false,
+      production_ready: false,
       service: "pr-captcha",
       missing: ["APP_BASE_URL"],
       database: true,
+      warnings: [],
+    });
+  });
+
+  it("keeps staging ready while warning about Turnstile test keys", async () => {
+    const response = await app.request(
+      "/health/ready",
+      {},
+      {
+        ...readyEnv(),
+        TURNSTILE_SITE_KEY: "1x00000000000000000000AA",
+        TURNSTILE_SECRET_KEY: "1x0000000000000000000000000000000AA",
+      },
+    );
+
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toEqual({
+      ok: true,
+      production_ready: false,
+      service: "pr-captcha",
+      missing: [],
+      database: true,
+      warnings: [
+        {
+          code: "turnstile_test_keys",
+          message:
+            "Cloudflare Turnstile test keys are configured. Replace them before production enforcement.",
+        },
+      ],
     });
   });
 
@@ -80,9 +116,11 @@ describe("readiness health check", () => {
     expect(response.status).toBe(200);
     await expect(response.json()).resolves.toEqual({
       ok: false,
+      production_ready: false,
       service: "pr-captcha",
       missing: ["GITHUB_PRIVATE_KEY", "SESSION_SECRET"],
       database: true,
+      warnings: [],
     });
   });
 });

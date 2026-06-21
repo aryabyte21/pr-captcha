@@ -49,6 +49,7 @@ import {
   getPullRequest,
   getRepositoryFile,
   getRepositoryMetadata,
+  getRepositoryUserPermission,
   rerunFailedWorkflowRunsForSha,
   updateIssueComment,
   updateCheckRun,
@@ -101,6 +102,7 @@ import type {
   GateRecord,
   GateTokenPayload,
   PullRequestWebhook,
+  WebhookPullRequest,
 } from "./types";
 
 export const app = new Hono<{ Bindings: Env; Variables: AppVariables }>();
@@ -170,6 +172,18 @@ const publicQueueRepos = [
 
 const publicCountFetchTimeoutMs = 2500;
 const configPreviewMaxBytes = 32 * 1024;
+const turnstileTestSiteKeys = new Set([
+  "1x00000000000000000000AA",
+  "2x00000000000000000000AB",
+  "1x00000000000000000000BB",
+  "2x00000000000000000000BB",
+  "3x00000000000000000000FF",
+]);
+const turnstileTestSecretKeys = new Set([
+  "1x0000000000000000000000000000000AA",
+  "2x0000000000000000000000000000000AA",
+  "3x0000000000000000000000000000000AA",
+]);
 
 type RateLimitAuditContext = Omit<AuditLogInput, "event" | "details"> & {
   details: Record<string, unknown>;
@@ -528,11 +542,14 @@ app.get("/health", (c) =>
 
 async function readinessPayload(env: Env): Promise<{
   ok: boolean;
+  production_ready: boolean;
   service: "pr-captcha";
   missing: string[];
   database: boolean;
+  warnings: Array<{ code: string; message: string }>;
 }> {
   const missing = missingRequiredEnv(env);
+  const warnings = readinessWarnings(env);
   let database = false;
   try {
     if (env.DB) {
@@ -545,9 +562,11 @@ async function readinessPayload(env: Env): Promise<{
   const ok = missing.length === 0 && database;
   return {
     ok,
+    production_ready: ok && warnings.length === 0,
     service: "pr-captcha",
     missing,
     database,
+    warnings,
   };
 }
 
@@ -1276,33 +1295,6 @@ app.post("/gate/:id", async (c) => {
     pullRequest.base.ref,
   );
 
-  if (
-    config.require.solver_must_be_pr_author &&
-    session.login !== gate.pr_author
-  ) {
-    await createAuditLog(
-      c.env.DB,
-      gateAuditInput(gate, "gate.denied", {
-        actorLogin: session.login,
-        details: {
-          reason: "solver_not_pr_author",
-          required_login: gate.pr_author,
-        },
-      }),
-    );
-    return c.html(
-      renderGatePage({
-        gate,
-        token,
-        csrfToken,
-        session,
-        turnstileSiteKey: c.env.TURNSTILE_SITE_KEY,
-        error: `This gate must be solved by ${gate.pr_author}. You are logged in as ${session.login}.`,
-      }),
-      403,
-    );
-  }
-
   if (pullRequest.head.sha !== gate.head_sha) {
     await createAuditLog(
       c.env.DB,
@@ -1325,6 +1317,40 @@ app.post("/gate/:id", async (c) => {
           "This pull request has a newer commit. Use the newest pr-captcha link on the PR.",
       }),
       409,
+    );
+  }
+
+  const solverAuthorization = await authorizeGateSolver({
+    config,
+    gate,
+    installationToken,
+    pullRequest,
+    session,
+  });
+  if (!solverAuthorization.ok) {
+    await createAuditLog(
+      c.env.DB,
+      gateAuditInput(gate, "gate.denied", {
+        actorLogin: session.login,
+        details: {
+          reason: solverAuthorization.reason,
+          required_login: gate.pr_author,
+          pr_author_type: pullRequest.user.type,
+          solver_permission: solverAuthorization.permission,
+          solver_role_name: solverAuthorization.roleName,
+        },
+      }),
+    );
+    return c.html(
+      renderGatePage({
+        gate,
+        token,
+        csrfToken,
+        session,
+        turnstileSiteKey: c.env.TURNSTILE_SITE_KEY,
+        error: solverAuthorization.message,
+      }),
+      403,
     );
   }
 
@@ -1365,6 +1391,9 @@ app.post("/gate/:id", async (c) => {
       actorLogin: session.login,
       details: {
         captcha_provider: "cloudflare_turnstile",
+        solver_authorization: solverAuthorization.reason,
+        solver_permission: solverAuthorization.permission,
+        solver_role_name: solverAuthorization.roleName,
       },
     }),
   );
@@ -1591,6 +1620,98 @@ async function loadConfig(
     ref,
   );
   return parseRepoConfig(raw);
+}
+
+type GateSolverAuthorization =
+  | {
+      ok: true;
+      reason: "pr_author" | "bot_maintainer_override" | "maintainer_override";
+      permission: "admin" | "write" | null;
+      roleName: string | null;
+    }
+  | {
+      ok: false;
+      reason:
+        | "bot_solver_not_maintainer"
+        | "solver_not_pr_author"
+        | "solver_not_pr_author_or_maintainer";
+      message: string;
+      permission: "admin" | "write" | "read" | "none" | null;
+      roleName: string | null;
+    };
+
+async function authorizeGateSolver(input: {
+  config: CiCaptchaConfig;
+  gate: GateRecord;
+  installationToken: string;
+  pullRequest: WebhookPullRequest;
+  session: SessionUser;
+}): Promise<GateSolverAuthorization> {
+  if (input.session.login === input.gate.pr_author) {
+    return {
+      ok: true,
+      reason: "pr_author",
+      permission: null,
+      roleName: null,
+    };
+  }
+
+  const botAuthored = isBotPullRequest(input.pullRequest);
+  if (input.config.require.solver_must_be_pr_author && !botAuthored) {
+    return {
+      ok: false,
+      reason: "solver_not_pr_author",
+      message: `This gate must be solved by ${input.gate.pr_author}. You are logged in as ${input.session.login}.`,
+      permission: null,
+      roleName: null,
+    };
+  }
+
+  const permission = await getRepositoryUserPermission(
+    input.installationToken,
+    input.gate.owner,
+    input.gate.repo,
+    input.session.login,
+  );
+  if (canMaintainRepository(permission)) {
+    return {
+      ok: true,
+      reason: botAuthored ? "bot_maintainer_override" : "maintainer_override",
+      permission: permission.permission,
+      roleName: permission.roleName,
+    };
+  }
+
+  if (botAuthored) {
+    return {
+      ok: false,
+      reason: "bot_solver_not_maintainer",
+      message: `Bot-authored pull requests must be verified by a repository maintainer. You are logged in as ${input.session.login}.`,
+      permission: permission.permission,
+      roleName: permission.roleName,
+    };
+  }
+
+  return {
+    ok: false,
+    reason: "solver_not_pr_author_or_maintainer",
+    message: `This gate must be solved by the PR author or a repository maintainer. You are logged in as ${input.session.login}.`,
+    permission: permission.permission,
+    roleName: permission.roleName,
+  };
+}
+
+function isBotPullRequest(pullRequest: WebhookPullRequest): boolean {
+  return (
+    pullRequest.user.type === "Bot" || pullRequest.user.login.endsWith("[bot]")
+  );
+}
+
+function canMaintainRepository(permission: {
+  permission: "admin" | "write" | "read" | "none";
+  roleName: string | null;
+}): permission is { permission: "admin" | "write"; roleName: string | null } {
+  return permission.permission === "admin" || permission.permission === "write";
 }
 
 async function getOpenPullRequestCount(repo: string): Promise<number | null> {
@@ -2607,6 +2728,23 @@ function missingRequiredEnv(env: Env): string[] {
     missing.push("APP_BASE_URL");
   }
   return missing;
+}
+
+function readinessWarnings(env: Env): Array<{ code: string; message: string }> {
+  const warnings: Array<{ code: string; message: string }> = [];
+  const siteKey = env.TURNSTILE_SITE_KEY?.trim() ?? "";
+  const secretKey = env.TURNSTILE_SECRET_KEY?.trim() ?? "";
+  if (
+    turnstileTestSiteKeys.has(siteKey) ||
+    turnstileTestSecretKeys.has(secretKey)
+  ) {
+    warnings.push({
+      code: "turnstile_test_keys",
+      message:
+        "Cloudflare Turnstile test keys are configured. Replace them before production enforcement.",
+    });
+  }
+  return warnings;
 }
 
 function validAppBaseUrl(env: Pick<Env, "APP_BASE_URL">): boolean {

@@ -484,7 +484,7 @@ require:
     );
   });
 
-  it("warns when verification is not limited to the PR author", () => {
+  it("warns when verification may use maintainer override", () => {
     const inspection = inspectRepoConfig(`
 require:
   solver_must_be_pr_author: false
@@ -493,7 +493,7 @@ require:
     expect(inspection.diagnostics).toContainEqual(
       expect.objectContaining({
         level: "warning",
-        code: "broad_solver_policy",
+        code: "maintainer_solver_policy",
       }),
     );
   });
