@@ -1,7 +1,7 @@
 <h1 align="center">pr-captcha</h1>
 
 <p align="center">
-  Human-origin checks for GitHub pull requests.
+  Make AI slop and PR spam knock before CI.
 </p>
 
 <p align="center">
@@ -12,16 +12,22 @@
 </p>
 
 <p align="center">
-  <strong>Make AI slop prove it has a human.</strong>
+  <strong>Make AI slop prove a human is present.</strong>
 </p>
 
-`pr-captcha` is a GitHub App for public repositories that want suspicious pull requests to knock before the repo spends maintainer attention.
+`pr-captcha` is a free hosted GitHub App for public repositories that want AI slop and PR spam to knock before the repo spends maintainer attention.
 
 It gates pull requests until a GitHub-authenticated human verifies the exact head SHA. By default that includes owner branches, member branches, forks, first-time contributors, outside authors, and bot PR workflows. The Worker never checks out the patch. It reads metadata, asks for a browser CAPTCHA, and publishes a SHA-bound human-origin signal. For fork workflows that GitHub already holds, it can also release CI after verification.
 
 ## Why this exists
 
-Open source PRs are real work queues. Mature projects already have reviews, labels, branch protection, and workflow approvals. The weak point is earlier: AI slop, bot accounts, and drive-by PRs can enter the queue, create status noise, request labels, and cause the tiny sigh before a maintainer decides whether to even open the diff.
+Open source PRs are real work queues. Mature projects already have reviews, labels, branch protection, and workflow approvals. The weak point is earlier: AI slop, bot accounts, and drive-by PRs can enter the queue, create status noise, request labels, and cause the tiny sigh before a maintainer decides whether to even open the diff. Greptile's OpenClaw writeup is the punchline in chart form: when PRs get cheap enough to send, maintainers inherit the inbox problem.
+
+Hosted launch page:
+
+```txt
+https://aryabyte21.github.io/pr-captcha/
+```
 
 These are public PR pages from busy repositories, captured on June 14, 2026:
 
@@ -102,7 +108,7 @@ https://<worker-domain>/gate-trace
   </tr>
   <tr>
     <td><strong>Protects</strong></td>
-    <td>Maintainer attention, required checks, and expensive automation where configured.</td>
+    <td>Maintainer attention, required checks, and heavy automation where configured.</td>
   </tr>
   <tr>
     <td><strong>Gates with</strong></td>
@@ -128,7 +134,7 @@ https://<worker-domain>/gate-trace
     </td>
     <td width="33%">
       <strong>Workflow gate</strong><br>
-      One tiny job can block expensive jobs for same-repo and private PRs.
+      One tiny job can block heavy jobs for same-repo and private PRs.
     </td>
   </tr>
 </table>
@@ -145,7 +151,7 @@ The contract test simulates a signed GitHub pull request webhook, creates the pe
 
 ## Current Status
 
-This repository is an MVP codebase. The product path is implemented, but it is not deployed as a live production service yet.
+This repository is an MVP codebase with a live GitHub Pages launch page and a free hosted Worker path for beta installs. The public front door is deployed at `https://aryabyte21.github.io/pr-captcha/`.
 
 <table>
   <tr>
@@ -280,17 +286,17 @@ The privileged app treats pull request content as metadata. It publishes a human
   <tr>
     <td>Native fork release</td>
     <td>Public repositories where GitHub already holds fork workflow runs.</td>
-    <td>All runner minutes before verification.</td>
+    <td>Held fork jobs before verification.</td>
   </tr>
   <tr>
     <td>Workflow gate</td>
     <td>Same-repo PRs, private repositories, or workflows that need a portable gate.</td>
-    <td>Expensive jobs after the tiny gate job.</td>
+    <td>Heavy jobs after the tiny gate job.</td>
   </tr>
   <tr>
     <td>Hybrid</td>
     <td>Most serious repositories.</td>
-    <td>Queue hygiene, CI minutes, merge safety, and clear contributor UX.</td>
+    <td>Queue hygiene, merge safety, and clear contributor UX.</td>
   </tr>
 </table>
 

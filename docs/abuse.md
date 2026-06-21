@@ -46,4 +46,4 @@ Operators should:
 
 ## Public launch requirement
 
-A dedicated abuse reporting mailbox or form is required before public Marketplace launch.
+A dedicated abuse reporting mailbox or form is required before broader public traffic.

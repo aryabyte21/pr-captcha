@@ -36,7 +36,7 @@ GitHub holds fork PR workflow runs until they are approved. pr-captcha becomes t
 
 Benefits:
 
-- Prevents expensive runner jobs from starting.
+- Prevents held fork jobs from starting before verification.
 - Uses GitHub's native hold queue.
 - Works without editing workflow YAML.
 
@@ -49,12 +49,12 @@ Limitations:
 
 The Action checks whether pr-captcha already has a verification for the current PR and SHA.
 
-If no verification exists, it fails quickly and prints the verification URL. Expensive jobs depend on this gate job.
+If no verification exists, it fails quickly and prints the verification URL. Heavy jobs depend on this gate job.
 
 Benefits:
 
 - Works for same-repo PRs and private repositories.
-- Gives maintainers a single YAML integration for expensive workflows.
+- Gives maintainers a single YAML integration for heavy workflows.
 
 Limitations:
 

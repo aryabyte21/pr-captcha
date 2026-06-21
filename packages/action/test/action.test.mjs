@@ -35,7 +35,7 @@ test("fails pending pull requests with the verification URL", async () => {
   assert.equal(result.exitCode, 1);
   assert.deepEqual(result.logs, []);
   assert.deepEqual(result.errors, [
-    "::error::Human verification required before expensive CI can run: https://captcha.example.test/gate/gate-1?token=abc123",
+    "::error::Human verification required before heavy CI can run: https://captcha.example.test/gate/gate-1?token=abc123",
   ]);
 });
 

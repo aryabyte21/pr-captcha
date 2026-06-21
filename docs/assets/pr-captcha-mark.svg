@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="pr-captcha">
+  <rect width="512" height="512" rx="108" fill="#070B12"/>
+  <path fill="#FFFFFF" fill-rule="evenodd" d="M132 122h176c70 0 120 48 120 113s-50 113-120 113h-70v70H132V122Zm106 88v72h59c24 0 40-14 40-36s-16-36-40-36h-59Z"/>
+  <circle cx="380" cy="366" r="44" fill="#22C55E"/>
+</svg>

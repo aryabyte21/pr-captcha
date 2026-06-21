@@ -14,7 +14,7 @@ Use the launch cockpit to track production gates and copy deploy commands:
 https://<worker-domain>/launch
 ```
 
-Use the queue pressure calculator to estimate maintainer attention and CI minutes exposed by unverified PRs:
+Use the queue pressure calculator to estimate maintainer attention exposed by unverified PRs:
 
 ```txt
 https://<worker-domain>/queue-pressure
@@ -224,7 +224,7 @@ Choose the repository policy that requires approval for outside contributors.
 
 ## 8. Optional Workflow Gate
 
-Use this mode when expensive jobs should wait on the human-origin signal.
+Use this mode when heavy jobs should wait on the human-origin signal.
 The Action validates the status response schema and fails closed if the Worker returns a malformed status response.
 
 ```yaml

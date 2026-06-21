@@ -359,7 +359,7 @@ universal_gate:
     expect(pendingAction.logs).toEqual([]);
     expect(pendingAction.errors).toEqual([
       expect.stringContaining(
-        "Human verification required before expensive CI can run: https://captcha.example.test/gate/",
+        "Human verification required before heavy CI can run: https://captcha.example.test/gate/",
       ),
     ]);
 

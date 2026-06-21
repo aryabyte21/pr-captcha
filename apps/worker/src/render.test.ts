@@ -51,17 +51,16 @@ describe("rendering", () => {
   it("uses the AI slop landing headline", () => {
     const html = renderHome();
 
-    expect(html).toContain("Make AI slop prove it has a human.");
-    expect(html).toContain("One user. One commit. One human-origin signal.");
-    expect(html).toContain("Suspicious PRs should wait outside the queue.");
-    expect(html).toContain("Install in one maintainer pass");
+    expect(html).toContain("A tiny velvet rope for your PR queue.");
+    expect(html).toContain("One GitHub user. One commit SHA. No PR code run.");
+    expect(html).toContain("AI slop should wait outside the queue.");
+    expect(html).toContain("Install the gate in one pass");
     expect(html).toContain("Protect pr-captcha/human");
     expect(html).toContain("Copy workflow gate");
     expect(html).toContain("Watch demo");
-    expect(html).toContain("Open spam radar");
-    expect(html).toContain("Measure queue pressure");
-    expect(html).toContain("Scan a repo");
-    expect(html).toContain("gate.created");
+    expect(html).toContain("Install app");
+    expect(html).toContain("Exact head SHA");
+    expect(html).toContain("The gate is for attention, not taste policing.");
   });
 
   it("renders public PR count hydration with honest fallback labels", () => {
@@ -200,7 +199,7 @@ describe("rendering", () => {
       "kubernetes/kubernetes",
     );
 
-    expect(html).toContain("Scan a repo before spam hits CI");
+    expect(html).toContain("Would this repo benefit?");
     expect(html).toContain("/api/public/repo-evidence");
     expect(html).toContain("data-evidence-form");
     expect(html).toContain("data-evidence-link");
@@ -360,7 +359,7 @@ describe("rendering", () => {
       fork: "24",
       unknown: "9",
       labels: "7",
-      recommendation: "Require pr-captcha before expensive CI starts.",
+      recommendation: "Require pr-captcha before heavy CI starts.",
       theme: "light",
     });
 
@@ -416,7 +415,7 @@ describe("rendering", () => {
   it("renders the launch cockpit", () => {
     const html = renderLaunchPage("https://captcha.example.test");
 
-    expect(html).toContain("Launch pr-captcha without guessing");
+    expect(html).toContain("Make AI slop knock first.");
     expect(html).toContain("data-launch-form");
     expect(html).toContain("data-launch-commands");
     expect(html).toContain("npx wrangler d1 create pr-captcha");
@@ -429,11 +428,11 @@ describe("rendering", () => {
     expect(html).toContain("npx wrangler secret put TURNSTILE_SITE_KEY");
     expect(html).toContain("GitHub Pages");
     expect(html).toContain("Fork PR test");
-    expect(html).toContain("Ship readiness");
+    expect(html).toContain("Step 1");
     expect(html).toContain("data-launch-decision");
-    expect(html).toContain("Launch blockers");
+    expect(html).toContain("Before requiring the check");
     expect(html).toContain("data-launch-blocker-list");
-    expect(html).toContain("Fork PR proof lane");
+    expect(html).toContain("Test it without drama");
     expect(html).toContain("data-launch-proof-stage");
     expect(html).toContain("Live readiness");
     expect(html).toContain("data-launch-readiness-refresh");
@@ -456,8 +455,8 @@ describe("rendering", () => {
   it("renders the fork PR rehearsal console", () => {
     const html = renderForkPrRehearsalPage("https://captcha.example.test");
 
-    expect(html).toContain("Fork PR rehearsal");
-    expect(html).toContain("Prove the gate before branch protection");
+    expect(html).toContain("Run one harmless test PR.");
+    expect(html).toContain("Before the check becomes required");
     expect(html).toContain("data-rehearsal-form");
     expect(html).toContain("data-rehearsal-progress");
     expect(html).toContain("Worker URL");
@@ -481,8 +480,8 @@ describe("rendering", () => {
   it("renders the gate trace console", () => {
     const html = renderGateTracePage("https://captcha.example.test");
 
-    expect(html).toContain("Trace a PR gate from webhook to check");
-    expect(html).toContain("Replay the path before protecting a branch");
+    expect(html).toContain("Trace one receipt end to end.");
+    expect(html).toContain("Advanced debugging");
     expect(html).toContain("data-trace-form");
     expect(html).toContain("data-trace-progress");
     expect(html).toContain("Worker URL");
@@ -504,10 +503,8 @@ describe("rendering", () => {
   it("renders the setup wizard", () => {
     const html = renderSetupWizardPage("https://captcha.example.test");
 
-    expect(html).toContain("Setup wizard");
-    expect(html).toContain(
-      "Generate a repository policy from live PR evidence",
-    );
+    expect(html).toContain("Choose who has to knock.");
+    expect(html).toContain("Start simple");
     expect(html).toContain("data-wizard-repository");
     expect(html).toContain("data-wizard-scan");
     expect(html).toContain("data-wizard-evidence");
@@ -548,7 +545,7 @@ describe("rendering", () => {
   it("renders the public status page", () => {
     const html = renderStatusPage("https://captcha.example.test");
 
-    expect(html).toContain("Service status");
+    expect(html).toContain("Is the little gate awake?");
     expect(html).toContain("data-refresh-status");
     expect(html).toContain("/health/ready");
     expect(html).toContain('data-status-tile="worker"');

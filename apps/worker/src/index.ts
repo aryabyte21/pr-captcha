@@ -614,7 +614,7 @@ app.get("/api/public/spam-radar", async (c) => {
 });
 
 app.post("/api/public/config-preview", async (c) => {
-  const ipLimited = await rateLimitResponse(
+  const ipLimited = await bestEffortRateLimitResponse(
     c.env,
     `public-config-preview-ip:${clientIp(c.req.raw)}`,
     60,
@@ -2606,6 +2606,20 @@ async function rateLimitResponse(
       },
     },
   );
+}
+
+async function bestEffortRateLimitResponse(
+  env: Env,
+  rawKey: string,
+  limit: number,
+  windowSeconds: number,
+  context: RateLimitAuditContext,
+): Promise<Response | null> {
+  try {
+    return await rateLimitResponse(env, rawKey, limit, windowSeconds, context);
+  } catch {
+    return null;
+  }
 }
 
 function gateRateLimitContext(

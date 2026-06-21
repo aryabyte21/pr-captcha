@@ -2,7 +2,7 @@
   "name": "pr-captcha",
   "version": "0.1.0",
   "private": true,
-  "description": "Human-origin checks for GitHub pull requests.",
+  "description": "Make AI slop and PR spam knock before CI.",
   "type": "module",
   "scripts": {
     "build": "npm run build --workspaces",

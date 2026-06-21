@@ -8,15 +8,15 @@ pr-captcha is a GitHub App and Cloudflare Worker that adds a human-origin intake
 
 ## Current launch posture
 
-| Area                | Status         | Notes                                                                                                                             |
-| ------------------- | -------------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| Security model      | Ready for beta | SHA binding, signed gate URLs, CSRF protection, nonce tracking, webhook dedupe, rate limits, and audit logs are implemented.      |
-| Privacy policy      | Ready for beta | Metadata processing is documented in [privacy.md](privacy.md).                                                                    |
-| Terms               | Beta           | Beta terms are documented in [terms.md](terms.md). A formal commercial agreement is still required before paid or enterprise use. |
-| Abuse reporting     | Ready for beta | Abuse paths are documented in [abuse.md](abuse.md).                                                                               |
-| Incident process    | Ready for beta | Triage and disclosure process is documented in [incident.md](incident.md).                                                        |
-| Support path        | Beta           | GitHub issues are the beta support path. A dedicated support mailbox is required before public launch.                            |
-| Production accounts | Blocked        | Cloudflare, GitHub App, OAuth, Turnstile, and D1 production credentials are still required for a live public service.             |
+| Area                | Status         | Notes                                                                                                                        |
+| ------------------- | -------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| Security model      | Ready for beta | SHA binding, signed gate URLs, CSRF protection, nonce tracking, webhook dedupe, rate limits, and audit logs are implemented. |
+| Privacy policy      | Ready for beta | Metadata processing is documented in [privacy.md](privacy.md).                                                               |
+| Terms               | Beta           | Beta terms are documented in [terms.md](terms.md). The hosted beta path is free.                                             |
+| Abuse reporting     | Ready for beta | Abuse paths are documented in [abuse.md](abuse.md).                                                                          |
+| Incident process    | Ready for beta | Triage and disclosure process is documented in [incident.md](incident.md).                                                   |
+| Support path        | Beta           | GitHub issues are the beta support path. A dedicated support mailbox is required before public launch.                       |
+| Production accounts | Blocked        | Cloudflare, GitHub App, OAuth, Turnstile, and D1 production credentials are still required for a live public service.        |
 
 ## Data handling summary
 
@@ -32,7 +32,7 @@ Use the repository issue tracker for non-sensitive reports:
 https://github.com/aryabyte21/pr-captcha/issues
 ```
 
-For sensitive vulnerability reports, use GitHub private vulnerability reporting if it is enabled for the repository. A dedicated security mailbox should be created before a public Marketplace launch.
+For sensitive vulnerability reports, use GitHub private vulnerability reporting if it is enabled for the repository. A dedicated security mailbox should be created before broader public traffic.
 
 ## Public launch blockers
 
@@ -40,4 +40,4 @@ For sensitive vulnerability reports, use GitHub private vulnerability reporting 
 - Run a clean fork PR demo against a real test repository.
 - Add real webhook replay fixtures from GitHub deliveries.
 - Add a dedicated support mailbox and security mailbox.
-- Finalize Marketplace listing, incident ownership, and support expectations.
+- Finalize incident ownership and support expectations.

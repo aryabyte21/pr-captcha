@@ -672,7 +672,7 @@ function riskLevelFor(input: {
 
 function recommendationFor(riskLevel: RepoEvidence["risk_level"]): string {
   if (riskLevel === "high") {
-    return "Install pr-captcha on fork and outside contributor PRs first, then require pr-captcha/human before expensive CI.";
+    return "Install pr-captcha on fork and outside contributor PRs first, then require pr-captcha/human before heavy CI.";
   }
   if (riskLevel === "medium") {
     return "Start with hybrid mode for fork PRs and first-time contributors, then expand only if queue pressure persists.";

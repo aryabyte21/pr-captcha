@@ -43,7 +43,7 @@ async function run() {
   }
   if (status.verification_url) {
     setFailed(
-      `Human verification required before expensive CI can run: ${status.verification_url}`
+      `Human verification required before heavy CI can run: ${status.verification_url}`
     );
     return;
   }
