@@ -8,12 +8,6 @@ Generate a starter policy with the setup wizard:
 https://<worker-domain>/setup-wizard
 ```
 
-Preview the effective policy before committing it:
-
-```txt
-https://<worker-domain>/config-preview
-```
-
 ```yaml
 mode: hybrid
 

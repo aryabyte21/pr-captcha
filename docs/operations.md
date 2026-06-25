@@ -156,11 +156,7 @@ The endpoint requires `ADMIN_TOKEN`, only accepts gates in `verified` status, re
 
 ## Repository Diagnostics
 
-Operators can verify that an installation can read a repository and determine the effective pr-captcha policy:
-
-```txt
-https://<worker-domain>/diagnostics
-```
+Operators can verify that an installation can read a repository and determine the effective pr-captcha policy with the admin diagnostics endpoint:
 
 ```sh
 curl \

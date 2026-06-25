@@ -590,10 +590,9 @@ export function renderEvidenceScannerPage(
             <p>Open PR pressure, recent fork PRs, unknown authors, stale pull requests, bot traffic, repeated low-signal titles, and spam or invalid label counts when GitHub search allows it.</p>
           </div>
           <div class="evidence-actions">
-            <a href="/queue-pressure">Estimate pressure</a>
-            <a href="/pilot">Plan pilot</a>
             <a href="/setup-wizard">Generate policy</a>
-            <a href="/github-app-manifest">Create app</a>
+            <a href="/demo">Try the gate</a>
+            <a href="${GITHUB_APP_INSTALL_URL}">Install the app</a>
           </div>
         </form>
         <div class="evidence-results">
@@ -734,7 +733,7 @@ export function renderTrustCenterPage(baseUrl?: string): string {
             <li data-state="blocked"><strong>Production accounts</strong><span>Cloudflare Worker, D1, Turnstile, GitHub App, and OAuth secrets are still required.</span></li>
           </ul>
           <div class="trust-actions">
-            <a class="button primary" href="/launch">Install app</a>
+            <a class="button primary" href="${GITHUB_APP_INSTALL_URL}">Install free</a>
             <a class="button light" href="/status">Check readiness</a>
           </div>
         </aside>
@@ -1569,10 +1568,9 @@ function evidenceScannerScript(): string {
           "",
           "Next steps",
           "1. Review the live report: " + url,
-          "2. Plan a 7-day pilot: " + appLink("/pilot", data.repository),
-          "3. Generate the policy: " + appLink("/setup-wizard", data.repository),
-          "4. Test the gate flow: " + appLink("/demo"),
-          "5. Copy the launch packet: " + appLink("/launch")
+          "2. Generate the policy: " + appLink("/setup-wizard", data.repository),
+          "3. Test the gate flow: " + appLink("/demo"),
+          "4. Install the app: https://github.com/apps/pr-captcha/installations/new",
         ].join("\\n");
       }
       function renderEvidence(data) {

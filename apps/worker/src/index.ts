@@ -210,8 +210,7 @@ function setSecurityHeaders(c: {
   if (
     path.startsWith("/gate") ||
     path.startsWith("/auth/") ||
-    path.startsWith("/api/admin") ||
-    path === "/diagnostics"
+    path.startsWith("/api/admin")
   ) {
     c.header("Cache-Control", "no-store");
   }
