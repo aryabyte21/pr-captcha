@@ -319,8 +319,7 @@ export function renderHome(baseUrl?: string): string {
         var root = document.documentElement;
         function get(k, d) { try { return localStorage.getItem(k) || d; } catch (e) { return d; } }
         function set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
-        var prefersLight = window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches;
-        root.setAttribute("data-theme", get("theme", prefersLight ? "light" : "dark"));
+        root.setAttribute("data-theme", get("theme", "dark"));
         var btn = document.getElementById("theme");
         function sync() { btn.textContent = root.getAttribute("data-theme") === "dark" ? "☀" : "☾"; }
         sync();
@@ -8417,17 +8416,15 @@ function layout(
         box-shadow: 0 12px 24px rgba(21, 31, 44, 0.14);
       }
       .button.primary {
-        background: var(--green);
-        border-color: var(--green);
-        box-shadow: 0 14px 28px rgba(16, 155, 85, 0.22);
+        background: var(--ink);
+        border-color: var(--ink);
+        box-shadow: var(--shadow-soft);
       }
-      .button.primary:hover {
-        background: var(--green-dark);
-        border-color: var(--green-dark);
-      }
+      .button.primary:hover,
       .button.dark:hover,
       .gate-card button:hover {
-        background: var(--surface);
+        background: var(--text);
+        border-color: var(--text);
       }
       .button.light {
         background: var(--surface);
