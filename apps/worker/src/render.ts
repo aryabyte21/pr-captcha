@@ -8090,23 +8090,18 @@ function layout(
       }
       .site-header {
         position: sticky;
-        top: 12px;
+        top: 0;
         z-index: 10;
-        min-height: 64px;
+        min-height: 62px;
         display: flex;
         align-items: center;
         justify-content: space-between;
         gap: 18px;
-        margin-top: 12px;
-        border: 1px solid rgba(216, 225, 220, 0.92);
-        border-radius: 8px;
-        padding: 0 14px;
-        background: var(--surface);
-        box-shadow:
-          0 18px 46px rgba(8, 17, 26, 0.08),
-          inset 0 1px 0 var(--surface);
-        backdrop-filter: none;
-        -webkit-backdrop-filter: none;
+        padding: 0 4px;
+        border-bottom: 1px solid var(--line);
+        background: color-mix(in srgb, var(--paper) 82%, transparent);
+        backdrop-filter: saturate(150%) blur(10px);
+        -webkit-backdrop-filter: saturate(150%) blur(10px);
       }
       .brand {
         display: inline-flex;
@@ -8180,11 +8175,11 @@ function layout(
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        border-radius: 8px;
+        border-radius: 9px;
         padding: 0 20px;
         border: 1px solid transparent;
         cursor: pointer;
-        font-weight: 800;
+        font-weight: 620;
         font-size: 15px;
         white-space: nowrap;
         transition:
@@ -9360,16 +9355,13 @@ function layout(
         line-height: 1.55;
       }
       .eyebrow {
-        width: fit-content;
         margin: 0 0 14px !important;
-        border: 1px solid rgba(15, 118, 110, 0.18);
-        border-radius: 999px;
-        padding: 7px 11px;
-        background: rgba(233, 248, 239, 0.88);
-        color: var(--green-dark) !important;
+        font-family: var(--mono);
+        color: var(--muted) !important;
         font-size: 12px !important;
-        font-weight: 900;
-        line-height: 1 !important;
+        font-weight: 600;
+        letter-spacing: 0.15em;
+        line-height: 1.4 !important;
         text-transform: uppercase;
       }
       .preview-guarantees {
@@ -9579,11 +9571,7 @@ function layout(
         border: 0;
         border-radius: 0;
       }
-      .evidence-page .button.primary {
-        border-color: var(--green);
-        background: var(--green);
-        color: #ffffff;
-      }
+
       .evidence-shell {
         display: grid;
         grid-template-columns: minmax(320px, 0.58fr) minmax(0, 1.42fr);
