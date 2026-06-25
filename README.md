@@ -1,7 +1,7 @@
 <h1 align="center">pr-captcha</h1>
 
 <p align="center">
-  Make AI slop and PR spam knock before CI.
+  A bouncer for your pull request queue.
 </p>
 
 <p align="center">
@@ -12,10 +12,10 @@
 </p>
 
 <p align="center">
-  <strong>Make AI slop prove a human is present.</strong>
+  <strong>Slop waits outside. Review still decides.</strong>
 </p>
 
-`pr-captcha` is a free hosted GitHub App for public repositories that want AI slop and PR spam to knock before the repo spends maintainer attention.
+`pr-captcha` is a free hosted GitHub App that checks ID at the door of your pull request queue. Every unknown PR has to prove a real GitHub human is present before it touches your queue or your CI. It is not AI detection: it is a door.
 
 It gates pull requests until a GitHub-authenticated human verifies the exact head SHA. By default that includes owner branches, member branches, forks, first-time contributors, outside authors, and bot PR workflows. The Worker never checks out the patch. It reads metadata, asks for a browser CAPTCHA, and publishes a SHA-bound human-origin signal. For fork workflows that GitHub already holds, it can also release CI after verification.
 

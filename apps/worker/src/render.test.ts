@@ -74,7 +74,7 @@ describe("rendering", () => {
       '<meta name="twitter:card" content="summary_large_image" />',
     );
     expect(ogImage).toContain('width="1200" height="630"');
-    expect(ogImage).toContain("Make AI slop prove");
+    expect(ogImage).toContain("bouncer");
     expect(ogImage).toContain("pr-captcha / human");
   });
 

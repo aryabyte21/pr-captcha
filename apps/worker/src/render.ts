@@ -6973,66 +6973,51 @@ export function renderScorecardSvg(
 
 export function renderOpenGraphImageSvg(): string {
   return `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
-    <rect width="1200" height="630" fill="#ffffff"/>
-    <path d="M0 0h1200v630H0z" fill="url(#grid)"/>
-    <defs>
-      <pattern id="grid" width="64" height="64" patternUnits="userSpaceOnUse">
-        <path d="M64 0H0v64" fill="none" stroke="#e8edf3" stroke-width="1"/>
-      </pattern>
-      <filter id="shadow" x="-20%" y="-20%" width="140%" height="150%">
-        <feDropShadow dx="0" dy="22" stdDeviation="24" flood-color="#080d14" flood-opacity="0.16"/>
-      </filter>
-    </defs>
-    <g transform="translate(64 58)">
-      <rect x="0" y="0" width="48" height="48" rx="13" fill="#080d14"/>
-      <path fill="#fff" fill-rule="evenodd" d="M17 36V13h10.3C34 13 38 16.8 38 22.3S34 31.8 27.3 31.8H23V36h-6Zm6-10.2h4c3 0 4.8-1.3 4.8-3.5S30 18.8 27 18.8h-4v7Z"/>
-      <circle cx="35" cy="35" r="5" fill="#109b55"/>
-      <text x="64" y="34" font-family="Geist, ui-sans-serif, system-ui, sans-serif" font-size="31" font-weight="850" fill="#080d14">pr-captcha</text>
-    </g>
-    <g transform="translate(64 146)">
-      <text x="0" y="0" font-family="Geist, ui-sans-serif, system-ui, sans-serif" font-size="78" font-weight="900" fill="#080d14">
-        <tspan x="0" dy="0">Make AI slop prove</tspan>
-        <tspan x="0" dy="84">a human is present.</tspan>
+    <rect width="1200" height="630" fill="#0a0c10"/>
+    <g font-family="Hanken Grotesk, -apple-system, Segoe UI, Roboto, sans-serif">
+      <g transform="translate(80 70)">
+        <rect x="0" y="0" width="44" height="44" rx="12" fill="#f3f3f4"/>
+        <circle cx="14" cy="13.5" r="5.2" fill="#15181e"/>
+        <circle cx="30" cy="13.5" r="5.2" fill="#15181e"/>
+        <circle cx="22" cy="24" r="13" fill="#ffffff" stroke="#15181e"/>
+        <rect x="11.5" y="20" width="21" height="6.8" rx="3.4" fill="#15181e"/>
+        <path d="M20 28.6h4l-2 2.2z" fill="#15181e"/>
+        <text x="60" y="32" font-size="30" font-weight="700" fill="#f3f4f6">pr-captcha</text>
+      </g>
+      <text x="80" y="252" font-size="92" font-weight="800" fill="#f3f4f6" letter-spacing="-3">
+        <tspan x="80" dy="0">Your repo has a</tspan>
+        <tspan x="80" dy="100" fill="#36c98a">bouncer</tspan><tspan fill="#f3f4f6"> now.</tspan>
       </text>
-      <text x="0" y="210" font-family="Geist, ui-sans-serif, system-ui, sans-serif" font-size="30" font-weight="520" fill="#384452">
-        <tspan x="0" dy="0">GitHub login, browser verification, exact commit SHA.</tspan>
-        <tspan x="0" dy="42">No AI detection. No PR code run.</tspan>
+      <text x="82" y="476" font-size="29" font-weight="500" fill="#98a0ab">
+        <tspan x="82" dy="0">A GitHub-authenticated, SHA-bound human check at the door.</tspan>
+        <tspan x="82" dy="42">Not AI detection. No PR code run.</tspan>
       </text>
-      <g transform="translate(0 318)">
-        <rect width="56" height="56" rx="14" fill="#109b55"/>
-        <path d="m17 29 8 8 16-20" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="6"/>
-        <text x="76" y="36" font-family="Geist, ui-sans-serif, system-ui, sans-serif" font-size="30" font-weight="850" fill="#080d14">One user. One commit. No PR code run.</text>
-      </g>
+      <text x="82" y="584" font-size="21" font-family="JetBrains Mono, ui-monospace, monospace" font-weight="600" fill="#6a7280">1 user / 1 commit / 0 patch executed</text>
     </g>
-    <g transform="translate(724 110)" filter="url(#shadow)">
-      <rect width="400" height="386" rx="10" fill="#fff" stroke="#d9dee6"/>
-      <rect width="400" height="58" rx="10" fill="#080d14"/>
-      <path d="M0 48h400v20H0z" fill="#080d14"/>
-      <text x="24" y="38" font-family="Geist, ui-sans-serif, system-ui, sans-serif" font-size="19" font-weight="850" fill="#fff">octo-org / awesome-repo</text>
-      <text x="285" y="38" font-family="Geist, ui-sans-serif, system-ui, sans-serif" font-size="15" font-weight="600" fill="#b8c0cc">PR #184</text>
-      <text x="24" y="104" font-family="Geist, ui-sans-serif, system-ui, sans-serif" font-size="25" font-weight="850" fill="#080d14">Add feature <tspan fill="#697586">#184</tspan></text>
-      <g transform="translate(24 136)">
-        <rect width="352" height="74" rx="8" fill="#fffdf8" stroke="#d9dee6"/>
-        <circle cx="22" cy="28" r="8" fill="none" stroke="#f3a000" stroke-width="3"/>
-        <text x="46" y="27" font-family="Geist, ui-sans-serif, system-ui, sans-serif" font-size="17" font-weight="820" fill="#080d14">GitHub Actions / ci.yml</text>
-        <text x="294" y="27" font-family="Geist, ui-sans-serif, system-ui, sans-serif" font-size="14" font-weight="600" fill="#5b6673">Held</text>
-        <text x="46" y="52" font-family="Geist, ui-sans-serif, system-ui, sans-serif" font-size="14" font-weight="500" fill="#5b6673">Waiting for human verification.</text>
+    <g transform="translate(720 152)" font-family="JetBrains Mono, ui-monospace, monospace">
+      <rect width="400" height="326" rx="14" fill="#13161c" stroke="#232831"/>
+      <circle cx="26" cy="28" r="5" fill="#36c98a"/>
+      <text x="44" y="33" font-size="16" fill="#98a0ab">octo-org/awesome-repo</text>
+      <text x="376" y="33" font-size="14" fill="#6a7280" text-anchor="end">#184</text>
+      <line x1="0" y1="54" x2="400" y2="54" stroke="#1a1e25"/>
+      <g transform="translate(24 78)">
+        <circle cx="11" cy="11" r="11" fill="rgba(54,201,138,0.18)"/>
+        <path d="m6 11 3.5 3.5 6.5-8" fill="none" stroke="#36c98a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+        <text x="34" y="9" font-size="15" font-weight="600" fill="#f3f4f6">pr-captcha / human</text>
+        <text x="34" y="30" font-size="13" fill="#98a0ab" font-family="Hanken Grotesk, sans-serif">Verified for this exact commit.</text>
+        <text x="352" y="13" font-size="12" fill="#36c98a" text-anchor="end">PASS</text>
       </g>
-      <g transform="translate(24 210)">
-        <rect width="352" height="82" rx="8" fill="#ffffff" stroke="#d9dee6"/>
-        <rect x="15" y="20" width="24" height="24" rx="7" fill="#080d14"/>
-        <path fill="#fff" d="M23 37V25h5.2c3.4 0 5.4 1.9 5.4 4.7s-2 4.8-5.4 4.8h-2.1V37H23Zm3.1-5.1h2c1.5 0 2.4-.7 2.4-1.8 0-1.1-.9-1.8-2.4-1.8h-2v3.6Z"/>
-        <circle cx="35" cy="37" r="3" fill="#109b55"/>
-        <text x="54" y="34" font-family="Geist, ui-sans-serif, system-ui, sans-serif" font-size="17" font-weight="850" fill="#080d14">pr-captcha / human</text>
-        <text x="286" y="34" font-family="Geist, ui-sans-serif, system-ui, sans-serif" font-size="14" font-weight="600" fill="#5b6673">Waiting</text>
-        <text x="54" y="58" font-family="Geist, ui-sans-serif, system-ui, sans-serif" font-size="14" font-weight="500" fill="#5b6673">Bound to exact head SHA.</text>
+      <line x1="24" y1="142" x2="376" y2="142" stroke="#1a1e25"/>
+      <g transform="translate(24 160)">
+        <circle cx="11" cy="11" r="11" fill="rgba(151,160,173,0.18)"/>
+        <text x="34" y="9" font-size="15" font-weight="600" fill="#f3f4f6">ci / build and test</text>
+        <text x="34" y="30" font-size="13" fill="#98a0ab" font-family="Hanken Grotesk, sans-serif">Held until a human is verified.</text>
+        <text x="352" y="13" font-size="12" fill="#97a0ad" text-anchor="end">HELD</text>
       </g>
-      <g transform="translate(24 318)">
-        <rect width="352" height="44" rx="8" fill="#080d14"/>
-        <text x="94" y="29" font-family="Geist, ui-sans-serif, system-ui, sans-serif" font-size="17" font-weight="850" fill="#fff">Mark PR as human</text>
-      </g>
+      <rect x="24" y="230" width="352" height="72" rx="10" fill="#0a0c10"/>
+      <text x="40" y="261" font-size="12" fill="#6a7280">identity GitHub OAuth</text>
+      <text x="40" y="283" font-size="12" fill="#6a7280">presence Turnstile / scope head SHA</text>
     </g>
-    <text x="64" y="574" font-family="Geist, ui-sans-serif, system-ui, sans-serif" font-size="22" font-weight="760" fill="#5b6673">Anti AI-slop checks for busy pull request queues.</text>
   </svg>`;
 }
 
