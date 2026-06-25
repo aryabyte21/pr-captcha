@@ -13,13 +13,11 @@
   &nbsp;
   <a href="https://pr-captcha.aryaabyte.workers.dev/"><img alt="Open the live site" src="https://img.shields.io/badge/Open_the_live_site-13161c?style=for-the-badge&logo=cloudflare&logoColor=white"></a>
   &nbsp;
-  <a href="https://github.com/aryabyte21/pr-captcha"><img alt="Star on GitHub" src="https://img.shields.io/github/stars/aryabyte21/pr-captcha?style=for-the-badge&logo=github&label=Star&color=24292f"></a>
+  <a href="https://github.com/aryabyte21/pr-captcha"><img alt="Star on GitHub" src="https://img.shields.io/badge/Star_on_GitHub-24292f?style=for-the-badge&logo=github&logoColor=white"></a>
 </p>
 
 <p align="center">
-  <video src="https://github.com/aryabyte21/pr-captcha/raw/main/docs/assets/pr-captcha-demo.mp4" width="760" autoplay loop muted playsinline>
-    <a href="https://pr-captcha.aryaabyte.workers.dev/">Watch the 30-second demo</a>
-  </video>
+  <a href="https://pr-captcha.aryaabyte.workers.dev/"><img src="docs/assets/pr-captcha-demo.gif" alt="pr-captcha gating a pull request: the human check posts, a contributor verifies, and held CI releases" width="760"></a>
 </p>
 
 A free hosted GitHub App that checks ID at the door of your pull request queue.
