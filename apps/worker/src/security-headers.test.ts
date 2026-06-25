@@ -11,7 +11,13 @@ describe("security headers", () => {
       "strict-origin-when-cross-origin",
     );
     expect(response.headers.get("Permissions-Policy")).toBe(
-      "camera=(), microphone=(), geolocation=()",
+      "camera=(), microphone=(), geolocation=(), browsing-topics=()",
+    );
+    expect(response.headers.get("Strict-Transport-Security")).toContain(
+      "max-age=",
+    );
+    expect(response.headers.get("Cross-Origin-Opener-Policy")).toBe(
+      "same-origin",
     );
     expect(response.headers.get("Content-Security-Policy")).toContain(
       "frame-ancestors 'none'",
@@ -19,5 +25,15 @@ describe("security headers", () => {
     expect(response.headers.get("Content-Security-Policy")).toContain(
       "https://challenges.cloudflare.com",
     );
+  });
+
+  it("marks token-bearing pages as non-cacheable", async () => {
+    const admin = await app.request("/api/admin/audit-logs", {}, {
+      ADMIN_TOKEN: "test-admin-token",
+    } as never);
+    expect(admin.headers.get("Cache-Control")).toBe("no-store");
+
+    const landing = await app.request("/");
+    expect(landing.headers.get("Cache-Control")).not.toBe("no-store");
   });
 });
