@@ -7870,6 +7870,11 @@ export function renderGatePage(input: {
     : "";
   const gateState = input.verified ? "verified" : "pending";
 
+  const head = `<div class="gate-head">
+            <span class="gate-mascot" aria-hidden="true">${brandMark()}</span>
+            <span class="gate-wordmark">pr-captcha</span>
+          </div>`;
+
   const verifiedBody = `<h1>You're verified</h1>
           <div class="notice success"><strong>Human check passed</strong> <span>${escapeHtml(input.successDetail ?? "The required check can turn green for this exact commit.")}</span></div>
           <p class="intro">Recorded for ${prLink} at <code>${escapeHtml(shortSha)}</code>, turning <code>pr-captcha/human</code> green.</p>
@@ -7881,26 +7886,32 @@ export function renderGatePage(input: {
             }, 2500);
           </script>`;
 
-  const pendingBody = `<h1>Finish this PR check</h1>
-          <p class="intro">Signed in as <strong>${escapeHtml(input.session.login)}</strong>. Verifying ${prLink} at <code>${escapeHtml(shortSha)}</code> to turn <code>pr-captcha/human</code> green.</p>
+  const pendingBody = `<h1>Prove you're human</h1>
+          <p class="intro">Signed in as <strong>${escapeHtml(input.session.login)}</strong>. Verifying ${prLink} at <code>${escapeHtml(shortSha)}</code>.</p>
           ${error}
           <form method="post" action="/gate/${escapeHtml(input.gate.id)}">
-            <input type="hidden" name="token" value="${escapeHtml(input.token)}" />
-            <input type="hidden" name="csrf_token" value="${escapeHtml(input.csrfToken)}" />
+            <span class="gate-label">Quick human check</span>
             <div class="turnstile-wrap">
               <div class="cf-turnstile" data-sitekey="${escapeHtml(input.turnstileSiteKey)}"></div>
             </div>
             <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+            <input type="hidden" name="token" value="${escapeHtml(input.token)}" />
+            <input type="hidden" name="csrf_token" value="${escapeHtml(input.csrfToken)}" />
             <button class="button dark full" type="submit">Complete human check</button>
           </form>
-          <p class="fine-print">No PR code runs here. The receipt is bound to this commit only: a new commit needs a new check.</p>`;
+          <div class="gate-trust">
+            <span><span class="dot"></span>GitHub login</span>
+            <span><span class="dot"></span>exact commit</span>
+            <span><span class="dot"></span>no patch executed</span>
+          </div>
+          <p class="fine-print">No PR code runs here. Turns <code>pr-captcha/human</code> green for this commit only.</p>`;
 
   return layout(
     input.verified ? "Verified" : "Finish this PR check",
     `<main id="main" class="gate-page">
       <section class="gate-shell" data-gate-shell data-gate-status="${gateState}">
         <div class="gate">
-          <div class="brand centered">${brandMark()}<span>pr-captcha</span></div>
+          ${head}
           ${input.verified ? verifiedBody : pendingBody}
         </div>
       </section>
@@ -13128,12 +13139,11 @@ function layout(
         min-height: 100vh;
         display: grid;
         place-items: center;
-        padding: 34px 20px;
+        padding: 40px 20px;
         background:
-          radial-gradient(circle at 50% 0%, rgba(17, 152, 95, 0.09), transparent 32rem),
-          linear-gradient(90deg, rgba(21, 31, 44, 0.03) 1px, transparent 1px),
-          linear-gradient(180deg, rgba(21, 31, 44, 0.025) 1px, transparent 1px);
-        background-size: auto, 72px 72px, 72px 72px;
+          radial-gradient(circle at 50% 26%, rgba(54, 201, 138, 0.08), transparent 34rem),
+          radial-gradient(circle at 50% 120%, rgba(54, 201, 138, 0.05), transparent 40rem),
+          var(--paper);
       }
       .gate-shell {
         width: min(540px, 100%);
@@ -13145,15 +13155,62 @@ function layout(
       }
       .gate {
         width: 100%;
-        border: 1px solid rgba(21, 31, 44, 0.11);
-        border-radius: 8px;
+        border: 1px solid var(--line);
+        border-radius: 16px;
         background: var(--surface);
         box-shadow: var(--shadow);
-        padding: 30px;
-        text-align: left;
+        padding: 40px 36px 32px;
+        text-align: center;
       }
-      .gate .brand.centered {
-        justify-content: flex-start;
+      .gate-head {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+      }
+      .gate-mascot {
+        width: 64px;
+        height: 64px;
+        display: grid;
+        place-items: center;
+        border-radius: 18px;
+        background: color-mix(in srgb, var(--text) 7%, transparent);
+        border: 1px solid var(--line);
+      }
+      .gate-mascot .brand-mark {
+        width: 46px;
+        height: 46px;
+      }
+      .gate-wordmark {
+        font-family: var(--mono);
+        font-size: 12.5px;
+        letter-spacing: 0.12em;
+        text-transform: lowercase;
+        color: var(--muted);
+      }
+      .gate-label {
+        display: block;
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--faint);
+        margin: 24px 0 12px;
+      }
+      .gate-trust {
+        display: flex;
+        justify-content: center;
+        gap: 18px;
+        flex-wrap: wrap;
+        margin-top: 22px;
+        font-family: var(--mono);
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .gate-trust span {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
       }
       .gate.small {
         width: min(480px, 100%);
@@ -13162,9 +13219,9 @@ function layout(
         min-height: 100%;
       }
       .gate h1 {
-        margin: 22px 0 12px;
+        margin: 18px 0 10px;
         color: var(--ink);
-        font-size: clamp(32px, 5vw, 44px);
+        font-size: clamp(28px, 4.4vw, 40px);
         line-height: 1.08;
         text-wrap: balance;
       }
@@ -13174,9 +13231,9 @@ function layout(
         line-height: 1.5;
       }
       .intro {
-        margin: 0 0 22px;
-        max-width: 620px;
-        font-size: 17px;
+        margin: 0 auto;
+        max-width: 44ch;
+        font-size: 16px;
       }
       .intro strong,
       .intro a,
@@ -13185,9 +13242,9 @@ function layout(
         font-weight: 820;
       }
       .fine-print {
-        margin: 16px 0 0;
-        max-width: 560px;
-        font-size: 14px;
+        margin: 16px auto 0;
+        max-width: 46ch;
+        font-size: 13px;
       }
       .status-strip {
         display: grid;
@@ -13241,11 +13298,7 @@ function layout(
       .turnstile-wrap {
         display: grid;
         place-items: center;
-        min-height: 104px;
-        margin-top: 18px;
-        border: 1px solid var(--line);
-        border-radius: 6px;
-        background: linear-gradient(var(--surface), var(--surface));
+        min-height: 70px;
       }
       .button.full {
         width: 100%;
