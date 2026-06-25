@@ -8,28 +8,10 @@ Before installing, use the public demo to walk through the PR lifecycle without 
 https://<worker-domain>/demo
 ```
 
-Use the launch cockpit to track production gates and copy deploy commands:
-
-```txt
-https://<worker-domain>/launch
-```
-
-Use the queue pressure calculator to estimate maintainer attention exposed by unverified PRs:
-
-```txt
-https://<worker-domain>/queue-pressure
-```
-
 Use the repo evidence scanner to pull live GitHub signals before installing:
 
 ```txt
 https://<worker-domain>/evidence
-```
-
-Use the open-source PR spam radar to see public spam and invalid-label evidence across repositories:
-
-```txt
-https://<worker-domain>/radar
 ```
 
 Review public security, privacy, terms, support, abuse, incident, and beta-policy docs before inviting outside contributors:
@@ -38,27 +20,9 @@ Review public security, privacy, terms, support, abuse, incident, and beta-polic
 https://<worker-domain>/trust
 ```
 
-After install, generate a README badge that links maintainers to the proof path:
-
-```txt
-https://<worker-domain>/badge-builder
-```
-
-After a PR verifies, generate a proof card for release notes or maintainer handoff:
-
-```txt
-https://<worker-domain>/proof-card
-```
-
 ## 1. Create the GitHub App
 
-Generate the GitHub App manifest from the deployed Worker:
-
-```txt
-https://<worker-domain>/github-app-manifest
-```
-
-Follow [github-app.md](github-app.md) for permissions, webhook URL, callback URL, manifest conversion, and Worker secrets.
+Create a GitHub App following [github-app.md](github-app.md) for permissions, webhook URL, callback URL, and Worker secrets.
 
 Subscribe to the `pull_request` webhook event.
 
@@ -135,7 +99,7 @@ https://<worker-domain>/status
 
 ## 4.1. Deploy the Static Launcher
 
-Enable GitHub Pages with source set to GitHub Actions. The `Pages` workflow publishes the `docs` directory as a static front door for setup docs, launch docs, and links into the Worker.
+Enable GitHub Pages with source set to GitHub Actions. The `Pages` workflow publishes the `docs` directory as a static front door for setup and trust docs, and links into the Worker.
 
 ```sh
 gh api repos/<owner>/<repo>/pages >/dev/null 2>&1 || gh api -X POST repos/<owner>/<repo>/pages -f build_type=workflow
@@ -150,12 +114,6 @@ Generate a starter policy with the setup wizard:
 
 ```txt
 https://<worker-domain>/setup-wizard
-```
-
-Preview the policy first at:
-
-```txt
-https://<worker-domain>/config-preview
 ```
 
 ```yaml
@@ -253,13 +211,7 @@ jobs:
 
 ## 9. Test the Install
 
-Run the repository diagnostics console:
-
-```txt
-https://<worker-domain>/diagnostics
-```
-
-Open a test PR under an enabled target and verify:
+Confirm service health in a browser at `https://<worker-domain>/status`, then open a test PR under an enabled target and verify:
 
 - The PR receives a `pr-captcha/human` check.
 - The PR receives one pr-captcha comment with a verification link.

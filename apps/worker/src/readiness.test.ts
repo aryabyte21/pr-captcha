@@ -147,9 +147,9 @@ describe("readiness health check", () => {
     });
   });
 
-  it("returns launch readiness without making the UI route an error", async () => {
+  it("reports missing secrets on the readiness endpoint", async () => {
     const response = await app.request(
-      "/api/public/launch-readiness",
+      "/health/ready",
       {},
       {
         ...readyEnv(),
@@ -158,7 +158,7 @@ describe("readiness health check", () => {
       },
     );
 
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(503);
     await expect(response.json()).resolves.toEqual({
       ok: false,
       production_ready: false,

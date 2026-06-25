@@ -25,29 +25,12 @@ describe("public launch routes", () => {
     const xml = await response.text();
     expect(xml).toContain("<loc>https://captcha.example.test</loc>");
     expect(xml).toContain("<loc>https://captcha.example.test/demo</loc>");
-    expect(xml).toContain(
-      "<loc>https://captcha.example.test/queue-pressure</loc>",
-    );
     expect(xml).toContain("<loc>https://captcha.example.test/evidence</loc>");
-    expect(xml).toContain("<loc>https://captcha.example.test/radar</loc>");
-    expect(xml).toContain("<loc>https://captcha.example.test/pilot</loc>");
     expect(xml).toContain("<loc>https://captcha.example.test/trust</loc>");
-    expect(xml).toContain(
-      "<loc>https://captcha.example.test/github-app-manifest</loc>",
-    );
-    expect(xml).toContain("<loc>https://captcha.example.test/launch</loc>");
-    expect(xml).toContain("<loc>https://captcha.example.test/rehearsal</loc>");
-    expect(xml).toContain("<loc>https://captcha.example.test/gate-trace</loc>");
     expect(xml).toContain(
       "<loc>https://captcha.example.test/setup-wizard</loc>",
     );
-    expect(xml).toContain(
-      "<loc>https://captcha.example.test/diagnostics</loc>",
-    );
     expect(xml).toContain("<loc>https://captcha.example.test/status</loc>");
-    expect(xml).toContain(
-      "<loc>https://captcha.example.test/config-preview</loc>",
-    );
     expect(xml).toContain("<loc>https://captcha.example.test/setup.md</loc>");
     expect(xml).toContain("<loc>https://captcha.example.test/trust.md</loc>");
     expect(xml).toContain(
@@ -76,18 +59,6 @@ describe("public launch routes", () => {
     expect(Date.parse(expires ?? "")).toBeGreaterThan(Date.now());
   });
 
-  it("renders the config preview page", async () => {
-    const response = await app.request("/config-preview", {}, env);
-
-    expect(response.status).toBe(200);
-    const html = await response.text();
-    expect(html).toContain("Preview pr-captcha.yml");
-    expect(html).toContain("/api/public/config-preview");
-    expect(html).toContain(
-      '<link rel="canonical" href="https://captcha.example.test/config-preview" />',
-    );
-  });
-
   it("renders the public demo page", async () => {
     const response = await app.request("/demo", {}, env);
 
@@ -101,19 +72,6 @@ describe("public launch routes", () => {
     expect(html).toContain("data-demo-policy");
     expect(html).toContain(
       '<link rel="canonical" href="https://captcha.example.test/demo" />',
-    );
-  });
-
-  it("renders the queue pressure calculator", async () => {
-    const response = await app.request("/queue-pressure", {}, env);
-
-    expect(response.status).toBe(200);
-    const html = await response.text();
-    expect(html).toContain("Measure your PR queue pressure");
-    expect(html).toContain("data-queue-form");
-    expect(html).toContain("data-queue-summary");
-    expect(html).toContain(
-      '<link rel="canonical" href="https://captcha.example.test/queue-pressure" />',
     );
   });
 
@@ -141,52 +99,6 @@ describe("public launch routes", () => {
     );
   });
 
-  it("renders the open-source PR spam radar", async () => {
-    const response = await app.request("/radar", {}, env);
-
-    expect(response.status).toBe(200);
-    const html = await response.text();
-    expect(html).toContain("See where PR spam is already labeled.");
-    expect(html).toContain("data-radar-refresh");
-    expect(html).toContain("data-radar-summary");
-    expect(html).toContain("data-radar-table");
-    expect(html).toContain("Repositories to inspect");
-    expect(html).toContain("data-radar-clusters");
-    expect(html).toContain("Copyable maintainer brief");
-    expect(html).toContain("GitHub search queries used by the radar");
-    expect(html).toContain("label%3Aspam");
-    expect(html).toContain("/api/public/spam-radar");
-    expect(html).toContain(
-      '<link rel="canonical" href="https://captcha.example.test/radar" />',
-    );
-  });
-
-  it("renders the maintainer pilot plan", async () => {
-    const response = await app.request(
-      "/pilot?repo=https%3A%2F%2Fgithub.com%2Ftldraw%2Ftldraw%2Fpulls",
-      {},
-      env,
-    );
-
-    expect(response.status).toBe(200);
-    const html = await response.text();
-    expect(html).toContain("Plan a 7-day maintainer pilot");
-    expect(html).toContain("data-pilot-form");
-    expect(html).toContain("data-pilot-run");
-    expect(html).toContain("data-pilot-copy");
-    expect(html).toContain("data-pilot-issue");
-    expect(html).toContain("data-pilot-open-issue");
-    expect(html).toContain("https://github.com/tldraw/tldraw/issues/new");
-    expect(html).toContain('value="tldraw/tldraw"');
-    expect(html).toContain(
-      "https://captcha.example.test/evidence?repo=tldraw%2Ftldraw",
-    );
-    expect(html).toContain("/api/public/repo-evidence");
-    expect(html).toContain(
-      '<link rel="canonical" href="https://captcha.example.test/pilot" />',
-    );
-  });
-
   it("renders the Trust Center", async () => {
     const response = await app.request("/trust", {}, env);
 
@@ -198,106 +110,6 @@ describe("public launch routes", () => {
     expect(html).toContain("Production accounts");
     expect(html).toContain(
       '<link rel="canonical" href="https://captcha.example.test/trust" />',
-    );
-  });
-
-  it("renders the GitHub App manifest builder", async () => {
-    const response = await app.request("/github-app-manifest", {}, env);
-
-    expect(response.status).toBe(200);
-    const html = await response.text();
-    expect(html).toContain("GitHub App manifest");
-    expect(html).toContain("data-manifest-form");
-    expect(html).toContain("data-manifest-json");
-    expect(html).toContain("https://captcha.example.test/webhooks/github");
-    expect(html).toContain(
-      '<link rel="canonical" href="https://captcha.example.test/github-app-manifest" />',
-    );
-  });
-
-  it("renders the GitHub App manifest callback handoff", async () => {
-    const response = await app.request(
-      "/github-app-manifest/callback?code=abc123&state=manifest-state",
-      {},
-      env,
-    );
-
-    expect(response.status).toBe(200);
-    const html = await response.text();
-    expect(html).toContain("Finish the manifest handoff");
-    expect(html).toContain("CODE=&#39;abc123&#39;");
-    expect(html).toContain(
-      "https://api.github.com/app-manifests/${CODE}/conversions",
-    );
-    expect(html).toContain("data-manifest-conversion-script");
-    expect(html).toContain("data-copy-manifest-conversion");
-    expect(html).toContain("npx wrangler secret put GITHUB_APP_ID");
-    expect(html).toContain("manifest-state");
-  });
-
-  it("renders the launch cockpit", async () => {
-    const response = await app.request("/launch", {}, env);
-
-    expect(response.status).toBe(200);
-    const html = await response.text();
-    expect(html).toContain("Make AI slop knock first.");
-    expect(html).toContain("data-launch-form");
-    expect(html).toContain("data-launch-commands");
-    expect(html).toContain("Pages redirect");
-    expect(html).toContain("https://aryabyte21.github.io/pr-captcha/");
-    expect(html).toContain("build_type=workflow");
-    expect(html).toContain("Step 1");
-    expect(html).toContain("data-launch-decision");
-    expect(html).toContain("Before requiring the check");
-    expect(html).toContain("data-launch-blocker-list");
-    expect(html).toContain("Fork PR proof lane");
-    expect(html).toContain("data-launch-proof-stage");
-    expect(html).toContain("data-launch-readiness-refresh");
-    expect(html).toContain("Maintainer adoption packet");
-    expect(html).toContain("Copy GitHub issue");
-    expect(html).toContain("data-launch-issue");
-    expect(html).toContain("data-launch-badge");
-    expect(html).toContain("/api/public/launch-readiness");
-    expect(html).toContain("Advanced proof list");
-    expect(html).toContain(
-      '<link rel="canonical" href="https://captcha.example.test/launch" />',
-    );
-  });
-
-  it("renders the fork PR rehearsal console", async () => {
-    const response = await app.request("/rehearsal", {}, env);
-
-    expect(response.status).toBe(200);
-    const html = await response.text();
-    expect(html).toContain("Run one harmless test PR.");
-    expect(html).toContain("Before the check becomes required");
-    expect(html).toContain("data-rehearsal-form");
-    expect(html).toContain("data-rehearsal-progress");
-    expect(html).toContain("data-rehearsal-runbook");
-    expect(html).toContain("data-rehearsal-issue");
-    expect(html).toContain("data-rehearsal-action");
-    expect(html).toContain("Ready for branch protection");
-    expect(html).toContain(
-      '<link rel="canonical" href="https://captcha.example.test/rehearsal" />',
-    );
-  });
-
-  it("renders the gate trace console", async () => {
-    const response = await app.request("/gate-trace", {}, env);
-
-    expect(response.status).toBe(200);
-    const html = await response.text();
-    expect(html).toContain("Trace one receipt end to end.");
-    expect(html).toContain("Advanced debugging");
-    expect(html).toContain("data-trace-form");
-    expect(html).toContain("data-trace-progress");
-    expect(html).toContain("data-trace-curl");
-    expect(html).toContain("data-trace-action");
-    expect(html).toContain("data-trace-proof");
-    expect(html).toContain("Ready to require pr-captcha/human");
-    expect(html).toContain("/webhooks/github");
-    expect(html).toContain(
-      '<link rel="canonical" href="https://captcha.example.test/gate-trace" />',
     );
   });
 
@@ -326,19 +138,6 @@ describe("public launch routes", () => {
     expect(html).toContain("/api/public/config-preview");
     expect(html).toContain(
       '<link rel="canonical" href="https://captcha.example.test/setup-wizard" />',
-    );
-  });
-
-  it("renders the repository diagnostics page", async () => {
-    const response = await app.request("/diagnostics", {}, env);
-
-    expect(response.status).toBe(200);
-    const html = await response.text();
-    expect(html).toContain("Repository diagnostics");
-    expect(html).toContain("data-run-diagnostics");
-    expect(html).toContain("/api/admin/repositories/");
-    expect(html).toContain(
-      '<link rel="canonical" href="https://captcha.example.test/diagnostics" />',
     );
   });
 

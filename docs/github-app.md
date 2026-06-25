@@ -1,12 +1,6 @@
 # GitHub App Setup
 
-If the Worker is already deployed, open the manifest builder first:
-
-```txt
-https://<worker-domain>/github-app-manifest
-```
-
-The builder computes the webhook URL, OAuth callback URL, setup URL, required permissions, and GitHub App manifest JSON. After GitHub redirects back with a manifest code, exchange that code from an operator shell and store the returned App ID, private key, webhook secret, client ID, and client secret as Worker secrets.
+Create a GitHub App at `https://github.com/settings/apps/new` (or your org's app settings). Set the webhook URL to `https://<worker-domain>/webhooks/github`, the OAuth callback URL to `https://<worker-domain>/auth/github/callback`, and the setup URL to `https://<worker-domain>/`. Apply the permissions below, then store the App ID, private key, webhook secret, client ID, and client secret as Worker secrets.
 
 Use `docs/assets/pr-captcha-github-app-icon.png` as the GitHub App logo.
 

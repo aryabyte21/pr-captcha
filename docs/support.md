@@ -36,7 +36,6 @@ Before public launch, create:
 Use these pages before opening a support request:
 
 - `/status` for Worker and readiness checks.
-- `/diagnostics` for repository installation diagnostics.
 - `/setup-wizard` for policy generation.
-- `/github-app-manifest` for GitHub App manifest setup.
-- `/launch` for production launch checklist.
+- `/evidence` for a live repo risk scan.
+- `/demo` for a dry run of the full gate.
