@@ -49,9 +49,9 @@ The page calls `/health` and `/health/ready`, summarizes Worker, D1, and configu
 
 ## Deploy GitHub Pages
 
-The static launcher and public docs are deployed by `.github/workflows/pages.yml` from the `docs` directory.
+The redirect fallback and public docs are deployed by `.github/workflows/pages.yml` from the `docs` directory.
 
-Enable GitHub Pages in repository settings with source set to GitHub Actions. After the first successful run, the Pages URL can act as the public front door while the live app continues to run on Cloudflare Workers.
+Enable GitHub Pages in repository settings with source set to GitHub Actions. After the first successful run, the Pages URL redirects people to the hosted Worker while the public markdown docs remain browsable.
 
 The equivalent API setup is:
 
@@ -61,7 +61,7 @@ gh api -X PUT repos/<owner>/<repo>/pages -f build_type=workflow
 gh api repos/<owner>/<repo>/pages --jq '.html_url'
 ```
 
-The static launcher does not process webhooks, OAuth callbacks, CAPTCHA solves, or secrets. It links users to the configured Worker URL.
+GitHub Pages does not process webhooks, OAuth callbacks, CAPTCHA solves, or secrets. It only redirects users to the configured Worker URL.
 
 ## Local Webhook Testing
 

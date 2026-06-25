@@ -19,13 +19,21 @@ const securityTxt = await readFile(
   "utf8",
 );
 
-test("static launcher can produce shareable repo links", () => {
-  assert.match(html, /data-share-copy/);
-  assert.match(html, /function launcherLink\(repo, base\)/);
-  assert.match(html, /url\.searchParams\.set\("repo", repo\)/);
-  assert.match(html, /url\.searchParams\.set\("worker_url", base\)/);
-  assert.match(html, /params\.get\("repo"\)/);
-  assert.match(html, /params\.get\("worker_url"\)/);
+test("static Pages front door only redirects to the hosted Worker", () => {
+  assert.match(
+    html,
+    /http-equiv="refresh"\s+content="0; url=https:\/\/pr-captcha\.aryaabyte\.workers\.dev\/"/,
+  );
+  assert.match(
+    html,
+    /window\.location\.replace\("https:\/\/pr-captcha\.aryaabyte\.workers\.dev\/"\)/,
+  );
+  assert.match(
+    html,
+    /<link rel="canonical" href="https:\/\/pr-captcha\.aryaabyte\.workers\.dev\/" \/>/,
+  );
+  assert.doesNotMatch(html, /data-share-copy/);
+  assert.doesNotMatch(html, /function launcherLink/);
 });
 
 test("static Pages front door exposes crawl and security metadata", () => {
