@@ -23,10 +23,10 @@ It gates pull requests until a GitHub-authenticated human verifies the exact hea
 
 Open source PRs are real work queues. Mature projects already have reviews, labels, branch protection, and workflow approvals. The weak point is earlier: AI slop, bot accounts, and drive-by PRs can enter the queue, create status noise, request labels, and cause the tiny sigh before a maintainer decides whether to even open the diff. Greptile's OpenClaw writeup is the punchline in chart form: when PRs get cheap enough to send, maintainers inherit the inbox problem.
 
-Hosted launch page:
+Hosted Worker:
 
 ```txt
-https://aryabyte21.github.io/pr-captcha/
+https://pr-captcha.aryaabyte.workers.dev/
 ```
 
 These are public PR pages from busy repositories, captured on June 14, 2026:
@@ -151,7 +151,7 @@ The contract test simulates a signed GitHub pull request webhook, creates the pe
 
 ## Current Status
 
-This repository is an MVP codebase with a live GitHub Pages launch page and a free hosted Worker path for beta installs. The public front door is deployed at `https://aryabyte21.github.io/pr-captcha/`.
+This repository is an MVP codebase with a free hosted Worker path for beta installs. The public front door is `https://pr-captcha.aryaabyte.workers.dev/`. GitHub Pages is only a redirect fallback.
 
 <table>
   <tr>

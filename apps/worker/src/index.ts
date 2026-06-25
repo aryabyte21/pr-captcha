@@ -2770,6 +2770,13 @@ function validAppBaseUrl(env: Pick<Env, "APP_BASE_URL">): boolean {
   }
 }
 
+app.notFound((c) => {
+  if (c.env.ASSETS) {
+    return c.env.ASSETS.fetch(c.req.raw);
+  }
+  return c.text("Not found", 404);
+});
+
 export default {
   fetch: app.fetch,
   async scheduled(_controller, env): Promise<void> {

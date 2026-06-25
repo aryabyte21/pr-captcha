@@ -3,16 +3,20 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Human receipts for AI slop PRs | pr-captcha</title>
+    <title>Opening hosted Worker | pr-captcha</title>
+    <meta
+      http-equiv="refresh"
+      content="0; url=https://pr-captcha.aryaabyte.workers.dev/"
+    />
     <meta
       name="description"
       content="pr-captcha makes AI slop and PR spam knock before CI by recording a GitHub-authenticated human receipt for the exact pull request commit asking for maintainer attention."
     />
-    <link rel="canonical" href="https://aryabyte21.github.io/pr-captcha/" />
+    <link rel="canonical" href="https://pr-captcha.aryaabyte.workers.dev/" />
     <meta property="og:type" content="website" />
     <meta
       property="og:url"
-      content="https://aryabyte21.github.io/pr-captcha/"
+      content="https://pr-captcha.aryaabyte.workers.dev/"
     />
     <meta property="og:site_name" content="pr-captcha" />
     <meta
@@ -25,9 +29,9 @@
     />
     <meta
       property="og:image"
-      content="https://aryabyte21.github.io/pr-captcha/og.png"
+      content="https://pr-captcha.aryaabyte.workers.dev/og.svg"
     />
-    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:type" content="image/svg+xml" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta
@@ -45,13 +49,16 @@
     />
     <meta
       name="twitter:image"
-      content="https://aryabyte21.github.io/pr-captcha/og.png"
+      content="https://pr-captcha.aryaabyte.workers.dev/og.svg"
     />
     <meta
       name="twitter:image:alt"
       content="pr-captcha pull request human receipt preview"
     />
     <link rel="icon" href="./assets/pr-captcha-mark.svg" />
+    <script>
+      window.location.replace("https://pr-captcha.aryaabyte.workers.dev/");
+    </script>
     <style>
       :root {
         color-scheme: light;
@@ -1383,7 +1390,7 @@
           <article class="bento-card span-4 metric">
             <div>
               <h3>Hosted Worker</h3>
-              <p>The public launcher and issue drafts point to production.</p>
+              <p>The Pages fallback sends people to the hosted Worker.</p>
             </div>
             <div class="metric-value">live</div>
             <code class="code-chip">workers.dev</code>
@@ -1505,7 +1512,7 @@
                   Copy pitch
                 </button>
                 <button class="button subtle" type="button" data-share-copy>
-                  Copy launcher link
+                  Copy Worker link
                 </button>
               </div>
             </div>
@@ -1629,8 +1636,8 @@
           <span>
             <strong>Static launch page</strong>
             <span>
-              GitHub Pages serves this front door. It does not process webhooks,
-              verify challenges, or store secrets.
+              GitHub Pages redirects to the hosted Worker. It does not process
+              webhooks, verify challenges, or store secrets.
             </span>
           </span>
         </div>
@@ -1771,7 +1778,7 @@
             "- Rollback is just removing `pr-captcha/human` from required checks.",
             "",
             "Links",
-            "- Public launcher: " + launcherLink(repo, base),
+            "- Public Worker: " + setup,
             "- Setup docs: " + staticUrl("./setup.md"),
             "- Live evidence scan: " + evidence,
             "- 7-day pilot planner: " + pilot,
@@ -1920,7 +1927,7 @@
             var finish = function (label) {
               shareCopy.textContent = label;
               window.setTimeout(function () {
-                shareCopy.textContent = "Copy launcher link";
+                shareCopy.textContent = "Copy Worker link";
               }, 1500);
             };
             copyText(value)

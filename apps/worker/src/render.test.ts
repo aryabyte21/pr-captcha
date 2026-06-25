@@ -51,14 +51,14 @@ describe("rendering", () => {
   it("uses the AI slop landing headline", () => {
     const html = renderHome();
 
-    expect(html).toContain("A tiny velvet rope for your PR queue.");
-    expect(html).toContain("One GitHub user. One commit SHA. No PR code run.");
+    expect(html).toContain("Make PR spam knock first.");
+    expect(html).toContain("Hosted Worker. SHA-bound. No patch checkout.");
     expect(html).toContain("AI slop should wait outside the queue.");
     expect(html).toContain("Install the gate in one pass");
     expect(html).toContain("Protect pr-captcha/human");
     expect(html).toContain("Copy workflow gate");
     expect(html).toContain("Watch demo");
-    expect(html).toContain("Install app");
+    expect(html).toContain("Start free");
     expect(html).toContain("Exact head SHA");
     expect(html).toContain("The gate is for attention, not taste policing.");
   });
@@ -122,7 +122,7 @@ describe("rendering", () => {
     expect(html).toContain("data-gate-shell");
     expect(html).toContain('data-gate-status="pending"');
     expect(html).toContain("Verification receipt");
-    expect(html).toContain("What pr-captcha proves");
+    expect(html).toContain("What this proves");
     expect(html).toContain("No PR code runs here");
     expect(html).toContain("New commits need a new check");
     expect(html).toContain('data-gate-check="sha"');
@@ -221,16 +221,16 @@ describe("rendering", () => {
   it("renders the open-source PR spam radar", () => {
     const html = renderSpamRadarPage("https://captcha.example.test");
 
-    expect(html).toContain("Open-source PR spam radar");
+    expect(html).toContain("See where PR spam is already labeled.");
     expect(html).toContain("data-radar-refresh");
     expect(html).toContain("data-radar-list");
     expect(html).toContain("data-radar-table");
-    expect(html).toContain("Repository pressure board");
+    expect(html).toContain("Repositories to inspect");
     expect(html).toContain("data-radar-clusters");
-    expect(html).toContain("Maintainer install packet");
+    expect(html).toContain("Copyable maintainer brief");
     expect(html).toContain("GitHub search queries used by the radar");
     expect(html).toContain("label%3Aspam");
-    expect(html).toContain("Live public GitHub pull requests labeled spam");
+    expect(html).toContain("Load public GitHub labels");
     expect(html).toContain("/api/public/spam-radar");
     expect(html).toContain("Scan your repo");
     expect(html).toContain(
@@ -419,14 +419,14 @@ describe("rendering", () => {
     expect(html).toContain("data-launch-form");
     expect(html).toContain("data-launch-commands");
     expect(html).toContain("npx wrangler d1 create pr-captcha");
-    expect(html).toContain("Pages URL");
+    expect(html).toContain("Pages redirect");
     expect(html).toContain("https://aryabyte21.github.io/pr-captcha/");
     expect(html).toContain("gh api -X POST repos/aryabyte21/pr-captcha/pages");
     expect(html).toContain("gh api -X PUT repos/aryabyte21/pr-captcha/pages");
     expect(html).toContain("build_type=workflow");
     expect(html).toContain("npx wrangler secret put APP_BASE_URL");
     expect(html).toContain("npx wrangler secret put TURNSTILE_SITE_KEY");
-    expect(html).toContain("GitHub Pages");
+    expect(html).toContain("Pages redirect");
     expect(html).toContain("Fork PR test");
     expect(html).toContain("Step 1");
     expect(html).toContain("data-launch-decision");
@@ -503,14 +503,14 @@ describe("rendering", () => {
   it("renders the setup wizard", () => {
     const html = renderSetupWizardPage("https://captcha.example.test");
 
-    expect(html).toContain("Choose who has to knock.");
-    expect(html).toContain("Start simple");
+    expect(html).toContain("Create your repository policy.");
+    expect(html).toContain("Start with fork");
     expect(html).toContain("data-wizard-repository");
     expect(html).toContain("data-wizard-scan");
     expect(html).toContain("data-wizard-evidence");
     expect(html).toContain("Repository-aware setup links");
     expect(html).toContain("/api/public/repo-evidence");
-    expect(html).toContain("Allow non-author solve");
+    expect(html).toContain("Allow maintainer override");
     expect(html).toContain("Branch protection");
     expect(html).toContain("Workflow guard");
     expect(html).toContain("Acceptance proof");

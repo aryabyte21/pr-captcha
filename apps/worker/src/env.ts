@@ -1,5 +1,6 @@
 export interface Env {
   DB: D1Database;
+  ASSETS?: Fetcher;
   APP_BASE_URL: string;
   GITHUB_APP_ID: string;
   GITHUB_PRIVATE_KEY: string;
