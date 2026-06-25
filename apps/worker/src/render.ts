@@ -20,26 +20,25 @@ export function renderHome(baseUrl?: string): string {
     `<header class="site-header">
       <a class="brand" href="/">${brandMark()}<span>pr-captcha</span></a>
       <nav class="site-nav" aria-label="Primary navigation">
-        <a href="/" aria-current="page">Home</a>
-        <a href="/demo">Demo</a>
-        <a href="/evidence">Evidence</a>
-        <a href="/launch">Launch</a>
-        <a href="/status">Status</a>
-        <a href="#roadmap">Roadmap</a>
+        <a href="/setup-wizard">Setup</a>
+        <a href="/trust">Trust</a>
+        <a href="/github-app-manifest">GitHub App</a>
+        <a href="/status">Operations</a>
         <a href="https://github.com/aryabyte21/pr-captcha">GitHub</a>
       </nav>
-      <a class="button dark header-cta" href="/launch">Install app</a>
+      <a class="button dark header-cta" href="/launch">Start free</a>
     </header>
     <main id="main" class="home">
       <section class="hero" data-motion-zone>
         <div class="hero-copy motion-reveal">
-          <h1>A tiny velvet rope for your PR queue.</h1>
-          <p>When AI slop knocks, pr-captcha asks for one human receipt before review or CI time gets spent. Useful humans get in. Spammy automation stops at the rope.</p>
+          <h1>Make PR spam knock first.</h1>
+          <p>Install the free hosted app, pick a simple policy, and make untrusted PRs prove a human is present before your repo has to care.</p>
           <div class="actions">
-            <a class="button primary" href="/demo">Watch demo</a>
-            <a class="button light" href="/launch">Install app</a>
+            <a class="button primary" href="/launch">Start free</a>
+            <a class="button light" href="/setup-wizard">Make policy</a>
+            <a class="button light" href="/demo">Watch demo</a>
           </div>
-          <p class="proof-line"><span class="success-shield">✓</span>One GitHub user. One commit SHA. No PR code run.</p>
+          <p class="proof-line"><span class="success-shield">✓</span>Hosted Worker. SHA-bound. No patch checkout.</p>
           <div class="signal-rail" aria-label="pr-captcha guarantees">
             <span>No AI detection</span>
             <span>No patch checkout</span>
@@ -795,7 +794,7 @@ export function renderEvidenceScannerPage(
 
 export function renderSpamRadarPage(baseUrl?: string): string {
   return layout(
-    "Open-source PR spam radar",
+    "PR spam radar",
     `<header class="site-header utility-header evidence-header">
       <a class="brand" href="/">${brandMark()}<span>pr-captcha</span></a>
       <nav class="site-nav" aria-label="Primary navigation">
@@ -812,30 +811,30 @@ export function renderSpamRadarPage(baseUrl?: string): string {
     <main id="main" class="preview-page evidence-page radar-page">
       <section class="preview-heading radar-heading">
         <div>
-          <h1>Open-source PR spam radar</h1>
-          <p>Live public GitHub pull requests labeled spam, invalid, or stale. Turn them into an install brief before the queue fills up.</p>
+          <h1>See where PR spam is already labeled.</h1>
+          <p>Load public GitHub labels, scan the examples, and copy a maintainer brief. No repo install required.</p>
           <div class="actions demo-actions">
-            <button class="button primary" type="button" data-radar-refresh>Refresh live radar</button>
+            <button class="button primary" type="button" data-radar-refresh>Load live examples</button>
             <button class="button light" type="button" data-radar-copy>Copy maintainer brief</button>
             <a class="button light" href="/evidence">Scan your repo</a>
           </div>
         </div>
         <div class="radar-proof">
           <div>
-            <span>Radar status</span>
+            <span>Last refresh</span>
             <strong data-radar-generated>waiting</strong>
           </div>
           <div>
-            <span>Repositories sampled</span>
+            <span>Repos found</span>
             <strong data-radar-repositories>scan</strong>
           </div>
           <div>
-            <span>Evidence quality</span>
+            <span>Signal confidence</span>
             <strong data-radar-quality>waiting</strong>
           </div>
           <div>
-            <span>Brief target</span>
-            <strong>maintainers</strong>
+            <span>Next step</span>
+            <strong>pick a repo</strong>
           </div>
         </div>
       </section>
@@ -844,17 +843,17 @@ export function renderSpamRadarPage(baseUrl?: string): string {
         ${radarQueryLink("Invalid labels", "is:pr is:open label:invalid archived:false", "invalid")}
         ${radarQueryLink("Stale labels", "is:pr is:open label:stale archived:false", "stale")}
       </section>
-      <section class="radar-shell" aria-label="Open-source PR spam radar">
+      <section class="radar-shell" aria-label="PR spam radar">
         <aside class="radar-panel">
           <div class="panel-top">
-            <strong>Why gate this?</strong>
+            <strong>How to use this</strong>
             <span data-radar-status>ready</span>
           </div>
           <div class="radar-recommendation">
             <span class="mini-shield">✓</span>
             <div>
-              <h2>Stop paying for unknown intent</h2>
-              <p data-radar-recommendation>Refresh the radar to turn public PR spam labels into a maintainer-ready install brief.</p>
+              <h2>Use evidence, not vibes</h2>
+              <p data-radar-recommendation>Load public examples, pick a repository with repeat signals, then use the brief to propose a small pilot.</p>
             </div>
           </div>
           <dl class="radar-totals">
@@ -871,12 +870,12 @@ export function renderSpamRadarPage(baseUrl?: string): string {
         </aside>
         <section class="radar-results">
           <div class="panel-top">
-            <strong>Live PR examples</strong>
+            <strong>Public PR examples</strong>
             <span data-radar-sample>waiting</span>
           </div>
           <div class="radar-empty" data-radar-empty>
-            <strong>No radar sample yet</strong>
-            <p>Load live GitHub search evidence to see PR titles, labels, authors, repository links, and why pr-captcha should gate the intake path.</p>
+            <strong>No examples loaded yet</strong>
+            <p>Click load to see public PR titles, labels, authors, repository links, and the signal behind each example.</p>
           </div>
           <div class="radar-table" data-radar-table hidden>
             <div class="radar-table-head" role="row">
@@ -892,30 +891,30 @@ export function renderSpamRadarPage(baseUrl?: string): string {
         <div class="radar-side-column">
           <section class="radar-clusters-card">
             <div class="panel-top">
-              <strong>Repository pressure board</strong>
+              <strong>Repositories to inspect</strong>
               <span data-radar-cluster-status>waiting</span>
             </div>
             <div class="radar-cluster-empty" data-radar-cluster-empty>
-              <strong>No repository clusters yet</strong>
-              <p>Refresh the radar to rank repositories by public PR intake signals.</p>
+              <strong>No repositories yet</strong>
+              <p>Load examples to group public signals by repository.</p>
             </div>
             <ol class="radar-cluster-list" data-radar-clusters></ol>
           </section>
           <section class="radar-summary-card">
             <div class="panel-top">
-              <strong>Maintainer install packet</strong>
+              <strong>Copyable maintainer brief</strong>
               <span data-radar-brief-status>ready</span>
             </div>
-            <pre class="status-json radar-summary" data-radar-summary tabindex="0">Refresh the radar to generate a maintainer-ready install packet.</pre>
+            <pre class="status-json radar-summary" data-radar-summary tabindex="0">Load examples to generate a maintainer-ready brief.</pre>
           </section>
         </div>
       </section>
     </main>
     ${spamRadarScript()}`,
     {
-      title: "Open-source PR spam radar",
+      title: "PR spam radar",
       description:
-        "Live public GitHub evidence of pull request spam, invalid, and stale labels.",
+        "Public GitHub evidence of pull request spam, invalid, and stale labels.",
       canonicalUrl: baseUrl ? `${baseUrl}/radar` : undefined,
       imageUrl: baseUrl ? `${baseUrl}/og.svg` : "/og.svg",
     },
@@ -1666,7 +1665,7 @@ export function renderLaunchPage(baseUrl?: string): string {
               <summary>Advanced service fields</summary>
               ${launchField("Worker URL", "worker_url", workerUrl, "url")}
               ${launchField("GitHub App slug", "github_app", appSlug)}
-              ${launchField("Pages URL", "pages_url", pagesUrl, "url")}
+              ${launchField("Pages redirect", "pages_url", pagesUrl, "url")}
               ${launchField("D1 database", "d1_database", databaseName)}
             </details>
           </div>
@@ -1676,7 +1675,7 @@ export function renderLaunchPage(baseUrl?: string): string {
               <legend>Production gates</legend>
               ${launchStep("worker", "Worker", "Deployed on the final domain with APP_BASE_URL set.")}
               ${launchStep("d1", "D1", "Production database created, bound, and migrated with the real database id.")}
-              ${launchStep("pages", "GitHub Pages", "Static launcher published from the Pages workflow with GitHub Actions as the source.")}
+              ${launchStep("pages", "Pages redirect", "Optional GitHub Pages fallback redirects people to the hosted Worker.")}
               ${launchStep("github_app_ready", "GitHub App", "Manifest converted and secrets stored in Cloudflare.")}
               ${launchStep("turnstile", "Turnstile", "Production site key and secret key are active.")}
               ${launchStep("policy", "Repository policy", ".github/pr-captcha.yml committed on the default branch.")}
@@ -1793,7 +1792,7 @@ export function renderLaunchPage(baseUrl?: string): string {
             <ul class="diagnostic-list" data-launch-gap-list>
               <li data-level="warning"><strong>Worker</strong><span>Waiting for evidence.</span></li>
               <li data-level="warning"><strong>D1</strong><span>Waiting for evidence.</span></li>
-              <li data-level="warning"><strong>GitHub Pages</strong><span>Waiting for evidence.</span></li>
+              <li data-level="warning"><strong>Pages redirect</strong><span>Waiting for evidence.</span></li>
               <li data-level="warning"><strong>GitHub App</strong><span>Waiting for evidence.</span></li>
               <li data-level="warning"><strong>Turnstile</strong><span>Waiting for evidence.</span></li>
               <li data-level="warning"><strong>Repository policy</strong><span>Waiting for evidence.</span></li>
@@ -2477,31 +2476,31 @@ export function renderSetupWizardPage(baseUrl?: string): string {
       <section class="preview-heading">
         <div>
           <p class="eyebrow">One file, one check</p>
-          <h1>Choose who has to knock.</h1>
-          <p>Start simple: require a human receipt for new, outside, fork, and bot PRs. The policy is just <code>.github/pr-captcha.yml</code>, so rollback is one revert.</p>
+          <h1>Create your repository policy.</h1>
+          <p>Pick a repo, choose who verifies, then copy <code>.github/pr-captcha.yml</code>. Start with fork, first-time, outside, and bot PRs.</p>
         </div>
         <div class="preview-guarantees">
-          <span><span class="mini-shield">✓</span>New contributors</span>
-          <span><span class="mini-shield">✓</span>Fork PRs</span>
-          <span><span class="mini-shield">✓</span>Bots</span>
+          <span><span class="mini-shield">✓</span>Scan first</span>
+          <span><span class="mini-shield">✓</span>Copy YAML</span>
+          <span><span class="mini-shield">✓</span>Test before protecting</span>
         </div>
       </section>
       <section class="wizard-shell" aria-label="pr-captcha setup wizard">
         <form class="wizard-options" data-setup-wizard>
           <div class="panel-top">
-            <strong>Repository policy</strong>
-            <span>guided setup</span>
+            <strong>Guided policy</strong>
+            <span>start here</span>
           </div>
           <fieldset class="wizard-group wizard-repository-group">
-            <legend>Repository evidence</legend>
+            <legend>Scan repository</legend>
             <label class="wizard-field wizard-repository-field">
               <span>GitHub repository</span>
               <input name="repository" value="kubernetes/kubernetes" autocomplete="off" data-wizard-repository />
             </label>
-            <button class="button primary compact" type="button" data-wizard-scan>Scan evidence</button>
+            <button class="button primary compact" type="button" data-wizard-scan>Scan public evidence</button>
             <div class="wizard-evidence" data-wizard-evidence data-risk="waiting">
               <div class="wizard-evidence-head">
-                <strong data-wizard-recommendation>Scan a repository before choosing branch protection.</strong>
+                <strong data-wizard-recommendation>Scan first, then choose where the required check should apply.</strong>
                 <span data-wizard-evidence-status>waiting</span>
               </div>
               <dl>
@@ -2521,30 +2520,30 @@ export function renderSetupWizardPage(baseUrl?: string): string {
             </div>
           </fieldset>
           <fieldset class="wizard-group">
-            <legend>Mode</legend>
-            <label class="wizard-choice"><input type="radio" name="mode" value="hybrid" checked /><span><strong>Hybrid</strong><small>PR signal, fork release, and workflow gate support.</small></span></label>
-            <label class="wizard-choice"><input type="radio" name="mode" value="native_fork" /><span><strong>Native fork release</strong><small>For public fork workflows GitHub already holds.</small></span></label>
-            <label class="wizard-choice"><input type="radio" name="mode" value="universal" /><span><strong>Workflow gate</strong><small>Portable gate for same-repo and private workflows.</small></span></label>
-            <label class="wizard-choice"><input type="radio" name="mode" value="required_check" /><span><strong>Required check</strong><small>Branch protection signal without workflow release.</small></span></label>
+            <legend>Pick gate mode</legend>
+            <label class="wizard-choice"><input type="radio" name="mode" value="hybrid" checked /><span><strong>Recommended default</strong><small>Creates the check, supports fork release, and can gate workflows later.</small></span></label>
+            <label class="wizard-choice"><input type="radio" name="mode" value="native_fork" /><span><strong>Release held fork runs</strong><small>Use when GitHub already holds fork workflows.</small></span></label>
+            <label class="wizard-choice"><input type="radio" name="mode" value="universal" /><span><strong>Gate heavy workflows</strong><small>Run a tiny job before expensive CI.</small></span></label>
+            <label class="wizard-choice"><input type="radio" name="mode" value="required_check" /><span><strong>Check only</strong><small>Use branch protection without workflow release.</small></span></label>
           </fieldset>
           <fieldset class="wizard-group">
-            <legend>Apply to</legend>
-            <label class="wizard-choice compact"><input type="checkbox" name="all_pull_requests" checked /><span><strong>Every PR</strong><small>Owners, members, branches, forks, bots.</small></span></label>
-            <label class="wizard-choice compact"><input type="checkbox" name="first_time_contributors" checked /><span><strong>First-time</strong><small>New contributors.</small></span></label>
-            <label class="wizard-choice compact"><input type="checkbox" name="outside_contributors" checked /><span><strong>Outside</strong><small>Not owner, member, or collaborator.</small></span></label>
+            <legend>Choose PR targets</legend>
+            <label class="wizard-choice compact"><input type="checkbox" name="all_pull_requests" /><span><strong>Every PR</strong><small>Use after a pilot, not as the first install.</small></span></label>
+            <label class="wizard-choice compact"><input type="checkbox" name="first_time_contributors" checked /><span><strong>First-time contributors</strong><small>New people without repo history.</small></span></label>
+            <label class="wizard-choice compact"><input type="checkbox" name="outside_contributors" checked /><span><strong>Outside contributors</strong><small>Not an owner, member, or collaborator.</small></span></label>
             <label class="wizard-choice compact"><input type="checkbox" name="fork_prs" checked /><span><strong>Fork PRs</strong><small>Pull requests from forks.</small></span></label>
             <label class="wizard-choice compact"><input type="checkbox" name="bots" checked /><span><strong>Bots</strong><small>Bot-authored pull requests.</small></span></label>
           </fieldset>
           <fieldset class="wizard-group">
-            <legend>Solver and surfaces</legend>
-            <label class="wizard-choice compact"><input type="checkbox" name="require_pr_author" checked /><span><strong>Require PR author</strong><small>Only the contributor can solve.</small></span></label>
-            <label class="wizard-choice compact"><input type="checkbox" name="maintainer_override" /><span><strong>Allow non-author solve</strong><small>Repository maintainers may verify.</small></span></label>
+            <legend>Decide what happens</legend>
+            <label class="wizard-choice compact"><input type="checkbox" name="require_pr_author" checked /><span><strong>Require PR author</strong><small>The contributor must solve their own check.</small></span></label>
+            <label class="wizard-choice compact"><input type="checkbox" name="maintainer_override" /><span><strong>Allow maintainer override</strong><small>Trusted maintainers may verify when needed.</small></span></label>
             <label class="wizard-choice compact"><input type="checkbox" name="create_required_check" checked /><span><strong>Create required check</strong><small>Publish pr-captcha/human.</small></span></label>
-            <label class="wizard-choice compact"><input type="checkbox" name="post_comment" checked /><span><strong>Post PR comment</strong><small>Contributor sees the verification link.</small></span></label>
-            <label class="wizard-choice compact"><input type="checkbox" name="rerun_after_verification" checked /><span><strong>Rerun failed workflow gate</strong><small>Useful for universal mode.</small></span></label>
+            <label class="wizard-choice compact"><input type="checkbox" name="post_comment" checked /><span><strong>Comment on the PR</strong><small>Contributor gets the verification link.</small></span></label>
+            <label class="wizard-choice compact"><input type="checkbox" name="rerun_after_verification" checked /><span><strong>Rerun gated workflow</strong><small>Useful when heavy jobs wait on the check.</small></span></label>
           </fieldset>
           <fieldset class="wizard-group">
-            <legend>Skip rules</legend>
+            <legend>Skip trusted traffic</legend>
             <label class="wizard-field"><span>Skip authors</span><input name="skip_authors" value="" /></label>
             <label class="wizard-field"><span>Skip labels</span><input name="skip_labels" value="trusted-contributor, no-captcha" /></label>
           </fieldset>
@@ -3986,7 +3985,7 @@ function spamRadarScript(): string {
         clusters.textContent = "";
         if (clusterEmpty) clusterEmpty.hidden = false;
         setText(clusterStatus, "failed");
-        latestBrief = "pr-captcha open-source PR spam radar\\nRadar unavailable: " + message;
+        latestBrief = "pr-captcha PR spam radar\\nRadar unavailable: " + message;
         summary.textContent = latestBrief;
       }
       async function load() {
@@ -4009,7 +4008,7 @@ function spamRadarScript(): string {
         } finally {
           if (refresh) {
             refresh.disabled = false;
-            refresh.textContent = "Refresh live radar";
+            refresh.textContent = "Load live examples";
           }
         }
       }
@@ -4956,10 +4955,10 @@ function launchPageScript(): string {
         return [
           "pr-captcha launch checklist",
           "Worker: " + baseUrl,
-          "Pages: " + pagesUrl,
+          "Pages redirect: " + pagesUrl,
           "Repository: " + repo.owner + "/" + repo.repo,
           "GitHub App: " + appSlug,
-          "Gates: Worker, D1, GitHub Pages, GitHub App, Turnstile, Repository policy, Diagnostics, Fork PR test.",
+          "Gates: Worker, D1, GitHub App, Turnstile, Repository policy, Diagnostics, Fork PR test.",
           "Runbook: " + baseUrl + "/launch"
         ].join("\\n");
       }
@@ -4984,7 +4983,7 @@ function launchPageScript(): string {
           "Demo: " + baseUrl + "/demo",
           "Setup wizard: " + baseUrl + "/setup-wizard",
           "Status: " + baseUrl + "/status",
-          "Pages launcher: " + pagesUrl,
+          "Pages redirect fallback: " + pagesUrl,
           "README badge: " + badgeMarkdown(baseUrl, repo)
         ].join("\\n");
       }
@@ -6330,7 +6329,7 @@ function setupWizardScript(baseUrl?: string): string {
           if (recommendation) recommendation.textContent = error && error.message ? error.message : "Evidence scan failed.";
         }).finally(function () {
           scanButton.disabled = false;
-          scanButton.textContent = "Scan evidence";
+          scanButton.textContent = "Scan public evidence";
         });
       }
       function renderPreview(payload) {
@@ -7392,10 +7391,10 @@ function launchShareText(
   return [
     "pr-captcha launch checklist",
     `Worker: ${workerUrl}`,
-    `Pages: ${pagesUrl}`,
+    `Pages redirect: ${pagesUrl}`,
     `Repository: ${repository}`,
     `GitHub App: ${appSlug}`,
-    "Gates: Worker, D1, GitHub Pages, GitHub App, Turnstile, Repository policy, Diagnostics, Fork PR test.",
+    "Gates: Worker, D1, GitHub App, Turnstile, Repository policy, Diagnostics, Fork PR test.",
     `Runbook: ${workerUrl}/launch`,
   ].join("\n");
 }
@@ -7425,7 +7424,7 @@ function launchIssueText(
     `Demo: ${workerUrl}/demo`,
     `Setup wizard: ${workerUrl}/setup-wizard`,
     `Status: ${workerUrl}/status`,
-    `Pages launcher: ${pagesUrl}`,
+    `Pages redirect fallback: ${pagesUrl}`,
     `README badge: ${launchBadgeMarkdown(workerUrl, repository)}`,
   ].join("\n");
 }
@@ -7978,7 +7977,7 @@ require:
   new_sha_requires_new_captcha: true
 
 apply_to:
-  all_pull_requests: true
+  all_pull_requests: false
   first_time_contributors: true
   outside_contributors: true
   fork_prs: true
@@ -8110,17 +8109,17 @@ export function renderGatePage(input: {
   const gateState = input.verified ? "verified" : "pending";
 
   return layout(
-    "Verify this pull request",
+    "Finish this PR check",
     `<main id="main" class="gate-page">
       <section class="gate-shell" data-gate-shell data-gate-status="${gateState}">
         <div class="gate gate-primary">
           <div class="brand centered">${brandMark()}<span>pr-captcha</span></div>
-          <h1>Verify this pull request</h1>
-          <p class="intro">Prove a GitHub-authenticated human is present for this exact commit before it spends maintainer attention.</p>
+          <h1>Finish this PR check</h1>
+          <p class="intro">Signed in as <strong>${escapeHtml(input.session.login)}</strong>. This verifies <a href="${escapeHtml(pullRequestUrl)}">${escapeHtml(repoFullName)}#${input.gate.pr_number}</a> at <code>${escapeHtml(shortSha)}</code>.</p>
           <div class="status-strip">
-            <span><span class="mini-shield">✓</span>SHA-bound</span>
-            <span><span class="mini-shield">✓</span>GitHub login</span>
-            <span><span class="mini-shield">✓</span>No code run</span>
+            <span><span class="mini-shield">✓</span>Signed into GitHub</span>
+            <span><span class="mini-shield">✓</span>Exact commit</span>
+            <span><span class="mini-shield">✓</span>No PR code runs</span>
           </div>
           ${error}
           ${success}
@@ -8133,7 +8132,7 @@ export function renderGatePage(input: {
             <h2>Verification receipt</h2>
             <span class="gate-status-badge" data-state="${gateState}">${input.verified ? "verified" : "waiting"}</span>
           </div>
-            <p>${input.verified ? "The human-origin signal is recorded." : "This check is waiting for the signed-in PR author or an authorized maintainer to finish."}</p>
+            <p>${input.verified ? "The human-origin signal is recorded." : "Complete the browser check to turn pr-captcha/human green for this commit."}</p>
             <dl class="gate-receipt-list">
               <div><dt>Required check</dt><dd><code>pr-captcha/human</code></dd></div>
               <div><dt>Target</dt><dd><a href="${escapeHtml(pullRequestUrl)}">${escapeHtml(repoFullName)}#${input.gate.pr_number}</a></dd></div>
@@ -8142,12 +8141,12 @@ export function renderGatePage(input: {
             </dl>
           </section>
           <section class="gate-panel">
-            <h2>What pr-captcha proves</h2>
+            <h2>What this proves</h2>
             <ul class="gate-check-list">
-              ${gateTrustItem("sha", "SHA-bound", "The check applies only to this pull request head commit.")}
-              ${gateTrustItem("github", "GitHub login", "The solver is tied to an authenticated GitHub account.")}
+              ${gateTrustItem("sha", "Exact SHA only", "The receipt applies only to this pull request head commit.")}
+              ${gateTrustItem("github", "GitHub account", "The solver is tied to an authenticated GitHub login.")}
               ${gateTrustItem("sandbox", "No PR code runs here", "This page never checks out or executes contributor code.")}
-              ${gateTrustItem("fresh", "New commits need a new check", "A pushed update cannot reuse an older human signal.")}
+              ${gateTrustItem("fresh", "New commits need a new check", "A pushed update cannot reuse an older receipt.")}
             </ul>
           </section>
         </aside>
@@ -10183,7 +10182,7 @@ function layout(
         max-height: 310px;
       }
       .radar-heading {
-        align-items: stretch;
+        align-items: start;
       }
       .radar-proof,
       .radar-panel,
@@ -10199,6 +10198,7 @@ function layout(
       .radar-proof {
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
+        min-width: 0;
       }
       .radar-proof div {
         display: grid;
@@ -10235,7 +10235,7 @@ function layout(
         display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: 12px;
-        margin: -12px 0 22px;
+        margin: 0 0 22px;
       }
       .radar-query {
         display: grid;
@@ -10278,8 +10278,10 @@ function layout(
       }
       .radar-shell {
         display: grid;
-        grid-template-columns: minmax(280px, 0.4fr) minmax(420px, 1fr) minmax(280px, 0.42fr);
-        grid-template-areas: "panel results side";
+        grid-template-columns: minmax(260px, 0.36fr) minmax(0, 1fr);
+        grid-template-areas:
+          "panel results"
+          "side side";
         gap: 18px;
         align-items: start;
       }
@@ -10335,6 +10337,7 @@ function layout(
       .radar-side-column {
         display: grid;
         grid-area: side;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
         gap: 18px;
         align-content: start;
         min-width: 0;
@@ -10546,6 +10549,8 @@ function layout(
         max-height: 240px;
         border: 0;
         border-radius: 0;
+        overflow-wrap: anywhere;
+        white-space: pre-wrap;
       }
       .pilot-shell {
         display: grid;
@@ -12706,7 +12711,7 @@ function layout(
       }
       .wizard-shell {
         display: grid;
-        grid-template-columns: minmax(360px, 0.78fr) minmax(520px, 1fr);
+        grid-template-columns: minmax(420px, 0.9fr) minmax(420px, 0.86fr);
         gap: 18px;
         align-items: start;
       }
@@ -12818,11 +12823,14 @@ function layout(
       .wizard-group {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 10px;
+        gap: 12px;
         border: 0;
         border-top: 1px solid var(--line);
         margin: 0;
-        padding: 16px 18px;
+        padding: 22px 18px 18px;
+      }
+      .wizard-group > * {
+        min-width: 0;
       }
       .wizard-group:first-of-type {
         grid-template-columns: 1fr;
@@ -12836,14 +12844,16 @@ function layout(
       }
       .wizard-group legend {
         grid-column: 1 / -1;
-        margin: 0 0 2px;
+        width: 100%;
+        margin: 0 0 8px;
         padding: 0;
         color: var(--ink);
-        font-size: 14px;
+        font-size: 15px;
         font-weight: 850;
+        line-height: 1.25;
       }
       .wizard-choice {
-        min-height: 70px;
+        min-height: 76px;
         display: grid;
         grid-template-columns: auto minmax(0, 1fr);
         gap: 10px;
@@ -12871,7 +12881,7 @@ function layout(
       }
       .wizard-choice strong {
         color: var(--ink);
-        font-size: 13px;
+        font-size: 14px;
         line-height: 1.25;
       }
       .wizard-choice small {
@@ -13014,6 +13024,8 @@ function layout(
         display: grid;
         gap: 14px;
         min-width: 0;
+        position: sticky;
+        top: 92px;
       }
       .wizard-install-grid {
         display: grid;
@@ -13107,7 +13119,7 @@ function layout(
         width: 100%;
       }
       .wizard-output .workflow-panel pre {
-        max-height: 590px;
+        max-height: 380px;
         overflow: auto;
       }
       .wizard-output .preview-output {
@@ -13338,7 +13350,7 @@ function layout(
         min-height: 100vh;
         display: grid;
         place-items: center;
-        padding: 48px 20px;
+        padding: 34px 20px;
         background:
           radial-gradient(circle at 50% 0%, rgba(17, 152, 95, 0.09), transparent 32rem),
           linear-gradient(90deg, rgba(21, 31, 44, 0.03) 1px, transparent 1px),
@@ -13346,9 +13358,9 @@ function layout(
         background-size: auto, 72px 72px, 72px 72px;
       }
       .gate-shell {
-        width: min(1160px, 100%);
+        width: min(1080px, 100%);
         display: grid;
-        grid-template-columns: minmax(0, 1.22fr) minmax(340px, 0.78fr);
+        grid-template-columns: minmax(0, 1fr) minmax(320px, 0.68fr);
         gap: 18px;
         align-items: stretch;
       }
@@ -13358,8 +13370,11 @@ function layout(
         border-radius: 8px;
         background: rgba(255, 255, 255, 0.96);
         box-shadow: var(--shadow);
-        padding: 34px;
-        text-align: center;
+        padding: 30px;
+        text-align: left;
+      }
+      .gate .brand.centered {
+        justify-content: flex-start;
       }
       .gate.small {
         width: min(480px, 100%);
@@ -13368,9 +13383,9 @@ function layout(
         min-height: 100%;
       }
       .gate h1 {
-        margin: 26px 0 12px;
+        margin: 22px 0 12px;
         color: var(--ink);
-        font-size: clamp(34px, 6vw, 52px);
+        font-size: clamp(32px, 5vw, 44px);
         line-height: 1.08;
         text-wrap: balance;
       }
@@ -13380,13 +13395,19 @@ function layout(
         line-height: 1.5;
       }
       .intro {
-        margin: 0 auto 28px;
-        max-width: 580px;
-        font-size: 18px;
+        margin: 0 0 22px;
+        max-width: 620px;
+        font-size: 17px;
+      }
+      .intro strong,
+      .intro a,
+      .intro code {
+        color: var(--ink);
+        font-weight: 820;
       }
       .fine-print {
-        margin: 18px auto 0;
-        max-width: 500px;
+        margin: 16px 0 0;
+        max-width: 560px;
         font-size: 14px;
       }
       .status-strip {
@@ -13403,9 +13424,9 @@ function layout(
         align-items: center;
         justify-content: center;
         gap: 10px;
-        min-height: 56px;
+        min-height: 52px;
         color: var(--green);
-        font-size: 15px;
+        font-size: 14px;
         font-weight: 760;
       }
       .status-strip > span + span {
@@ -13441,7 +13462,7 @@ function layout(
       .turnstile-wrap {
         display: grid;
         place-items: center;
-        min-height: 112px;
+        min-height: 104px;
         margin-top: 18px;
         border: 1px solid var(--line);
         border-radius: 6px;
@@ -13449,9 +13470,9 @@ function layout(
       }
       .button.full {
         width: 100%;
-        min-height: 58px;
+        min-height: 54px;
         margin-top: 22px;
-        font-size: 19px;
+        font-size: 17px;
       }
       .gate-complete-action .button.full {
         display: inline-flex;
@@ -13767,10 +13788,16 @@ function layout(
           grid-area: auto;
           position: static;
         }
+        .wizard-output {
+          position: static;
+        }
         .radar-results,
         .radar-side-column,
         .radar-summary-card {
           grid-area: auto;
+        }
+        .radar-side-column {
+          grid-template-columns: 1fr;
         }
         .radar-cluster-list {
           max-height: none;
