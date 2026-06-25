@@ -63,36 +63,22 @@ import {
 import {
   renderFaviconSvg,
   renderBadgeSvg,
-  renderConfigPreviewPage,
   renderDemoPage,
   renderEvidenceScannerPage,
-  renderForkPrRehearsalPage,
   renderGatePage,
-  renderGateTracePage,
-  renderGitHubAppManifestCallbackPage,
-  renderGitHubAppManifestPage,
   renderHome,
-  renderLaunchPage,
   renderMessagePage,
   renderOpenGraphImageSvg,
-  renderPilotPlanPage,
-  renderQueuePressurePage,
-  renderRepositoryDiagnosticsPage,
   renderRobotsTxt,
   renderSecurityTxt,
   renderSetupWizardPage,
-  renderSpamRadarPage,
   renderSitemapXml,
   renderStatusPage,
   renderTrustCenterPage,
 } from "./render";
 import { verifyTurnstile } from "./turnstile";
 import { fetchWithTimeout } from "./http";
-import {
-  fetchRepoEvidence,
-  fetchSpamRadar,
-  normalizeRepositorySlug,
-} from "./evidence";
+import { fetchRepoEvidence, normalizeRepositorySlug } from "./evidence";
 import type {
   CiCaptchaConfig,
   GateRecord,
@@ -284,48 +270,15 @@ app.get("/", (c) => {
   );
 });
 
-app.get("/config-preview", (c) => {
-  return c.html(
-    renderConfigPreviewPage(
-      publicBaseUrl(c.env as Partial<Env> | undefined, c.req.url),
-    ),
-  );
-});
-
 app.get("/demo", (c) => {
   return c.html(
     renderDemoPage(publicBaseUrl(c.env as Partial<Env> | undefined, c.req.url)),
   );
 });
 
-app.get("/queue-pressure", (c) => {
-  return c.html(
-    renderQueuePressurePage(
-      publicBaseUrl(c.env as Partial<Env> | undefined, c.req.url),
-    ),
-  );
-});
-
 app.get("/evidence", (c) => {
   return c.html(
     renderEvidenceScannerPage(
-      publicBaseUrl(c.env as Partial<Env> | undefined, c.req.url),
-      normalizeRepositorySlug(c.req.query("repo") ?? "") ?? undefined,
-    ),
-  );
-});
-
-app.get("/radar", (c) => {
-  return c.html(
-    renderSpamRadarPage(
-      publicBaseUrl(c.env as Partial<Env> | undefined, c.req.url),
-    ),
-  );
-});
-
-app.get("/pilot", (c) => {
-  return c.html(
-    renderPilotPlanPage(
       publicBaseUrl(c.env as Partial<Env> | undefined, c.req.url),
       normalizeRepositorySlug(c.req.query("repo") ?? "") ?? undefined,
     ),
@@ -340,59 +293,9 @@ app.get("/trust", (c) => {
   );
 });
 
-app.get("/github-app-manifest", (c) => {
-  return c.html(
-    renderGitHubAppManifestPage(
-      publicBaseUrl(c.env as Partial<Env> | undefined, c.req.url),
-    ),
-  );
-});
-
-app.get("/github-app-manifest/callback", (c) => {
-  return c.html(
-    renderGitHubAppManifestCallbackPage({
-      baseUrl: publicBaseUrl(c.env as Partial<Env> | undefined, c.req.url),
-      code: c.req.query("code") || undefined,
-      state: c.req.query("state") || undefined,
-    }),
-  );
-});
-
-app.get("/launch", (c) => {
-  return c.html(
-    renderLaunchPage(
-      publicBaseUrl(c.env as Partial<Env> | undefined, c.req.url),
-    ),
-  );
-});
-
-app.get("/rehearsal", (c) => {
-  return c.html(
-    renderForkPrRehearsalPage(
-      publicBaseUrl(c.env as Partial<Env> | undefined, c.req.url),
-    ),
-  );
-});
-
-app.get("/gate-trace", (c) => {
-  return c.html(
-    renderGateTracePage(
-      publicBaseUrl(c.env as Partial<Env> | undefined, c.req.url),
-    ),
-  );
-});
-
 app.get("/setup-wizard", (c) => {
   return c.html(
     renderSetupWizardPage(
-      publicBaseUrl(c.env as Partial<Env> | undefined, c.req.url),
-    ),
-  );
-});
-
-app.get("/diagnostics", (c) => {
-  return c.html(
-    renderRepositoryDiagnosticsPage(
       publicBaseUrl(c.env as Partial<Env> | undefined, c.req.url),
     ),
   );
@@ -527,10 +430,6 @@ app.get("/health/ready", async (c) => {
   return c.json(payload, payload.ok ? 200 : 503);
 });
 
-app.get("/api/public/launch-readiness", async (c) => {
-  return c.json(await readinessPayload(c.env));
-});
-
 app.get("/api/public/pr-counts", async (c) => {
   const repos = await Promise.all(
     publicQueueRepos.map(async (repo) => {
@@ -557,12 +456,6 @@ app.get("/api/public/repo-evidence", async (c) => {
   const evidence = await fetchRepoEvidence(repository);
   c.header("Cache-Control", "public, max-age=300, stale-while-revalidate=3600");
   return c.json(evidence);
-});
-
-app.get("/api/public/spam-radar", async (c) => {
-  const radar = await fetchSpamRadar();
-  c.header("Cache-Control", "public, max-age=300, stale-while-revalidate=3600");
-  return c.json(radar);
 });
 
 app.post("/api/public/config-preview", async (c) => {

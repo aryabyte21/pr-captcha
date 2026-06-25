@@ -42,55 +42,6 @@ export type RepoEvidence = {
   pulls: RepoEvidencePull[];
 };
 
-export type SpamRadarQuery = {
-  key: "spam" | "invalid" | "stale";
-  label: string;
-  query: string;
-  total_count: number | null;
-};
-
-export type SpamRadarItem = {
-  repository: string;
-  number: number;
-  title: string;
-  url: string;
-  author: string;
-  author_type: string;
-  created_at: string;
-  age_days: number;
-  labels: string[];
-  source: SpamRadarQuery["key"];
-  reasons: string[];
-};
-
-export type SpamRadarRepositoryCluster = {
-  repository: string;
-  sample_size: number;
-  top_signal: SpamRadarQuery["key"];
-  spam_items: number;
-  invalid_items: number;
-  stale_items: number;
-  latest_pr_url: string;
-  latest_pr_title: string;
-  latest_pr_number: number;
-};
-
-export type SpamRadar = {
-  generated_at: string;
-  live: boolean;
-  partial: boolean;
-  errors: string[];
-  queries: SpamRadarQuery[];
-  sample_size: number;
-  repositories: number;
-  spam_label_matches: number | null;
-  invalid_label_matches: number | null;
-  stale_label_matches: number | null;
-  recommendation: string;
-  items: SpamRadarItem[];
-  repository_clusters: SpamRadarRepositoryCluster[];
-};
-
 type GitHubPull = {
   number?: unknown;
   title?: unknown;
@@ -115,21 +66,6 @@ type GitHubPull = {
 type GitHubSearchResponse = {
   total_count?: unknown;
   items?: unknown;
-};
-
-type GitHubSearchIssue = {
-  number?: unknown;
-  title?: unknown;
-  html_url?: unknown;
-  created_at?: unknown;
-  repository_url?: unknown;
-  labels?: Array<{
-    name?: unknown;
-  }>;
-  user?: {
-    login?: unknown;
-    type?: unknown;
-  } | null;
 };
 
 export function normalizeRepositorySlug(input: string): string | null {
@@ -215,106 +151,6 @@ export async function fetchRepoEvidence(
     risk_level: riskLevel,
     recommendation: recommendationFor(riskLevel),
     pulls: sample,
-  };
-}
-
-export async function fetchSpamRadar(now = new Date()): Promise<SpamRadar> {
-  const errors: string[] = [];
-  const querySpecs: Array<Omit<SpamRadarQuery, "total_count">> = [
-    {
-      key: "spam",
-      label: "Spam labels",
-      query: "is:pr is:open label:spam archived:false",
-    },
-    {
-      key: "invalid",
-      label: "Invalid labels",
-      query: "is:pr is:open label:invalid archived:false",
-    },
-    {
-      key: "stale",
-      label: "Stale labels",
-      query: "is:pr is:open label:stale archived:false",
-    },
-  ];
-  const results = await Promise.all(
-    querySpecs.map(async (spec) => {
-      try {
-        const result = await fetchRadarSearch(spec, now);
-        return { spec, result };
-      } catch (error) {
-        errors.push(`${spec.label}: ${errorMessage(error)}`);
-        return {
-          spec,
-          result: {
-            total_count: null,
-            items: [] as SpamRadarItem[],
-          },
-        };
-      }
-    }),
-  );
-  const itemsByUrl = new Map<string, SpamRadarItem>();
-  const queries = results.map(({ spec, result }) => {
-    for (const item of result.items) {
-      if (!itemsByUrl.has(item.url)) {
-        itemsByUrl.set(item.url, item);
-      }
-    }
-    return {
-      ...spec,
-      total_count: result.total_count,
-    };
-  });
-  const items = Array.from(itemsByUrl.values()).slice(0, 24);
-  const repositoryClusters = radarRepositoryClusters(items);
-  const repositories = new Set(items.map((item) => item.repository)).size;
-  const spamLabelMatches =
-    queries.find((query) => query.key === "spam")?.total_count ?? null;
-  const invalidLabelMatches =
-    queries.find((query) => query.key === "invalid")?.total_count ?? null;
-  const staleLabelMatches =
-    queries.find((query) => query.key === "stale")?.total_count ?? null;
-  return {
-    generated_at: now.toISOString(),
-    live: results.some(({ result }) => result.total_count !== null),
-    partial: errors.length > 0,
-    errors,
-    queries,
-    sample_size: items.length,
-    repositories,
-    spam_label_matches: spamLabelMatches,
-    invalid_label_matches: invalidLabelMatches,
-    stale_label_matches: staleLabelMatches,
-    recommendation: radarRecommendation({
-      spamLabelMatches,
-      invalidLabelMatches,
-      staleLabelMatches,
-      sampleSize: items.length,
-      repositories,
-    }),
-    items,
-    repository_clusters: repositoryClusters,
-  };
-}
-
-async function fetchRadarSearch(
-  spec: Omit<SpamRadarQuery, "total_count">,
-  now: Date,
-): Promise<{ total_count: number | null; items: SpamRadarItem[] }> {
-  const response = await githubFetch(
-    `https://api.github.com/search/issues?q=${encodeURIComponent(spec.query)}&per_page=12&sort=created&order=desc`,
-  );
-  const payload = (await response.json()) as GitHubSearchResponse;
-  const rawItems = Array.isArray(payload.items) ? payload.items : [];
-  return {
-    total_count:
-      typeof payload.total_count === "number" ? payload.total_count : null,
-    items: rawItems
-      .map((item) =>
-        radarItemFromGitHubIssue(item as GitHubSearchIssue, spec.key, now),
-      )
-      .filter((item): item is SpamRadarItem => Boolean(item)),
   };
 }
 
@@ -435,52 +271,6 @@ function pullFromGitHub(
   };
 }
 
-function radarItemFromGitHubIssue(
-  issue: GitHubSearchIssue,
-  source: SpamRadarQuery["key"],
-  now: Date,
-): SpamRadarItem | null {
-  if (
-    typeof issue.number !== "number" ||
-    typeof issue.title !== "string" ||
-    typeof issue.html_url !== "string" ||
-    typeof issue.created_at !== "string"
-  ) {
-    return null;
-  }
-  const repository =
-    typeof issue.repository_url === "string"
-      ? repositoryFromApiUrl(issue.repository_url)
-      : null;
-  if (!repository) {
-    return null;
-  }
-  const createdAt = Date.parse(issue.created_at);
-  const ageDays = Number.isFinite(createdAt)
-    ? Math.max(0, Math.floor((now.getTime() - createdAt) / 86_400_000))
-    : 0;
-  const labels = Array.isArray(issue.labels)
-    ? issue.labels
-        .map((label) => label.name)
-        .filter((label): label is string => typeof label === "string")
-    : [];
-  return {
-    repository,
-    number: issue.number,
-    title: issue.title,
-    url: issue.html_url,
-    author:
-      typeof issue.user?.login === "string" ? issue.user.login : "unknown",
-    author_type:
-      typeof issue.user?.type === "string" ? issue.user.type : "Unknown",
-    created_at: issue.created_at,
-    age_days: ageDays,
-    labels,
-    source,
-    reasons: radarReasons(source, labels, ageDays, issue.user?.type),
-  };
-}
-
 function evidenceStats(pulls: RepoEvidencePull[]) {
   const repeatedTitles = new Map<string, number>();
   for (const pull of pulls) {
@@ -503,136 +293,6 @@ function evidenceStats(pulls: RepoEvidencePull[]) {
       (count) => count > 1,
     ).length,
   };
-}
-
-function radarReasons(
-  source: SpamRadarQuery["key"],
-  labels: string[],
-  ageDays: number,
-  userType: unknown,
-): string[] {
-  const normalized = labels.map((label) => label.toLowerCase());
-  const reasons: string[] = [];
-  if (source === "spam" || normalized.includes("spam")) {
-    reasons.push("spam label");
-  }
-  if (source === "invalid" || normalized.includes("invalid")) {
-    reasons.push("invalid label");
-  }
-  if (source === "stale" || ageDays >= 30) {
-    reasons.push(`${ageDays}d open`);
-  }
-  if (userType === "Bot") {
-    reasons.push("bot author");
-  }
-  return reasons.length > 0 ? reasons : ["public search match"];
-}
-
-function radarRepositoryClusters(
-  items: SpamRadarItem[],
-): SpamRadarRepositoryCluster[] {
-  const clusters = new Map<
-    string,
-    {
-      repository: string;
-      sample_size: number;
-      spam_items: number;
-      invalid_items: number;
-      stale_items: number;
-      latest: SpamRadarItem;
-    }
-  >();
-  for (const item of items) {
-    const cluster = clusters.get(item.repository);
-    if (!cluster) {
-      clusters.set(item.repository, {
-        repository: item.repository,
-        sample_size: 1,
-        spam_items: item.source === "spam" ? 1 : 0,
-        invalid_items: item.source === "invalid" ? 1 : 0,
-        stale_items: item.source === "stale" ? 1 : 0,
-        latest: item,
-      });
-      continue;
-    }
-    cluster.sample_size += 1;
-    if (item.source === "spam") {
-      cluster.spam_items += 1;
-    } else if (item.source === "invalid") {
-      cluster.invalid_items += 1;
-    } else {
-      cluster.stale_items += 1;
-    }
-    if (Date.parse(item.created_at) > Date.parse(cluster.latest.created_at)) {
-      cluster.latest = item;
-    }
-  }
-  return Array.from(clusters.values())
-    .map((cluster) => {
-      const topSignal = topRadarSignal(cluster);
-      return {
-        repository: cluster.repository,
-        sample_size: cluster.sample_size,
-        top_signal: topSignal,
-        spam_items: cluster.spam_items,
-        invalid_items: cluster.invalid_items,
-        stale_items: cluster.stale_items,
-        latest_pr_url: cluster.latest.url,
-        latest_pr_title: cluster.latest.title,
-        latest_pr_number: cluster.latest.number,
-      };
-    })
-    .sort((a, b) => {
-      const severityDelta =
-        radarSignalWeight(b.top_signal) - radarSignalWeight(a.top_signal);
-      if (severityDelta !== 0) {
-        return severityDelta;
-      }
-      return b.sample_size - a.sample_size;
-    })
-    .slice(0, 8);
-}
-
-function topRadarSignal(input: {
-  spam_items: number;
-  invalid_items: number;
-  stale_items: number;
-}): SpamRadarQuery["key"] {
-  if (
-    input.spam_items >= input.invalid_items &&
-    input.spam_items >= input.stale_items
-  ) {
-    return "spam";
-  }
-  if (input.invalid_items >= input.stale_items) {
-    return "invalid";
-  }
-  return "stale";
-}
-
-function radarSignalWeight(source: SpamRadarQuery["key"]): number {
-  return source === "spam" ? 3 : source === "invalid" ? 2 : 1;
-}
-
-function radarRecommendation(input: {
-  spamLabelMatches: number | null;
-  invalidLabelMatches: number | null;
-  staleLabelMatches: number | null;
-  sampleSize: number;
-  repositories: number;
-}): string {
-  const labelMatches =
-    (input.spamLabelMatches ?? 0) + (input.invalidLabelMatches ?? 0);
-  if (labelMatches >= 25 || input.repositories >= 10) {
-    return "Open-source maintainers are already labeling PR intake noise. Start pr-captcha in hybrid mode for fork, outside, bot, and first-time contributor PRs.";
-  }
-  if (labelMatches > 0 || input.sampleSize > 0) {
-    return "Use the radar as proof, then scan your repository and gate the pull request targets creating maintainer queue pressure.";
-  }
-  if ((input.staleLabelMatches ?? 0) > 0) {
-    return "Stale PR labels are visible even without spam labels. Scan your repository before enabling a required check.";
-  }
-  return "GitHub public search did not return strong spam-label evidence right now. Scan your own repository for fork and author pressure.";
 }
 
 function riskLevelFor(input: {
@@ -709,27 +369,6 @@ function pullCountFromLinkHeader(linkHeader: string | null): number | null {
 
 function validSlugPart(value: string): boolean {
   return /^[A-Za-z0-9_.-]{1,100}$/.test(value);
-}
-
-function repositoryFromApiUrl(value: string): string | null {
-  try {
-    const url = new URL(value);
-    if (url.hostname.toLowerCase() !== "api.github.com") {
-      return null;
-    }
-    const match = url.pathname.match(/^\/repos\/([^/]+)\/([^/]+)$/);
-    if (!match) {
-      return null;
-    }
-    const owner = decodeURIComponent(match[1] ?? "");
-    const repo = decodeURIComponent(match[2] ?? "");
-    if (!validSlugPart(owner) || !validSlugPart(repo)) {
-      return null;
-    }
-    return `${owner}/${repo}`;
-  } catch {
-    return null;
-  }
 }
 
 function errorMessage(error: unknown): string {

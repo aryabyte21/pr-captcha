@@ -24,6 +24,8 @@
 
 A free hosted GitHub App that checks ID at the door of your pull request queue.
 
+> It's not a Turing test. It's a guest list. Opus can pass the CAPTCHA; it still can't be the GitHub account you ban at 2am. That is the whole point.
+
 ## What it does
 
 - Posts a `pr-captcha/human` check on every PR, bound to the exact head SHA.
@@ -49,8 +51,6 @@ checks:
 ```
 
 Add the file, [install the app](https://github.com/apps/pr-captcha/installations/new), then require `pr-captcha/human` in branch protection. That is the whole setup.
-
-Install the GitHub App: https://github.com/apps/pr-captcha/installations/new
 
 ## Why
 
@@ -145,16 +145,13 @@ universal_gate:
 
 Every tool runs on the hosted Worker, no install required:
 
-| Path              | What                                      |
-| ----------------- | ----------------------------------------- |
-| `/demo`           | Interactive dry run of the full gate      |
-| `/evidence`       | Scan a repo for queue risk                |
-| `/queue-pressure` | Estimate maintainer attention at risk     |
-| `/radar`          | Public PR spam and invalid-label evidence |
-| `/setup-wizard`   | Generate a policy file                    |
-| `/trust`          | Security, privacy, and policy docs        |
-| `/launch`         | Production install cockpit                |
-| `/status`         | Live service health                       |
+| Path            | What                                 |
+| --------------- | ------------------------------------ |
+| `/demo`         | Interactive dry run of the full gate |
+| `/evidence`     | Scan a repo for queue risk           |
+| `/setup-wizard` | Generate a policy file               |
+| `/trust`        | Security, privacy, and policy docs   |
+| `/status`       | Live service health                  |
 
 ## Local development
 
