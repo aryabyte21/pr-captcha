@@ -16,6 +16,7 @@ export interface CiCaptchaConfig {
     new_sha_requires_new_captcha: boolean;
   };
   apply_to: {
+    all_pull_requests: boolean;
     first_time_contributors: boolean;
     outside_contributors: boolean;
     fork_prs: boolean;
@@ -40,7 +41,7 @@ export interface CiCaptchaConfig {
 
 export interface PullRequestWebhook {
   action: string;
-  installation?: {
+  installation: {
     id: number;
   };
   repository: {
@@ -99,6 +100,7 @@ export interface GateRecord {
   status: "pending" | "verified" | "skipped";
   gate_url: string;
   gate_token_hash: string;
+  gate_nonce_hash: string | null;
   check_run_id: number | null;
   comment_id: number | null;
   last_error: string | null;
@@ -128,5 +130,6 @@ export interface GateTokenPayload {
   repo: string;
   pr_number: number;
   head_sha: string;
+  nonce: string;
   exp: number;
 }

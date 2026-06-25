@@ -2,7 +2,13 @@ name = "pr-captcha"
 main = "src/index.ts"
 compatibility_date = "2026-06-14"
 
+[triggers]
+crons = ["*/30 * * * *"]
+
+[assets]
+directory = "../../docs"
+
 [[d1_databases]]
 binding = "DB"
 database_name = "pr-captcha"
-database_id = "replace-with-your-d1-database-id"
+database_id = "bd57567c-bd6e-40ef-80d8-ec15dce21822"

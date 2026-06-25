@@ -1,7 +1,7 @@
 <h1 align="center">pr-captcha</h1>
 
 <p align="center">
-  CAPTCHA before CI for GitHub Actions.
+  Make AI slop and PR spam knock before CI.
 </p>
 
 <p align="center">
@@ -12,36 +12,103 @@
 </p>
 
 <p align="center">
-  <strong>No CAPTCHA, no CI.</strong>
+  <strong>Make AI slop prove a human is present.</strong>
 </p>
 
-`pr-captcha` is a GitHub App that holds suspicious, first-time, and fork pull request workflows until a GitHub-authenticated human solves a browser CAPTCHA for the exact PR head SHA.
+`pr-captcha` is a free hosted GitHub App for public repositories that want AI slop and PR spam to knock before the repo spends maintainer attention.
 
-It is built for maintainers who do not want low-quality drive-by PRs spending CI minutes before anyone has looked at the work.
+It gates pull requests until a GitHub-authenticated human verifies the exact head SHA. By default that includes owner branches, member branches, forks, first-time contributors, outside authors, and bot PR workflows. The Worker never checks out the patch. It reads metadata, asks for a browser CAPTCHA, and publishes a SHA-bound human-origin signal. For fork workflows that GitHub already holds, it can also release CI after verification.
 
-<table>
-  <tr>
-    <td width="33%">
-      <strong>Stop waste early</strong><br>
-      Native fork approval keeps GitHub Actions paused before runners start.
-    </td>
-    <td width="33%">
-      <strong>Bind proof to code</strong><br>
-      Verification is scoped to repository, PR number, author, and head SHA.
-    </td>
-    <td width="33%">
-      <strong>Support every repo</strong><br>
-      Use fork approval, a tiny gate Action, a required check, or a hybrid setup.
-    </td>
-  </tr>
-</table>
+## Why this exists
+
+Open source PRs are real work queues. Mature projects already have reviews, labels, branch protection, and workflow approvals. The weak point is earlier: AI slop, bot accounts, and drive-by PRs can enter the queue, create status noise, request labels, and cause the tiny sigh before a maintainer decides whether to even open the diff. Greptile's OpenClaw writeup is the punchline in chart form: when PRs get cheap enough to send, maintainers inherit the inbox problem.
+
+Hosted launch page:
+
+```txt
+https://aryabyte21.github.io/pr-captcha/
+```
+
+These are public PR pages from busy repositories, captured on June 14, 2026:
+
+| VS Code                                                           | Kubernetes                                                               | Next.js                                                           |
+| ----------------------------------------------------------------- | ------------------------------------------------------------------------ | ----------------------------------------------------------------- |
+| ![VS Code pull request screenshot](docs/assets/oss-pr-vscode.png) | ![Kubernetes pull request screenshot](docs/assets/oss-pr-kubernetes.png) | ![Next.js pull request screenshot](docs/assets/oss-pr-nextjs.png) |
+
+`pr-captcha` does one narrow thing: it makes PR authors prove a real GitHub user is present before the PR becomes maintainer work. It is not AI detection. It is a CAPTCHA at intake.
+
+The landing page can hydrate live open-PR counts from GitHub and falls back to the captured snapshot if the public API is unavailable or slow.
+
+Try the shareable dry run before installing:
+
+```txt
+https://<worker-domain>/demo
+```
+
+Measure your weekly PR queue pressure before choosing a policy:
+
+```txt
+https://<worker-domain>/queue-pressure
+```
+
+Scan a real repository for fork pressure, unknown authors, stale PRs, and spam labels:
+
+```txt
+https://<worker-domain>/evidence
+```
+
+Watch public open-source PR spam and invalid-label evidence before choosing a policy:
+
+```txt
+https://<worker-domain>/radar
+```
+
+Review security, privacy, terms, support, abuse, incident, and beta policy docs before sending real traffic:
+
+```txt
+https://<worker-domain>/trust
+```
+
+Generate a README badge after install:
+
+```txt
+https://<worker-domain>/badge-builder
+```
+
+Generate a shareable PR proof card after verification:
+
+```txt
+https://<worker-domain>/proof-card
+```
+
+Generate a shareable repository queue scorecard after scanning evidence:
+
+```txt
+https://<worker-domain>/scorecard-builder
+```
+
+Rehearse a disposable fork PR before enabling branch protection:
+
+```txt
+https://<worker-domain>/rehearsal
+```
+
+Trace the gate from signed webhook to required check:
+
+```txt
+https://<worker-domain>/gate-trace
+```
 
 ## Product Snapshot
 
 <table>
   <tr>
+    <td><strong>Stops</strong></td>
+    <td>Unverified PRs from blending into the maintainer queue.</td>
+  </tr>
+  <tr>
     <td><strong>Protects</strong></td>
-    <td>GitHub Actions minutes, maintainer attention, and required checks.</td>
+    <td>Maintainer attention, required checks, and heavy automation where configured.</td>
   </tr>
   <tr>
     <td><strong>Gates with</strong></td>
@@ -53,26 +120,38 @@ It is built for maintainers who do not want low-quality drive-by PRs spending CI
   </tr>
 </table>
 
+## What it does
+
 <table>
   <tr>
     <td width="33%">
-      <strong>Native fork gate</strong><br>
-      Zero runner minutes until GitHub releases the held workflow run.
+      <strong>PR intake check</strong><br>
+      A required SHA-bound human-origin check appears as soon as the PR opens.
     </td>
     <td width="33%">
-      <strong>Universal Action gate</strong><br>
-      One tiny job blocks expensive jobs for same-repo and private PRs.
+      <strong>Native fork release</strong><br>
+      GitHub's held fork workflow can be released after verification.
     </td>
     <td width="33%">
-      <strong>Required check</strong><br>
-      Branch protection can require <code>pr-captcha/human</code> before merge.
+      <strong>Workflow gate</strong><br>
+      One tiny job can block heavy jobs for same-repo and private PRs.
     </td>
   </tr>
 </table>
 
+## Test the gate path locally
+
+Run the focused gate proof before changing webhook, CAPTCHA, check run, or Action behavior:
+
+```sh
+npm test --workspace apps/worker -- src/gate-flow.test.ts
+```
+
+The contract test simulates a signed GitHub pull request webhook, creates the pending `pr-captcha/human` check, runs the shipped Action against the Worker status API, solves the Turnstile gate for the exact head SHA, updates the GitHub check to success, approves a held fork workflow, reruns a failed workflow, and then proves the Action passes for the same commit.
+
 ## Current Status
 
-This repository is an MVP codebase. The product path is implemented, but it is not deployed as a live production service yet.
+This repository is an MVP codebase with a live GitHub Pages launch page and a free hosted Worker path for beta installs. The public front door is deployed at `https://aryabyte21.github.io/pr-captcha/`.
 
 <table>
   <tr>
@@ -87,7 +166,34 @@ This repository is an MVP codebase. The product path is implemented, but it is n
       Cloudflare Turnstile verification<br>
       D1 gate and verification schema<br>
       SHA-bound signed links<br>
+      Hashed gate token storage<br>
+      Single-use gate nonce<br>
+      Signed CSRF form token<br>
       PR comments and check runs<br>
+      Webhook delivery deduplication<br>
+      Gate and webhook rate limits<br>
+      Audit log table and gate events<br>
+      Admin audit log export<br>
+      Admin repository diagnostics<br>
+      Repository diagnostics console<br>
+      Public interactive demo<br>
+      Public queue pressure calculator<br>
+      Public open-source PR spam radar with repository pressure board<br>
+      Public Trust Center and launch docs<br>
+      Public README badge builder<br>
+      Public PR proof-card generator<br>
+      Public repository scorecard generator<br>
+      Public GitHub App manifest builder<br>
+      Public fork PR rehearsal console<br>
+      Public gate trace smoke-test console<br>
+      Public status page<br>
+      Public setup wizard<br>
+      Public config preview page<br>
+      Beta installation allowlist<br>
+      CI, Pages, and Worker deploy workflows<br>
+      Structured redacted error logs<br>
+      Scheduled expired-row cleanup<br>
+      Admin retry endpoint for verified gates<br>
       Workflow approval logic<br>
       Optional universal gate Action<br>
       Landing page and docs
@@ -113,7 +219,8 @@ flowchart LR
     Held["Fork workflow run held by GitHub"]
     Comment["PR comment"]
     Check["pr-captcha/human check"]
-    Actions["GitHub Actions starts"]
+    Signal["Human-origin signal"]
+    Actions["Optional workflow release"]
   end
 
   subgraph App["pr-captcha Worker"]
@@ -122,7 +229,7 @@ flowchart LR
     Decision{"Gate this PR?"}
     Gate["Create signed SHA gate"]
     Store["Store verification"]
-    Approve["Approve matching workflow runs"]
+    Approve["Optionally approve matching workflow runs"]
     Success["Mark check success"]
   end
 
@@ -137,7 +244,7 @@ flowchart LR
   PR --> Webhook
   PR --> Held
   Webhook --> Policy --> Decision
-  Decision -- "No" --> Actions
+  Decision -- "No" --> Signal
   Decision -- "Yes" --> Gate
   Gate --> Comment
   Gate --> Check
@@ -145,22 +252,23 @@ flowchart LR
   Link --> OAuth --> Captcha --> Validate --> Match
   Match -- "No" --> Held
   Match -- "Yes" --> Store
+  Store --> Signal
   Store --> Approve --> Actions
   Store --> Success --> Check
 ```
 
-The privileged app treats pull request content as metadata. It approves or denies workflow runs, but never checks out or executes the patch.
+The privileged app treats pull request content as metadata. It publishes a human-origin signal and can approve held fork workflow runs, but never checks out or executes the patch.
 
 ## Pull Request Flow
 
-| Step | Event                                                                                 | pr-captcha action                                                 |
-| ---- | ------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
-| 1    | PR opens from fork, first-time contributor, outside contributor, or configured target | Creates a gate for repository, PR number, PR author, and head SHA |
-| 2    | GitHub creates a workflow run that is awaiting approval                               | Posts a verification comment and creates `pr-captcha/human`       |
-| 3    | Contributor opens the gate link                                                       | Requires GitHub OAuth login                                       |
-| 4    | Contributor solves CAPTCHA                                                            | Validates Turnstile token server-side                             |
-| 5    | Verification passes                                                                   | Approves held workflow runs for that exact SHA                    |
-| 6    | Contributor pushes another commit                                                     | Old verification no longer applies                                |
+| Step | Event                                                                                  | pr-captcha action                                                 |
+| ---- | -------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| 1    | PR opens under an enabled target: every PR by default, or a narrower configured target | Creates a gate for repository, PR number, PR author, and head SHA |
+| 2    | The pull request webhook arrives                                                       | Posts a verification comment and creates `pr-captcha/human`       |
+| 3    | Contributor opens the gate link                                                        | Requires GitHub OAuth login                                       |
+| 4    | Contributor solves CAPTCHA                                                             | Validates Turnstile token server-side                             |
+| 5    | Verification passes                                                                    | Marks the exact SHA as human-verified and optionally releases CI  |
+| 6    | Contributor pushes another commit                                                      | Old verification no longer applies                                |
 
 ## Integration Modes
 
@@ -171,30 +279,36 @@ The privileged app treats pull request content as metadata. It approves or denie
     <td><strong>What it saves</strong></td>
   </tr>
   <tr>
-    <td>Native fork gate</td>
-    <td>Public repositories receiving fork PRs from outside contributors.</td>
-    <td>All runner minutes before verification.</td>
+    <td>PR intake check</td>
+    <td>Busy public repositories receiving unknown or automated pull requests.</td>
+    <td>Maintainer attention before triage and review.</td>
   </tr>
   <tr>
-    <td>Universal Action gate</td>
+    <td>Native fork release</td>
+    <td>Public repositories where GitHub already holds fork workflow runs.</td>
+    <td>Held fork jobs before verification.</td>
+  </tr>
+  <tr>
+    <td>Workflow gate</td>
     <td>Same-repo PRs, private repositories, or workflows that need a portable gate.</td>
-    <td>Expensive jobs after the tiny gate job.</td>
-  </tr>
-  <tr>
-    <td>Required check</td>
-    <td>Repositories that want merge protection even when CI already ran.</td>
-    <td>Maintainer review time and merge risk.</td>
+    <td>Heavy jobs after the tiny gate job.</td>
   </tr>
   <tr>
     <td>Hybrid</td>
     <td>Most serious repositories.</td>
-    <td>CI minutes, merge safety, and clear contributor UX.</td>
+    <td>Queue hygiene, merge safety, and clear contributor UX.</td>
   </tr>
 </table>
 
-### Native Fork Gate
+### PR Intake Check
 
-Best for public open-source repositories.
+Best for busy public repositories.
+
+`pr-captcha` creates a `pr-captcha/human` check run on the PR SHA as soon as the pull request opens or updates. Repositories can require that check before merge, use it in triage automation, or show it as a visible signal for maintainers.
+
+### Native Fork Release
+
+Best when GitHub already holds fork workflows.
 
 GitHub already has an awaiting-approval state for fork PR workflows. `pr-captcha` becomes the approval layer and releases the held workflow only after human verification.
 
@@ -204,9 +318,10 @@ Fork pull request workflows
 Require approval for outside contributors
 ```
 
-### Universal Action Gate
+### Workflow Gate
 
 Best for same-repo PRs, private repositories, and repositories that want a workflow-level gate.
+The Action validates the status response schema and fails closed if the Worker returns a malformed status response.
 
 ```yaml
 name: CI
@@ -232,22 +347,17 @@ jobs:
       - run: npm test
 ```
 
-### Required Check
-
-Best for branch protection.
-
-`pr-captcha` creates a `pr-captcha/human` check run on the PR SHA. Repositories can require that check before merge.
-
 ## Mode Comparison
 
-| Capability                         | Native fork gate      | Universal Action gate   | Required check          |
-| ---------------------------------- | --------------------- | ----------------------- | ----------------------- |
-| Stops CI before runner starts      | Yes                   | Partially               | No                      |
-| Works for fork PRs                 | Yes                   | Yes                     | Yes                     |
-| Works for same-repo PRs            | No                    | Yes                     | Yes                     |
-| Runner minutes before verification | Zero                  | Tiny gate job           | Zero by itself          |
-| Blocks merge                       | With required check   | With required check     | Yes                     |
-| Best use case                      | Public repo fork spam | Broad workflow adoption | Merge protection signal |
+| Capability                         | PR intake check      | Native fork release        | Workflow gate           |
+| ---------------------------------- | -------------------- | -------------------------- | ----------------------- |
+| Creates PR-visible human signal    | Yes                  | Yes                        | Yes                     |
+| Stops CI before runner starts      | No                   | Yes                        | Partially               |
+| Works for fork PRs                 | Yes                  | Yes                        | Yes                     |
+| Works for same-repo PRs            | Yes                  | No                         | Yes                     |
+| Runner minutes before verification | Zero by itself       | Zero                       | Tiny gate job           |
+| Blocks merge                       | With required check  | With required check        | With required check     |
+| Best use case                      | Public triage queues | GitHub-held fork workflows | Broad workflow adoption |
 
 ## Repository Config
 
@@ -265,15 +375,14 @@ require:
   new_sha_requires_new_captcha: true
 
 apply_to:
+  all_pull_requests: true
   first_time_contributors: true
   outside_contributors: true
   fork_prs: true
   bots: true
 
 skip:
-  authors:
-    - dependabot[bot]
-    - renovate[bot]
+  authors: []
   labels:
     - trusted-contributor
     - no-captcha
@@ -290,12 +399,22 @@ universal_gate:
   rerun_after_verification: true
 ```
 
+`github_login` and `new_sha_requires_new_captcha` are enforced security invariants. False values are ignored so every passed gate is still bound to a GitHub-authenticated user and the exact PR head SHA. Set `solver_must_be_pr_author: false` only if repository maintainers with write, maintain, or admin access may verify on behalf of contributors. Bot-authored pull requests can also be verified by maintainers because bot accounts cannot complete GitHub OAuth.
+
+`all_pull_requests` gates owner branches, member branches, forks, outside contributors, first-time contributors, and bots. Turn it off only when a repository intentionally wants a narrower policy.
+
+`outside_contributors` covers any GitHub PR author association that is not `OWNER`, `MEMBER`, or `COLLABORATOR`, including repeat external contributors.
+
+`skip.authors` and `skip.labels` are matched case-insensitively.
+
+`required_check` always creates its check run. In `native_fork` and `hybrid`, pr-captcha keeps the PR comment enabled if checks are disabled so the verification link is still visible.
+
 ## GitHub App Permissions
 
 | Permission    | Access | Why                                                                    |
 | ------------- | ------ | ---------------------------------------------------------------------- |
 | Metadata      | Read   | Required by GitHub Apps.                                               |
-| Pull requests | Read   | Read PR author, labels, fork state, and head SHA.                      |
+| Pull requests | Write  | Read PR metadata and update PR review surfaces.                        |
 | Issues        | Write  | Create or update the PR comment with the verification link.            |
 | Checks        | Write  | Create `pr-captcha/human` check runs.                                  |
 | Actions       | Write  | Approve held fork PR workflow runs and rerun universal-gate workflows. |
@@ -315,6 +434,10 @@ universal_gate:
   <tr>
     <td><strong>Test</strong></td>
     <td><code>npm run test</code></td>
+  </tr>
+  <tr>
+    <td><strong>Critical path</strong></td>
+    <td><code>npm test --workspace @pr-captcha/worker -- gate-flow.test.ts</code></td>
   </tr>
   <tr>
     <td><strong>Build</strong></td>
@@ -352,7 +475,7 @@ examples
   Example config and workflow snippets
 
 docs
-  Architecture, config, operations, GitHub App setup, production goal
+  Setup guide, architecture, config, operations, GitHub App setup, production goal
 ```
 
 ## Security Model
@@ -379,25 +502,26 @@ make
 
 See [docs/production-goal.md](docs/production-goal.md).
 
+Start with [docs/setup.md](docs/setup.md) for the maintainer install path, open `/trust` for public security and policy docs, open `/launch` on a deployed Worker for the production cockpit, use `/rehearsal` for the disposable fork PR dry run, use `/gate-trace` for the webhook-to-check smoke test, or open `/github-app-manifest` to generate the GitHub App registration payload.
+
+Before enabling production deploys, run `npm run check:deploy-env` with `CLOUDFLARE_ACCOUNT_ID` and `CLOUDFLARE_API_TOKEN` set. The same preflight runs in `.github/workflows/worker-deploy.yml` before Wrangler deploys.
+
 High-priority work before public launch:
 
 - deploy production Worker
 - create production GitHub App and OAuth app
-- add webhook delivery deduplication
-- add rate limits by IP, GitHub login, repository, and PR number
-- add audit log rows for every gate event
-- add replay protection and nonce tracking
-- add end-to-end tests with real fork PR fixtures
-- add operator retry path for failed GitHub approvals
-- publish setup guide and demo video
+- tune rate-limit thresholds from beta traffic
+- add real GitHub delivery replay fixtures
+- record demo video or GIF from a clean fork PR
 
 ## Launch Line
 
 ```txt
-I built CAPTCHA before CI.
+I built a CAPTCHA for AI-slop PRs.
 
-Open a PR from a fork.
-CI stays paused.
-Solve CAPTCHA.
-GitHub Actions starts.
+Open an unknown PR.
+pr-captcha makes it knock.
+GitHub login. CAPTCHA. Exact commit.
+The check is bound to one GitHub user and one commit SHA.
+Review still decides. Slop waits outside.
 ```

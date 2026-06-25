@@ -1,4 +1,7 @@
 import type { Env } from "./env";
+import { fetchWithTimeout } from "./http";
+
+const turnstileTimeoutMs = 5000;
 
 export async function verifyTurnstile(
   env: Env,
@@ -13,13 +16,30 @@ export async function verifyTurnstile(
   }
   form.set("idempotency_key", crypto.randomUUID());
 
-  const response = await fetch(
-    "https://challenges.cloudflare.com/turnstile/v0/siteverify",
-    {
-      method: "POST",
-      body: form,
-    },
+  try {
+    const response = await fetchWithTimeout(
+      "https://challenges.cloudflare.com/turnstile/v0/siteverify",
+      {
+        method: "POST",
+        body: form,
+      },
+      turnstileTimeoutMs,
+    );
+    if (!response.ok) {
+      return false;
+    }
+    const payload = await response.json();
+    return isTurnstileResult(payload) && payload.success === true;
+  } catch {
+    return false;
+  }
+}
+
+function isTurnstileResult(value: unknown): value is { success: boolean } {
+  return (
+    Boolean(value) &&
+    typeof value === "object" &&
+    !Array.isArray(value) &&
+    typeof (value as { success?: unknown }).success === "boolean"
   );
-  const payload = (await response.json()) as { success?: boolean };
-  return payload.success === true;
 }

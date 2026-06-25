@@ -9,10 +9,13 @@ export interface Env {
   TURNSTILE_SITE_KEY: string;
   TURNSTILE_SECRET_KEY: string;
   SESSION_SECRET: string;
+  ADMIN_TOKEN?: string;
+  ALLOWED_INSTALLATION_IDS?: string;
 }
 
 export type AppVariables = {
   session?: SessionUser;
+  requestId?: string;
 };
 
 export type SessionUser = {
@@ -20,3 +23,12 @@ export type SessionUser = {
   login: string;
   exp: number;
 };
+
+export function appBaseUrl(env: Pick<Env, "APP_BASE_URL">): string {
+  return env.APP_BASE_URL.trim().replace(/\/+$/, "");
+}
+
+export function appUrl(env: Pick<Env, "APP_BASE_URL">, path: string): string {
+  const normalizedPath = path.startsWith("/") ? path : `/${path}`;
+  return `${appBaseUrl(env)}${normalizedPath}`;
+}
