@@ -350,9 +350,9 @@ export function renderDemoPage(baseUrl?: string): string {
   return layout(
     "pr-captcha demo",
     `<header class="site-header utility-header">
-      <a class="brand" href="/">${brandMark()}<span>pr-captcha</span></a>
+      <a class="brand" href="/">${brandMark()}<span>pr-captcha</span><span class="tag">free · hosted</span></a>
       <nav class="site-nav" aria-label="Primary navigation"><a href="/">Home</a><a href="/demo">Demo</a><a href="/evidence">Evidence</a><a href="/setup-wizard">Setup</a><a href="/trust">Trust</a><a href="https://github.com/aryabyte21/pr-captcha">GitHub</a></nav>
-      <a class="button dark header-cta" href="/setup-wizard">Open setup wizard</a>
+      <span class="header-actions"><button class="header-tg" id="theme" type="button" aria-label="Toggle light or dark">☀</button><a class="button dark header-cta" href="${GITHUB_APP_INSTALL_URL}">Install free</a></span>
     </header>
     <main id="main" class="preview-page demo-page">
       <section class="preview-heading demo-heading">
@@ -503,9 +503,9 @@ export function renderQueuePressurePage(baseUrl?: string): string {
   return layout(
     "Queue pressure",
     `<header class="site-header utility-header">
-      <a class="brand" href="/">${brandMark()}<span>pr-captcha</span></a>
+      <a class="brand" href="/">${brandMark()}<span>pr-captcha</span><span class="tag">free · hosted</span></a>
       <nav class="site-nav" aria-label="Primary navigation"><a href="/">Home</a><a href="/demo">Demo</a><a href="/evidence">Evidence</a><a href="/setup-wizard">Setup</a><a href="/trust">Trust</a><a href="https://github.com/aryabyte21/pr-captcha">GitHub</a></nav>
-      <a class="button dark header-cta" href="/demo">Open demo</a>
+      <span class="header-actions"><button class="header-tg" id="theme" type="button" aria-label="Toggle light or dark">☀</button><a class="button dark header-cta" href="${GITHUB_APP_INSTALL_URL}">Install free</a></span>
     </header>
     <main id="main" class="preview-page queue-page">
       <section class="preview-heading queue-heading">
@@ -613,9 +613,9 @@ export function renderEvidenceScannerPage(
   return layout(
     "Repo evidence",
     `<header class="site-header utility-header evidence-header">
-      <a class="brand" href="/">${brandMark()}<span>pr-captcha</span></a>
+      <a class="brand" href="/">${brandMark()}<span>pr-captcha</span><span class="tag">free · hosted</span></a>
       <nav class="site-nav" aria-label="Primary navigation"><a href="/">Home</a><a href="/demo">Demo</a><a href="/evidence">Evidence</a><a href="/setup-wizard">Setup</a><a href="/trust">Trust</a><a href="https://github.com/aryabyte21/pr-captcha">GitHub</a></nav>
-      <a class="button dark header-cta" href="/launch">Install app</a>
+      <span class="header-actions"><button class="header-tg" id="theme" type="button" aria-label="Toggle light or dark">☀</button><a class="button dark header-cta" href="${GITHUB_APP_INSTALL_URL}">Install free</a></span>
     </header>
     <main id="main" class="preview-page evidence-page">
       <section class="preview-heading evidence-heading">
@@ -743,9 +743,9 @@ export function renderSpamRadarPage(baseUrl?: string): string {
   return layout(
     "PR spam radar",
     `<header class="site-header utility-header evidence-header">
-      <a class="brand" href="/">${brandMark()}<span>pr-captcha</span></a>
+      <a class="brand" href="/">${brandMark()}<span>pr-captcha</span><span class="tag">free · hosted</span></a>
       <nav class="site-nav" aria-label="Primary navigation"><a href="/">Home</a><a href="/demo">Demo</a><a href="/evidence">Evidence</a><a href="/setup-wizard">Setup</a><a href="/trust">Trust</a><a href="https://github.com/aryabyte21/pr-captcha">GitHub</a></nav>
-      <a class="button dark header-cta" href="/evidence">Scan your repo</a>
+      <span class="header-actions"><button class="header-tg" id="theme" type="button" aria-label="Toggle light or dark">☀</button><a class="button dark header-cta" href="${GITHUB_APP_INSTALL_URL}">Install free</a></span>
     </header>
     <main id="main" class="preview-page evidence-page radar-page">
       <section class="preview-heading radar-heading">
@@ -873,9 +873,9 @@ export function renderPilotPlanPage(
   return layout(
     "Maintainer pilot plan",
     `<header class="site-header utility-header evidence-header">
-      <a class="brand" href="/">${brandMark()}<span>pr-captcha</span></a>
+      <a class="brand" href="/">${brandMark()}<span>pr-captcha</span><span class="tag">free · hosted</span></a>
       <nav class="site-nav" aria-label="Primary navigation"><a href="/">Home</a><a href="/demo">Demo</a><a href="/evidence">Evidence</a><a href="/setup-wizard">Setup</a><a href="/trust">Trust</a><a href="https://github.com/aryabyte21/pr-captcha">GitHub</a></nav>
-      <a class="button dark header-cta" href="/setup-wizard">Generate policy</a>
+      <span class="header-actions"><button class="header-tg" id="theme" type="button" aria-label="Toggle light or dark">☀</button><a class="button dark header-cta" href="${GITHUB_APP_INSTALL_URL}">Install free</a></span>
     </header>
     <main id="main" class="preview-page evidence-page pilot-page">
       <section class="preview-heading pilot-heading">
@@ -1007,9 +1007,9 @@ export function renderTrustCenterPage(baseUrl?: string): string {
   return layout(
     "Trust Center",
     `<header class="site-header utility-header trust-header">
-      <a class="brand" href="/">${brandMark()}<span>pr-captcha</span></a>
+      <a class="brand" href="/">${brandMark()}<span>pr-captcha</span><span class="tag">free · hosted</span></a>
       <nav class="site-nav" aria-label="Primary navigation"><a href="/">Home</a><a href="/demo">Demo</a><a href="/evidence">Evidence</a><a href="/setup-wizard">Setup</a><a href="/trust">Trust</a><a href="https://github.com/aryabyte21/pr-captcha">GitHub</a></nav>
-      <a class="button dark header-cta" href="/security.md">Security contact</a>
+      <span class="header-actions"><button class="header-tg" id="theme" type="button" aria-label="Toggle light or dark">☀</button><a class="button dark header-cta" href="${GITHUB_APP_INSTALL_URL}">Install free</a></span>
     </header>
     <main id="main" class="preview-page trust-page">
       <section class="preview-heading trust-heading">
@@ -1102,9 +1102,9 @@ export function renderLaunchPage(baseUrl?: string): string {
   return layout(
     "Install pr-captcha",
     `<header class="site-header utility-header launch-header">
-      <a class="brand" href="/">${brandMark()}<span>pr-captcha</span></a>
+      <a class="brand" href="/">${brandMark()}<span>pr-captcha</span><span class="tag">free · hosted</span></a>
       <nav class="site-nav" aria-label="Primary navigation"><a href="/">Home</a><a href="/demo">Demo</a><a href="/evidence">Evidence</a><a href="/setup-wizard">Setup</a><a href="/trust">Trust</a><a href="https://github.com/aryabyte21/pr-captcha">GitHub</a></nav>
-      <a class="button dark header-cta" href="${GITHUB_APP_INSTALL_URL}">Install app</a>
+      <span class="header-actions"><button class="header-tg" id="theme" type="button" aria-label="Toggle light or dark">☀</button><a class="button dark header-cta" href="${GITHUB_APP_INSTALL_URL}">Install free</a></span>
     </header>
     <main id="main" class="preview-page launch-page">
       <section class="preview-heading launch-heading">
@@ -1327,9 +1327,9 @@ export function renderForkPrRehearsalPage(baseUrl?: string): string {
   return layout(
     "Fork PR rehearsal",
     `<header class="site-header utility-header rehearsal-header">
-      <a class="brand" href="/">${brandMark()}<span>pr-captcha</span></a>
+      <a class="brand" href="/">${brandMark()}<span>pr-captcha</span><span class="tag">free · hosted</span></a>
       <nav class="site-nav" aria-label="Primary navigation"><a href="/">Home</a><a href="/demo">Demo</a><a href="/evidence">Evidence</a><a href="/setup-wizard">Setup</a><a href="/trust">Trust</a><a href="https://github.com/aryabyte21/pr-captcha">GitHub</a></nav>
-      <a class="button dark header-cta" href="${GITHUB_APP_INSTALL_URL}">Install app</a>
+      <span class="header-actions"><button class="header-tg" id="theme" type="button" aria-label="Toggle light or dark">☀</button><a class="button dark header-cta" href="${GITHUB_APP_INSTALL_URL}">Install free</a></span>
     </header>
     <main id="main" class="preview-page rehearsal-page">
       <section class="preview-heading rehearsal-heading">
@@ -1459,9 +1459,9 @@ export function renderGateTracePage(baseUrl?: string): string {
   return layout(
     "Gate trace",
     `<header class="site-header utility-header trace-header">
-      <a class="brand" href="/">${brandMark()}<span>pr-captcha</span></a>
+      <a class="brand" href="/">${brandMark()}<span>pr-captcha</span><span class="tag">free · hosted</span></a>
       <nav class="site-nav" aria-label="Primary navigation"><a href="/">Home</a><a href="/demo">Demo</a><a href="/evidence">Evidence</a><a href="/setup-wizard">Setup</a><a href="/trust">Trust</a><a href="https://github.com/aryabyte21/pr-captcha">GitHub</a></nav>
-      <a class="button dark header-cta" href="/rehearsal">Test PR</a>
+      <span class="header-actions"><button class="header-tg" id="theme" type="button" aria-label="Toggle light or dark">☀</button><a class="button dark header-cta" href="${GITHUB_APP_INSTALL_URL}">Install free</a></span>
     </header>
     <main id="main" class="preview-page trace-page">
       <section class="preview-heading trace-heading">
@@ -1583,9 +1583,9 @@ export function renderGitHubAppManifestPage(baseUrl?: string): string {
   return layout(
     "GitHub App manifest",
     `<header class="site-header utility-header manifest-header">
-      <a class="brand" href="/">${brandMark()}<span>pr-captcha</span></a>
+      <a class="brand" href="/">${brandMark()}<span>pr-captcha</span><span class="tag">free · hosted</span></a>
       <nav class="site-nav" aria-label="Primary navigation"><a href="/">Home</a><a href="/demo">Demo</a><a href="/evidence">Evidence</a><a href="/setup-wizard">Setup</a><a href="/trust">Trust</a><a href="https://github.com/aryabyte21/pr-captcha">GitHub</a></nav>
-      <a class="button dark header-cta" href="/setup-wizard">Open setup wizard</a>
+      <span class="header-actions"><button class="header-tg" id="theme" type="button" aria-label="Toggle light or dark">☀</button><a class="button dark header-cta" href="${GITHUB_APP_INSTALL_URL}">Install free</a></span>
     </header>
     <main id="main" class="preview-page manifest-page">
       <section class="preview-heading manifest-heading">
@@ -1699,9 +1699,9 @@ export function renderGitHubAppManifestCallbackPage(input: {
   return layout(
     "GitHub App manifest callback",
     `<header class="site-header utility-header">
-      <a class="brand" href="/">${brandMark()}<span>pr-captcha</span></a>
+      <a class="brand" href="/">${brandMark()}<span>pr-captcha</span><span class="tag">free · hosted</span></a>
       <nav class="site-nav" aria-label="Primary navigation"><a href="/">Home</a><a href="/demo">Demo</a><a href="/evidence">Evidence</a><a href="/setup-wizard">Setup</a><a href="/trust">Trust</a><a href="https://github.com/aryabyte21/pr-captcha">GitHub</a></nav>
-      <a class="button dark header-cta" href="/github-app-manifest">Back to manifest</a>
+      <span class="header-actions"><button class="header-tg" id="theme" type="button" aria-label="Toggle light or dark">☀</button><a class="button dark header-cta" href="${GITHUB_APP_INSTALL_URL}">Install free</a></span>
     </header>
     <main id="main" class="preview-page manifest-page">
       <section class="preview-heading manifest-heading">
@@ -1823,9 +1823,9 @@ export function renderConfigPreviewPage(baseUrl?: string): string {
   return layout(
     "Preview pr-captcha.yml",
     `<header class="site-header utility-header">
-      <a class="brand" href="/">${brandMark()}<span>pr-captcha</span></a>
+      <a class="brand" href="/">${brandMark()}<span>pr-captcha</span><span class="tag">free · hosted</span></a>
       <nav class="site-nav" aria-label="Primary navigation"><a href="/">Home</a><a href="/demo">Demo</a><a href="/evidence">Evidence</a><a href="/setup-wizard">Setup</a><a href="/trust">Trust</a><a href="https://github.com/aryabyte21/pr-captcha">GitHub</a></nav>
-      <a class="button dark header-cta" href="/setup.md">Open setup</a>
+      <span class="header-actions"><button class="header-tg" id="theme" type="button" aria-label="Toggle light or dark">☀</button><a class="button dark header-cta" href="${GITHUB_APP_INSTALL_URL}">Install free</a></span>
     </header>
     <main id="main" class="preview-page">
       <section class="preview-heading">
@@ -1904,9 +1904,9 @@ export function renderSetupWizardPage(baseUrl?: string): string {
   return layout(
     "Choose a policy",
     `<header class="site-header utility-header">
-      <a class="brand" href="/">${brandMark()}<span>pr-captcha</span></a>
+      <a class="brand" href="/">${brandMark()}<span>pr-captcha</span><span class="tag">free · hosted</span></a>
       <nav class="site-nav" aria-label="Primary navigation"><a href="/">Home</a><a href="/demo">Demo</a><a href="/evidence">Evidence</a><a href="/setup-wizard">Setup</a><a href="/trust">Trust</a><a href="https://github.com/aryabyte21/pr-captcha">GitHub</a></nav>
-      <a class="button dark header-cta" href="/config-preview">Preview config</a>
+      <span class="header-actions"><button class="header-tg" id="theme" type="button" aria-label="Toggle light or dark">☀</button><a class="button dark header-cta" href="${GITHUB_APP_INSTALL_URL}">Install free</a></span>
     </header>
     <main id="main" class="preview-page">
       <section class="preview-heading">
@@ -2075,9 +2075,9 @@ export function renderRepositoryDiagnosticsPage(baseUrl?: string): string {
   return layout(
     "Repository diagnostics",
     `<header class="site-header utility-header">
-      <a class="brand" href="/">${brandMark()}<span>pr-captcha</span></a>
+      <a class="brand" href="/">${brandMark()}<span>pr-captcha</span><span class="tag">free · hosted</span></a>
       <nav class="site-nav" aria-label="Primary navigation"><a href="/">Home</a><a href="/demo">Demo</a><a href="/evidence">Evidence</a><a href="/setup-wizard">Setup</a><a href="/trust">Trust</a><a href="https://github.com/aryabyte21/pr-captcha">GitHub</a></nav>
-      <a class="button dark header-cta" href="/setup.md">Open setup</a>
+      <span class="header-actions"><button class="header-tg" id="theme" type="button" aria-label="Toggle light or dark">☀</button><a class="button dark header-cta" href="${GITHUB_APP_INSTALL_URL}">Install free</a></span>
     </header>
     <main id="main" class="preview-page">
       <section class="preview-heading">
@@ -2171,9 +2171,9 @@ export function renderStatusPage(baseUrl?: string): string {
   return layout(
     "pr-captcha status",
     `<header class="site-header utility-header">
-      <a class="brand" href="/">${brandMark()}<span>pr-captcha</span></a>
+      <a class="brand" href="/">${brandMark()}<span>pr-captcha</span><span class="tag">free · hosted</span></a>
       <nav class="site-nav" aria-label="Primary navigation"><a href="/">Home</a><a href="/demo">Demo</a><a href="/evidence">Evidence</a><a href="/setup-wizard">Setup</a><a href="/trust">Trust</a><a href="https://github.com/aryabyte21/pr-captcha">GitHub</a></nav>
-      <a class="button dark header-cta" href="/diagnostics">Run diagnostics</a>
+      <span class="header-actions"><button class="header-tg" id="theme" type="button" aria-label="Toggle light or dark">☀</button><a class="button dark header-cta" href="${GITHUB_APP_INSTALL_URL}">Install free</a></span>
     </header>
     <main id="main" class="preview-page">
       <section class="preview-heading">
@@ -2982,10 +2982,10 @@ function evidenceScannerScript(): string {
           "",
           "Next steps",
           "1. Review the live report: " + url,
-          "3. Plan a 7-day pilot: " + appLink("/pilot", data.repository),
-          "4. Generate the policy: " + appLink("/setup-wizard", data.repository),
-          "5. Test the gate flow: " + appLink("/demo"),
-          "6. Copy the launch packet: " + appLink("/launch")
+          "2. Plan a 7-day pilot: " + appLink("/pilot", data.repository),
+          "3. Generate the policy: " + appLink("/setup-wizard", data.repository),
+          "4. Test the gate flow: " + appLink("/demo"),
+          "5. Copy the launch packet: " + appLink("/launch")
         ].join("\\n");
       }
       function renderEvidence(data) {
@@ -6952,15 +6952,6 @@ function layout(
         color: var(--ink);
         filter: drop-shadow(0 1px 0 rgba(8, 13, 20, 0.12));
       }
-      .brand-mark rect {
-        fill: currentColor;
-      }
-      .brand-mark path {
-        fill: #ffffff;
-      }
-      .brand-mark circle {
-        fill: #16a35c;
-      }
       .brand-mark.small {
         width: 24px;
         height: 24px;
@@ -6968,6 +6959,39 @@ function layout(
       .brand-mark.tiny {
         width: 22px;
         height: 22px;
+      }
+      .brand .tag {
+        font-family: var(--mono);
+        font-size: 11px;
+        color: var(--muted);
+        letter-spacing: 0.02em;
+        font-weight: 600;
+        padding: 2px 6px;
+        border: 1px solid var(--line);
+        border-radius: 5px;
+      }
+      .header-actions {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        flex: 0 0 auto;
+      }
+      .header-tg {
+        display: grid;
+        place-items: center;
+        width: 36px;
+        height: 36px;
+        flex: 0 0 auto;
+        border-radius: 8px;
+        border: 1px solid var(--line);
+        background: var(--surface);
+        color: var(--muted);
+        cursor: pointer;
+        font-size: 14px;
+        transition: color 180ms var(--ease-out);
+      }
+      .header-tg:hover {
+        color: var(--ink);
       }
       .site-nav {
         display: flex;
@@ -13259,7 +13283,23 @@ function layout(
       svg .m-line { fill: none; stroke: #15181e; stroke-width: 1; stroke-linecap: round; }
     </style>
   </head>
-  <body><a class="skip-link" href="#main">Skip to content</a>${body}</body>
+  <body><a class="skip-link" href="#main">Skip to content</a>${body}<script>
+    (function () {
+      var root = document.documentElement;
+      function get(k, d) { try { return localStorage.getItem(k) || d; } catch (e) { return d; } }
+      function set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+      root.setAttribute("data-theme", get("theme", "dark"));
+      var btn = document.getElementById("theme");
+      if (btn) {
+        function sync() { btn.textContent = root.getAttribute("data-theme") === "dark" ? "☀" : "☾"; }
+        sync();
+        btn.addEventListener("click", function () {
+          var next = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
+          root.setAttribute("data-theme", next); set("theme", next); sync();
+        });
+      }
+    })();
+  </script></body>
 </html>`;
 }
 

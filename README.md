@@ -9,6 +9,12 @@
 </p>
 
 <p align="center">
+  <a href="https://github.com/apps/pr-captcha/installations/new"><img alt="Install the GitHub App" src="https://img.shields.io/badge/Install_the_GitHub_App-0b8f4d?style=for-the-badge&logo=github&logoColor=white"></a>
+  &nbsp;
+  <a href="https://pr-captcha.aryaabyte.workers.dev/"><img alt="Open the live site" src="https://img.shields.io/badge/Open_the_live_site-13161c?style=for-the-badge&logo=cloudflare&logoColor=white"></a>
+</p>
+
+<p align="center">
   <img alt="Status: MVP" src="https://img.shields.io/badge/status-MVP-black">
   <img alt="Runtime: Cloudflare Workers" src="https://img.shields.io/badge/runtime-Cloudflare%20Workers-f38020">
   <img alt="Captcha: Turnstile" src="https://img.shields.io/badge/captcha-Turnstile-0b8f4d">
