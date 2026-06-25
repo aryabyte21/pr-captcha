@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vitest";
 import {
-  renderBadgeBuilderPage,
   renderBadgeSvg,
   renderConfigPreviewPage,
   renderDemoPage,
@@ -14,11 +13,7 @@ import {
   renderLaunchPage,
   renderOpenGraphImageSvg,
   renderPilotPlanPage,
-  renderProofCardBuilderPage,
-  renderProofCardSvg,
   renderQueuePressurePage,
-  renderScorecardBuilderPage,
-  renderScorecardSvg,
   renderRepositoryDiagnosticsPage,
   renderSetupWizardPage,
   renderSpamRadarPage,
@@ -261,18 +256,6 @@ describe("rendering", () => {
     );
   });
 
-  it("renders the README badge builder", () => {
-    const html = renderBadgeBuilderPage("https://captcha.example.test");
-
-    expect(html).toContain("Give maintainers a public proof mark");
-    expect(html).toContain("data-badge-form");
-    expect(html).toContain("data-badge-markdown");
-    expect(html).toContain("data-badge-preview");
-    expect(html).toContain(
-      '<link rel="canonical" href="https://captcha.example.test/badge-builder" />',
-    );
-  });
-
   it("renders a first-party README badge SVG", () => {
     const svg = renderBadgeSvg({
       label: "protected by",
@@ -285,75 +268,6 @@ describe("rendering", () => {
     expect(svg).toContain("protected by pr-captcha");
     expect(svg).toContain("#109b55");
     expect(svg).toContain('rx="6"');
-  });
-
-  it("renders the PR proof-card builder", () => {
-    const html = renderProofCardBuilderPage("https://captcha.example.test");
-
-    expect(html).toContain("Turn a verified PR into proof");
-    expect(html).toContain("data-proof-form");
-    expect(html).toContain("data-proof-preview");
-    expect(html).toContain("data-proof-social");
-    expect(html).toContain(
-      '<link rel="canonical" href="https://captcha.example.test/proof-card" />',
-    );
-  });
-
-  it("renders a first-party PR proof-card SVG", () => {
-    const svg = renderProofCardSvg({
-      repo: "octo-org/awesome-repo",
-      pr: "184",
-      sha: "8f31c9a",
-      user: "some-user",
-      result: "verified",
-      theme: "light",
-    });
-
-    expect(svg).toContain('width="1200" height="630"');
-    expect(svg).toContain("octo-org/awesome-repo");
-    expect(svg).toContain("PR #184");
-    expect(svg).toContain("Human verified");
-    expect(svg).toContain("8f31c9a");
-  });
-
-  it("renders the OSS PR queue scorecard builder", () => {
-    const html = renderScorecardBuilderPage(
-      "https://captcha.example.test",
-      "kubernetes/kubernetes",
-    );
-
-    expect(html).toContain("Repository queue scorecard");
-    expect(html).toContain("data-scorecard-form");
-    expect(html).toContain("data-scorecard-preview");
-    expect(html).toContain("data-scorecard-url");
-    expect(html).toContain("data-scorecard-social");
-    expect(html).toContain("data-scorecard-issue");
-    expect(html).toContain("data-scorecard-open-issue");
-    expect(html).toContain("data-scorecard-share");
-    expect(html).toContain("/api/public/repo-evidence");
-    expect(html).toContain('value="kubernetes/kubernetes"');
-    expect(html).toContain(
-      '<link rel="canonical" href="https://captcha.example.test/scorecard-builder" />',
-    );
-  });
-
-  it("renders a first-party repo queue scorecard SVG", () => {
-    const svg = renderScorecardSvg({
-      repo: "octo-org/awesome-repo",
-      risk: "high",
-      open: "184",
-      fork: "24",
-      unknown: "9",
-      labels: "7",
-      recommendation: "Require pr-captcha before heavy CI starts.",
-      theme: "light",
-    });
-
-    expect(svg).toContain('width="1200" height="630"');
-    expect(svg).toContain("octo-org/awesome-repo");
-    expect(svg).toContain("HIGH RISK");
-    expect(svg).toContain("184");
-    expect(svg).toContain("protected by pr-captcha");
   });
 
   it("renders the GitHub App manifest builder", () => {
