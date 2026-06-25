@@ -94,7 +94,7 @@ describe("rendering", () => {
     expect(html).toContain('name="csrf_token" value="csrf-token"');
   });
 
-  it("renders gate trust boundaries and receipt metadata", () => {
+  it("renders a pending gate with the human check form", () => {
     const html = renderGatePage({
       gate,
       token: "gate-token",
@@ -109,11 +109,9 @@ describe("rendering", () => {
 
     expect(html).toContain("data-gate-shell");
     expect(html).toContain('data-gate-status="pending"');
-    expect(html).toContain("Verification receipt");
-    expect(html).toContain("What this proves");
+    expect(html).toContain("Complete human check");
+    expect(html).toContain("cf-turnstile");
     expect(html).toContain("No PR code runs here");
-    expect(html).toContain("New commits need a new check");
-    expect(html).toContain('data-gate-check="sha"');
     expect(html).toContain("<code>pr-captcha/human</code>");
     expect(html).toContain("octo-org/awesome-repo#184");
   });

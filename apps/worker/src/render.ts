@@ -11,6 +11,9 @@ type ProofTheme = "light" | "dark" | "compact";
 type ScorecardRisk = "low" | "medium" | "high";
 type ScorecardTheme = "light" | "dark";
 
+const GITHUB_APP_INSTALL_URL =
+  "https://github.com/apps/pr-captcha-aryabyte21/installations/new";
+
 export function renderHome(baseUrl?: string): string {
   const canonical = baseUrl
     ? `<link rel="canonical" href="${escapeHtml(baseUrl)}" />`
@@ -51,7 +54,7 @@ export function renderHome(baseUrl?: string): string {
     <meta name="twitter:title" content="Your repo has a bouncer now." />
     <meta name="twitter:description" content="A GitHub-authenticated, SHA-bound human check at the door of your pull request queue." />
     <meta name="twitter:image" content="${ogImage}" />
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon.svg?v=2" type="image/svg+xml" />
     <style>
       @font-face { font-family: "Hanken Grotesk"; font-style: normal; font-weight: 400 500; font-display: swap; src: url("/assets/fonts/hanken-400.woff2") format("woff2"); }
       @font-face { font-family: "Hanken Grotesk"; font-style: normal; font-weight: 600 800; font-display: swap; src: url("/assets/fonts/hanken-600.woff2") format("woff2"); }
@@ -167,6 +170,8 @@ export function renderHome(baseUrl?: string): string {
       .explore a:hover { border-color: var(--text); transform: translateY(-1px); }
       .explore .rn { font-family: var(--mono); font-size: 13px; font-weight: 600; }
       .explore .rd { font-size: 12.5px; color: var(--muted); margin-top: 4px; }
+      .explore-note { margin-top: 18px; font-size: 13.5px; color: var(--muted); }
+      .explore-note a { color: var(--text); text-decoration: underline; text-underline-offset: 2px; }
       .final { background: var(--ink); color: var(--paper); border-radius: 18px; padding: 56px 48px; display: flex; align-items: center; justify-content: space-between; gap: 32px; flex-wrap: wrap; border: 1px solid var(--line); }
       .final h2 { font-size: clamp(26px, 3.4vw, 36px); letter-spacing: -0.03em; font-weight: 640; margin: 0; max-width: 18ch; text-wrap: balance; }
       .final .quip { font-family: var(--mono); font-size: 12.5px; color: color-mix(in srgb, var(--paper) 55%, transparent); margin-top: 12px; }
@@ -199,11 +204,11 @@ export function renderHome(baseUrl?: string): string {
           <a href="#how">How it works</a>
           <a href="#short">The idea</a>
           <a href="/trust">Trust</a>
-          <a href="/setup-wizard">Docs</a>
+          <a href="/setup-wizard">Setup</a>
           <a href="https://github.com/aryabyte21/pr-captcha">GitHub</a>
         </nav>
         <button class="tg" id="theme" type="button" aria-label="Toggle light or dark">☀</button>
-        <a class="btn primary sm" href="/setup-wizard">Install free</a>
+        <a class="btn primary sm" href="${GITHUB_APP_INSTALL_URL}">Install free</a>
       </div>
     </header>
     <main id="main">
@@ -214,7 +219,7 @@ export function renderHome(baseUrl?: string): string {
             <h1>Your repo<br />has a <em>bouncer</em><br />now.</h1>
             <p class="lede">pr-captcha checks ID at the door. Every unknown PR has to prove a real GitHub human is present before it touches your queue or your CI.</p>
             <div class="cta">
-              <a class="btn primary" href="/setup-wizard">Install the GitHub App</a>
+              <a class="btn primary" href="${GITHUB_APP_INSTALL_URL}">Install the GitHub App</a>
               <a class="btn ghost" href="/demo">Watch the 60s demo</a>
             </div>
             <div class="proofline">
@@ -284,10 +289,8 @@ export function renderHome(baseUrl?: string): string {
             <a href="/demo"><div class="rn">/demo</div><div class="rd">Interactive dry run of the full gate</div></a>
             <a href="/evidence"><div class="rn">/evidence</div><div class="rd">Scan a repo for queue risk</div></a>
             <a href="/queue-pressure"><div class="rn">/queue-pressure</div><div class="rd">Estimate attention at risk</div></a>
-            <a href="/setup-wizard"><div class="rn">/setup-wizard</div><div class="rd">Generate a policy file</div></a>
-            <a href="/launch"><div class="rn">/launch</div><div class="rd">Production install cockpit</div></a>
-            <a href="/status"><div class="rn">/status</div><div class="rd">Live service health</div></a>
           </div>
+          <p class="explore-note">After installing, generate a policy in the <a href="/setup-wizard">setup wizard</a> and check service health on the <a href="/status">status page</a>.</p>
         </section>
         <section class="blk" style="padding-top: 0">
           <div class="final">
@@ -296,7 +299,7 @@ export function renderHome(baseUrl?: string): string {
               <div class="quip">$ git push → "who sent this?" → review still decides.</div>
             </div>
             <div style="display: flex; gap: 12px; flex-wrap: wrap">
-              <a class="btn primary" href="/setup-wizard">Install free</a>
+              <a class="btn primary" href="${GITHUB_APP_INSTALL_URL}">Install free</a>
               <a class="btn ghost" href="/trust">Read the trust docs</a>
             </div>
           </div>
@@ -1219,7 +1222,7 @@ export function renderBadgeBuilderPage(baseUrl?: string): string {
           <p>Install the app, paste the badge into the repository README, then point curious maintainers to the demo, status page, and setup wizard.</p>
         </div>
         <div class="demo-next-actions">
-          <a class="button primary" href="/setup-wizard">Install app</a>
+          <a class="button primary" href="${GITHUB_APP_INSTALL_URL}">Install app</a>
           <a class="button light" href="/status">Verify status</a>
           <a class="button light" href="/queue-pressure">Measure queue</a>
         </div>
@@ -1574,7 +1577,7 @@ export function renderLaunchPage(baseUrl?: string): string {
         <a href="/trust">Trust</a>
         <a href="https://github.com/aryabyte21/pr-captcha">GitHub</a>
       </nav>
-      <a class="button dark header-cta" href="https://github.com/apps/pr-captcha-aryabyte21/installations/new">Install app</a>
+      <a class="button dark header-cta" href="${GITHUB_APP_INSTALL_URL}">Install app</a>
     </header>
     <main id="main" class="preview-page launch-page">
       <section class="preview-heading launch-heading">
@@ -1583,7 +1586,7 @@ export function renderLaunchPage(baseUrl?: string): string {
           <h1 aria-label="Make AI slop knock first">Make AI slop knock first.</h1>
           <p>pr-captcha is a polite little velvet rope for your PR queue. A contributor proves one simple thing before CI or review time starts: a logged-in GitHub human is present for this exact commit.</p>
           <div class="actions demo-actions">
-            <a class="button primary" href="https://github.com/apps/pr-captcha-aryabyte21/installations/new">Install GitHub App</a>
+            <a class="button primary" href="${GITHUB_APP_INSTALL_URL}">Install GitHub App</a>
             <a class="button light" href="/setup-wizard">Make policy</a>
             <button class="button light" type="button" data-copy-launch="share">Copy maintainer note</button>
           </div>
@@ -1668,7 +1671,7 @@ export function renderLaunchPage(baseUrl?: string): string {
             </div>
           </details>
           <div class="launch-actions-row">
-            <a href="https://github.com/apps/pr-captcha-aryabyte21/installations/new"><strong>Install GitHub App</strong><span>Use the hosted pr-captcha app.</span></a>
+            <a href="${GITHUB_APP_INSTALL_URL}"><strong>Install GitHub App</strong><span>Use the hosted pr-captcha app.</span></a>
             <a href="/setup-wizard"><strong>Make policy</strong><span>Choose who needs the check.</span></a>
             <a href="/status"><strong>Check service</strong><span>See whether the hosted gate is healthy.</span></a>
           </div>
@@ -1808,7 +1811,7 @@ export function renderForkPrRehearsalPage(baseUrl?: string): string {
         <a href="/trust">Trust</a>
         <a href="https://github.com/aryabyte21/pr-captcha">GitHub</a>
       </nav>
-      <a class="button dark header-cta" href="https://github.com/apps/pr-captcha-aryabyte21/installations/new">Install app</a>
+      <a class="button dark header-cta" href="${GITHUB_APP_INSTALL_URL}">Install app</a>
     </header>
     <main id="main" class="preview-page rehearsal-page">
       <section class="preview-heading rehearsal-heading">
@@ -8029,103 +8032,59 @@ export function renderGatePage(input: {
   const shortSha = input.gate.head_sha.slice(0, 7);
   const repoFullName = `${input.gate.owner}/${input.gate.repo}`;
   const pullRequestUrl = `https://github.com/${input.gate.owner}/${input.gate.repo}/pull/${input.gate.pr_number}`;
+  const prLink = `<a href="${escapeHtml(pullRequestUrl)}">${escapeHtml(repoFullName)}#${input.gate.pr_number}</a>`;
   const error = input.error
     ? `<div class="notice error">${escapeHtml(input.error)}</div>`
     : "";
-  const successDetail =
-    input.successDetail ??
-    "The required check can turn green for this exact commit.";
-  const success = input.verified
-    ? `<div class="notice success"><strong>Human check passed</strong> <span>${escapeHtml(successDetail)}</span></div>`
-    : "";
-  const button = input.verified
-    ? `<a class="button dark full" href="${escapeHtml(pullRequestUrl)}">Return to pull request</a>`
-    : `<button class="button dark full" type="submit">Complete human check</button>`;
-  const turnstile = input.verified
-    ? ""
-    : `<div class="turnstile-wrap">
-        <div class="cf-turnstile" data-sitekey="${escapeHtml(input.turnstileSiteKey)}"></div>
-      </div>
-      <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>`;
-  const metaTable = `<div class="meta-table" aria-label="Pull request verification target">
-    ${metaRow("Repository", repoFullName)}
-    ${metaRow("Pull request", `#${input.gate.pr_number}`)}
-    ${metaRow("Commit", shortSha, true)}
-    ${metaRow("GitHub user", input.session.login)}
-  </div>`;
-  const gateAction = input.verified
-    ? `<div class="gate-complete-action">
-        ${metaTable}
-        ${button}
-      </div>`
-    : `<form method="post" action="/gate/${escapeHtml(input.gate.id)}">
-        <input type="hidden" name="token" value="${escapeHtml(input.token)}" />
-        <input type="hidden" name="csrf_token" value="${escapeHtml(input.csrfToken)}" />
-        ${metaTable}
-        ${turnstile}
-        ${button}
-      </form>`;
   const gateState = input.verified ? "verified" : "pending";
 
+  const verifiedBody = `<h1>You're verified</h1>
+          <div class="notice success"><strong>Human check passed</strong> <span>${escapeHtml(input.successDetail ?? "The required check can turn green for this exact commit.")}</span></div>
+          <p class="intro">Recorded for ${prLink} at <code>${escapeHtml(shortSha)}</code>, turning <code>pr-captcha/human</code> green.</p>
+          <a class="button dark full" href="${escapeHtml(pullRequestUrl)}">Return to pull request</a>
+          <p class="fine-print" data-gate-return>Taking you back to the pull request...</p>
+          <script>
+            window.setTimeout(function () {
+              window.location.href = "${pullRequestUrl}";
+            }, 2500);
+          </script>`;
+
+  const pendingBody = `<h1>Finish this PR check</h1>
+          <p class="intro">Signed in as <strong>${escapeHtml(input.session.login)}</strong>. Verifying ${prLink} at <code>${escapeHtml(shortSha)}</code> to turn <code>pr-captcha/human</code> green.</p>
+          ${error}
+          <form method="post" action="/gate/${escapeHtml(input.gate.id)}">
+            <input type="hidden" name="token" value="${escapeHtml(input.token)}" />
+            <input type="hidden" name="csrf_token" value="${escapeHtml(input.csrfToken)}" />
+            <div class="turnstile-wrap">
+              <div class="cf-turnstile" data-sitekey="${escapeHtml(input.turnstileSiteKey)}"></div>
+            </div>
+            <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+            <button class="button dark full" type="submit">Complete human check</button>
+          </form>
+          <p class="fine-print">No PR code runs here. The receipt is bound to this commit only: a new commit needs a new check.</p>`;
+
   return layout(
-    "Finish this PR check",
+    input.verified ? "Verified" : "Finish this PR check",
     `<main id="main" class="gate-page">
       <section class="gate-shell" data-gate-shell data-gate-status="${gateState}">
-        <div class="gate gate-primary">
+        <div class="gate">
           <div class="brand centered">${brandMark()}<span>pr-captcha</span></div>
-          <h1>Finish this PR check</h1>
-          <p class="intro">Signed in as <strong>${escapeHtml(input.session.login)}</strong>. This verifies <a href="${escapeHtml(pullRequestUrl)}">${escapeHtml(repoFullName)}#${input.gate.pr_number}</a> at <code>${escapeHtml(shortSha)}</code>.</p>
-          <div class="status-strip">
-            <span><span class="mini-shield">✓</span>Signed into GitHub</span>
-            <span><span class="mini-shield">✓</span>Exact commit</span>
-            <span><span class="mini-shield">✓</span>No PR code runs</span>
-          </div>
-          ${error}
-          ${success}
-          ${gateAction}
-          <p class="fine-print">This verification is valid for this commit only. Pushing a new commit creates a fresh gate for the new SHA.</p>
+          ${input.verified ? verifiedBody : pendingBody}
         </div>
-        <aside class="gate-side" aria-label="Verification details">
-          <section class="gate-panel gate-receipt">
-            <div class="gate-panel-head">
-            <h2>Verification receipt</h2>
-            <span class="gate-status-badge" data-state="${gateState}">${input.verified ? "verified" : "waiting"}</span>
-          </div>
-            <p>${input.verified ? "The human-origin signal is recorded." : "Complete the browser check to turn pr-captcha/human green for this commit."}</p>
-            <dl class="gate-receipt-list">
-              <div><dt>Required check</dt><dd><code>pr-captcha/human</code></dd></div>
-              <div><dt>Target</dt><dd><a href="${escapeHtml(pullRequestUrl)}">${escapeHtml(repoFullName)}#${input.gate.pr_number}</a></dd></div>
-              <div><dt>Commit binding</dt><dd><code>${escapeHtml(input.gate.head_sha)}</code></dd></div>
-              <div><dt>Solver account</dt><dd>${escapeHtml(input.session.login)}</dd></div>
-            </dl>
-          </section>
-          <section class="gate-panel">
-            <h2>What this proves</h2>
-            <ul class="gate-check-list">
-              ${gateTrustItem("sha", "Exact SHA only", "The receipt applies only to this pull request head commit.")}
-              ${gateTrustItem("github", "GitHub account", "The solver is tied to an authenticated GitHub login.")}
-              ${gateTrustItem("sandbox", "No PR code runs here", "This page never checks out or executes contributor code.")}
-              ${gateTrustItem("fresh", "New commits need a new check", "A pushed update cannot reuse an older receipt.")}
-            </ul>
-          </section>
-        </aside>
       </section>
     </main>`,
   );
-}
-
-function gateTrustItem(id: string, title: string, body: string): string {
-  return `<li data-gate-check="${escapeHtml(id)}">
-    <span class="gate-check-icon">✓</span>
-    <div><strong>${escapeHtml(title)}</strong><small>${escapeHtml(body)}</small></div>
-  </li>`;
 }
 
 export function renderMessagePage(
   title: string,
   message: string,
   status: "success" | "error" = "success",
+  link?: { href: string; label: string },
 ): string {
+  const action = link
+    ? `<a class="button dark full" href="${escapeHtml(link.href)}">${escapeHtml(link.label)}</a>`
+    : "";
   return layout(
     title,
     `<main id="main" class="gate-page">
@@ -8133,6 +8092,7 @@ export function renderMessagePage(
         <div class="brand centered">${brandMark()}<span>pr-captcha</span></div>
         <h1>${escapeHtml(title)}</h1>
         <div class="notice ${status}">${escapeHtml(message)}</div>
+        ${action}
       </section>
     </main>`,
   );
@@ -8182,7 +8142,7 @@ function layout(
     <meta name="twitter:description" content="${escapeHtml(description)}" />
     <meta name="twitter:image" content="${escapeHtml(image)}" />
     ${canonical}
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon.svg?v=2" type="image/svg+xml" />
     <style>
       @font-face { font-family: "Hanken Grotesk"; font-style: normal; font-weight: 400 500; font-display: swap; src: url("/assets/fonts/hanken-400.woff2") format("woff2"); }
       @font-face { font-family: "Hanken Grotesk"; font-style: normal; font-weight: 600 800; font-display: swap; src: url("/assets/fonts/hanken-600.woff2") format("woff2"); }
@@ -13344,11 +13304,12 @@ function layout(
         background-size: auto, 72px 72px, 72px 72px;
       }
       .gate-shell {
-        width: min(1080px, 100%);
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) minmax(320px, 0.68fr);
-        gap: 18px;
-        align-items: stretch;
+        width: min(540px, 100%);
+      }
+      .gate .notice + .button,
+      .gate form + .button,
+      .gate .button {
+        margin-top: 18px;
       }
       .gate {
         width: 100%;
