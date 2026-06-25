@@ -220,7 +220,7 @@ export function renderHome(baseUrl?: string): string {
             <p class="lede">pr-captcha checks ID at the door. Every unknown PR has to prove a real GitHub human is present before it touches your queue or your CI.</p>
             <div class="cta">
               <a class="btn primary" href="${GITHUB_APP_INSTALL_URL}">Install the GitHub App</a>
-              <a class="btn ghost" href="/demo">Watch the 60s demo</a>
+              <a class="btn ghost" href="/evidence">Scan your repo</a>
             </div>
             <div class="proofline">
               <span><span class="dot"></span><b>1 user</b></span>
@@ -341,17 +341,7 @@ export function renderDemoPage(baseUrl?: string): string {
     "pr-captcha demo",
     `<header class="site-header utility-header">
       <a class="brand" href="/">${brandMark()}<span>pr-captcha</span></a>
-      <nav class="site-nav" aria-label="Primary navigation">
-        <a href="/">Home</a>
-        <a href="/demo">Demo</a>
-        <a href="/queue-pressure">Queue</a>
-        <a href="/badge-builder">Badge</a>
-        <a href="/proof-card">Proof</a>
-        <a href="/setup-wizard">Wizard</a>
-        <a href="/diagnostics">Diagnostics</a>
-        <a href="/status">Status</a>
-        <a href="https://github.com/aryabyte21/pr-captcha">GitHub</a>
-      </nav>
+      <nav class="site-nav" aria-label="Primary navigation"><a href="/">Home</a><a href="/demo">Demo</a><a href="/evidence">Evidence</a><a href="/setup-wizard">Setup</a><a href="/trust">Trust</a><a href="https://github.com/aryabyte21/pr-captcha">GitHub</a></nav>
       <a class="button dark header-cta" href="/setup-wizard">Open setup wizard</a>
     </header>
     <main id="main" class="preview-page demo-page">
@@ -504,17 +494,7 @@ export function renderQueuePressurePage(baseUrl?: string): string {
     "Queue pressure",
     `<header class="site-header utility-header">
       <a class="brand" href="/">${brandMark()}<span>pr-captcha</span></a>
-      <nav class="site-nav" aria-label="Primary navigation">
-        <a href="/">Home</a>
-        <a href="/demo">Demo</a>
-        <a href="/queue-pressure">Queue</a>
-        <a href="/badge-builder">Badge</a>
-        <a href="/proof-card">Proof</a>
-        <a href="/setup-wizard">Wizard</a>
-        <a href="/diagnostics">Diagnostics</a>
-        <a href="/status">Status</a>
-        <a href="https://github.com/aryabyte21/pr-captcha">GitHub</a>
-      </nav>
+      <nav class="site-nav" aria-label="Primary navigation"><a href="/">Home</a><a href="/demo">Demo</a><a href="/evidence">Evidence</a><a href="/setup-wizard">Setup</a><a href="/trust">Trust</a><a href="https://github.com/aryabyte21/pr-captcha">GitHub</a></nav>
       <a class="button dark header-cta" href="/demo">Open demo</a>
     </header>
     <main id="main" class="preview-page queue-page">
@@ -624,15 +604,7 @@ export function renderEvidenceScannerPage(
     "Repo evidence",
     `<header class="site-header utility-header evidence-header">
       <a class="brand" href="/">${brandMark()}<span>pr-captcha</span></a>
-      <nav class="site-nav" aria-label="Primary navigation">
-        <a href="/">Home</a>
-        <a href="/launch">Install</a>
-        <a href="/setup-wizard">Policy</a>
-        <a href="/evidence" aria-current="page">Evidence</a>
-        <a href="/status">Status</a>
-        <a href="/trust">Trust</a>
-        <a href="https://github.com/aryabyte21/pr-captcha">GitHub</a>
-      </nav>
+      <nav class="site-nav" aria-label="Primary navigation"><a href="/">Home</a><a href="/demo">Demo</a><a href="/evidence">Evidence</a><a href="/setup-wizard">Setup</a><a href="/trust">Trust</a><a href="https://github.com/aryabyte21/pr-captcha">GitHub</a></nav>
       <a class="button dark header-cta" href="/launch">Install app</a>
     </header>
     <main id="main" class="preview-page evidence-page">
@@ -762,15 +734,7 @@ export function renderSpamRadarPage(baseUrl?: string): string {
     "PR spam radar",
     `<header class="site-header utility-header evidence-header">
       <a class="brand" href="/">${brandMark()}<span>pr-captcha</span></a>
-      <nav class="site-nav" aria-label="Primary navigation">
-        <a href="/">Home</a>
-        <a href="/radar" aria-current="page">Radar</a>
-        <a href="/evidence">Evidence</a>
-        <a href="/launch">Launch</a>
-        <a href="/setup-wizard">Setup</a>
-        <a href="/github-app-manifest">Manifest</a>
-        <a href="https://github.com/aryabyte21/pr-captcha">GitHub</a>
-      </nav>
+      <nav class="site-nav" aria-label="Primary navigation"><a href="/">Home</a><a href="/demo">Demo</a><a href="/evidence">Evidence</a><a href="/setup-wizard">Setup</a><a href="/trust">Trust</a><a href="https://github.com/aryabyte21/pr-captcha">GitHub</a></nav>
       <a class="button dark header-cta" href="/evidence">Scan your repo</a>
     </header>
     <main id="main" class="preview-page evidence-page radar-page">
@@ -900,16 +864,7 @@ export function renderPilotPlanPage(
     "Maintainer pilot plan",
     `<header class="site-header utility-header evidence-header">
       <a class="brand" href="/">${brandMark()}<span>pr-captcha</span></a>
-      <nav class="site-nav" aria-label="Primary navigation">
-        <a href="/">Home</a>
-        <a href="/radar">Radar</a>
-        <a href="/evidence">Evidence</a>
-        <a href="/pilot" aria-current="page">Pilot</a>
-        <a href="/launch">Launch</a>
-        <a href="/setup-wizard">Setup</a>
-        <a href="/status">Status</a>
-        <a href="https://github.com/aryabyte21/pr-captcha">GitHub</a>
-      </nav>
+      <nav class="site-nav" aria-label="Primary navigation"><a href="/">Home</a><a href="/demo">Demo</a><a href="/evidence">Evidence</a><a href="/setup-wizard">Setup</a><a href="/trust">Trust</a><a href="https://github.com/aryabyte21/pr-captcha">GitHub</a></nav>
       <a class="button dark header-cta" href="/setup-wizard">Generate policy</a>
     </header>
     <main id="main" class="preview-page evidence-page pilot-page">
@@ -1043,14 +998,7 @@ export function renderTrustCenterPage(baseUrl?: string): string {
     "Trust Center",
     `<header class="site-header utility-header trust-header">
       <a class="brand" href="/">${brandMark()}<span>pr-captcha</span></a>
-      <nav class="site-nav" aria-label="Primary navigation">
-        <a href="/">Home</a>
-        <a href="/launch">Install</a>
-        <a href="/setup-wizard">Policy</a>
-        <a href="/status">Status</a>
-        <a href="/trust" aria-current="page">Trust</a>
-        <a href="https://github.com/aryabyte21/pr-captcha">GitHub</a>
-      </nav>
+      <nav class="site-nav" aria-label="Primary navigation"><a href="/">Home</a><a href="/demo">Demo</a><a href="/evidence">Evidence</a><a href="/setup-wizard">Setup</a><a href="/trust">Trust</a><a href="https://github.com/aryabyte21/pr-captcha">GitHub</a></nav>
       <a class="button dark header-cta" href="/security.md">Security contact</a>
     </header>
     <main id="main" class="preview-page trust-page">
@@ -1136,17 +1084,7 @@ export function renderBadgeBuilderPage(baseUrl?: string): string {
     "README badge builder",
     `<header class="site-header utility-header">
       <a class="brand" href="/">${brandMark()}<span>pr-captcha</span></a>
-      <nav class="site-nav" aria-label="Primary navigation">
-        <a href="/">Home</a>
-        <a href="/demo">Demo</a>
-        <a href="/queue-pressure">Queue</a>
-        <a href="/badge-builder">Badge</a>
-        <a href="/proof-card">Proof</a>
-        <a href="/setup-wizard">Wizard</a>
-        <a href="/diagnostics">Diagnostics</a>
-        <a href="/status">Status</a>
-        <a href="https://github.com/aryabyte21/pr-captcha">GitHub</a>
-      </nav>
+      <nav class="site-nav" aria-label="Primary navigation"><a href="/">Home</a><a href="/demo">Demo</a><a href="/evidence">Evidence</a><a href="/setup-wizard">Setup</a><a href="/trust">Trust</a><a href="https://github.com/aryabyte21/pr-captcha">GitHub</a></nav>
       <a class="button dark header-cta" href="/setup-wizard">Open setup</a>
     </header>
     <main id="main" class="preview-page badge-page">
@@ -1252,17 +1190,7 @@ export function renderProofCardBuilderPage(baseUrl?: string): string {
     "PR proof card",
     `<header class="site-header utility-header proof-header">
       <a class="brand" href="/">${brandMark()}<span>pr-captcha</span></a>
-      <nav class="site-nav" aria-label="Primary navigation">
-        <a href="/">Home</a>
-        <a href="/demo">Demo</a>
-        <a href="/queue-pressure">Queue</a>
-        <a href="/badge-builder">Badge</a>
-        <a href="/proof-card" aria-current="page">Proof</a>
-        <a href="/setup-wizard">Wizard</a>
-        <a href="/diagnostics">Diagnostics</a>
-        <a href="/status">Status</a>
-        <a href="https://github.com/aryabyte21/pr-captcha">GitHub</a>
-      </nav>
+      <nav class="site-nav" aria-label="Primary navigation"><a href="/">Home</a><a href="/demo">Demo</a><a href="/evidence">Evidence</a><a href="/setup-wizard">Setup</a><a href="/trust">Trust</a><a href="https://github.com/aryabyte21/pr-captcha">GitHub</a></nav>
       <a class="button dark header-cta" href="/demo">Open demo</a>
     </header>
     <main id="main" class="preview-page proof-page">
@@ -1399,18 +1327,7 @@ export function renderScorecardBuilderPage(
     "OSS PR queue scorecard",
     `<header class="site-header utility-header proof-header">
       <a class="brand" href="/">${brandMark()}<span>pr-captcha</span></a>
-      <nav class="site-nav" aria-label="Primary navigation">
-        <a href="/">Home</a>
-        <a href="/radar">Radar</a>
-        <a href="/evidence">Evidence</a>
-        <a href="/pilot">Pilot</a>
-        <a href="/badge-builder">Badge</a>
-        <a href="/proof-card">Proof</a>
-        <a href="/scorecard-builder" aria-current="page">Scorecard</a>
-        <a href="/setup-wizard">Setup</a>
-        <a href="/status">Status</a>
-        <a href="https://github.com/aryabyte21/pr-captcha">GitHub</a>
-      </nav>
+      <nav class="site-nav" aria-label="Primary navigation"><a href="/">Home</a><a href="/demo">Demo</a><a href="/evidence">Evidence</a><a href="/setup-wizard">Setup</a><a href="/trust">Trust</a><a href="https://github.com/aryabyte21/pr-captcha">GitHub</a></nav>
       <a class="button dark header-cta" href="/evidence">Scan repo</a>
     </header>
     <main id="main" class="preview-page proof-page scorecard-page">
@@ -1569,14 +1486,7 @@ export function renderLaunchPage(baseUrl?: string): string {
     "Install pr-captcha",
     `<header class="site-header utility-header launch-header">
       <a class="brand" href="/">${brandMark()}<span>pr-captcha</span></a>
-      <nav class="site-nav" aria-label="Primary navigation">
-        <a href="/">Home</a>
-        <a href="/launch" aria-current="page">Install</a>
-        <a href="/setup-wizard">Policy</a>
-        <a href="/status">Status</a>
-        <a href="/trust">Trust</a>
-        <a href="https://github.com/aryabyte21/pr-captcha">GitHub</a>
-      </nav>
+      <nav class="site-nav" aria-label="Primary navigation"><a href="/">Home</a><a href="/demo">Demo</a><a href="/evidence">Evidence</a><a href="/setup-wizard">Setup</a><a href="/trust">Trust</a><a href="https://github.com/aryabyte21/pr-captcha">GitHub</a></nav>
       <a class="button dark header-cta" href="${GITHUB_APP_INSTALL_URL}">Install app</a>
     </header>
     <main id="main" class="preview-page launch-page">
@@ -1701,7 +1611,6 @@ export function renderLaunchPage(baseUrl?: string): string {
                   <div><dt>Required check</dt><dd>pr-captcha/human</dd></div>
                   <div><dt>README badge</dt><dd><code data-launch-badge>${escapeHtml(badgeMarkdown)}</code></dd></div>
                   <div><dt>Setup wizard</dt><dd><a href="/setup-wizard">Open setup</a></dd></div>
-                  <div><dt>Proof card</dt><dd><a href="/proof-card">Create after fork test</a></dd></div>
                 </dl>
               </div>
               <div class="launch-adoption-issue">
@@ -1802,15 +1711,7 @@ export function renderForkPrRehearsalPage(baseUrl?: string): string {
     "Fork PR rehearsal",
     `<header class="site-header utility-header rehearsal-header">
       <a class="brand" href="/">${brandMark()}<span>pr-captcha</span></a>
-      <nav class="site-nav" aria-label="Primary navigation">
-        <a href="/">Home</a>
-        <a href="/launch">Install</a>
-        <a href="/setup-wizard">Policy</a>
-        <a href="/rehearsal" aria-current="page">Test PR</a>
-        <a href="/status">Status</a>
-        <a href="/trust">Trust</a>
-        <a href="https://github.com/aryabyte21/pr-captcha">GitHub</a>
-      </nav>
+      <nav class="site-nav" aria-label="Primary navigation"><a href="/">Home</a><a href="/demo">Demo</a><a href="/evidence">Evidence</a><a href="/setup-wizard">Setup</a><a href="/trust">Trust</a><a href="https://github.com/aryabyte21/pr-captcha">GitHub</a></nav>
       <a class="button dark header-cta" href="${GITHUB_APP_INSTALL_URL}">Install app</a>
     </header>
     <main id="main" class="preview-page rehearsal-page">
@@ -1942,16 +1843,7 @@ export function renderGateTracePage(baseUrl?: string): string {
     "Gate trace",
     `<header class="site-header utility-header trace-header">
       <a class="brand" href="/">${brandMark()}<span>pr-captcha</span></a>
-      <nav class="site-nav" aria-label="Primary navigation">
-        <a href="/">Home</a>
-        <a href="/launch">Install</a>
-        <a href="/setup-wizard">Policy</a>
-        <a href="/rehearsal">Test PR</a>
-        <a href="/gate-trace" aria-current="page">Trace</a>
-        <a href="/status">Status</a>
-        <a href="/trust">Trust</a>
-        <a href="https://github.com/aryabyte21/pr-captcha">GitHub</a>
-      </nav>
+      <nav class="site-nav" aria-label="Primary navigation"><a href="/">Home</a><a href="/demo">Demo</a><a href="/evidence">Evidence</a><a href="/setup-wizard">Setup</a><a href="/trust">Trust</a><a href="https://github.com/aryabyte21/pr-captcha">GitHub</a></nav>
       <a class="button dark header-cta" href="/rehearsal">Test PR</a>
     </header>
     <main id="main" class="preview-page trace-page">
@@ -2075,17 +1967,7 @@ export function renderGitHubAppManifestPage(baseUrl?: string): string {
     "GitHub App manifest",
     `<header class="site-header utility-header manifest-header">
       <a class="brand" href="/">${brandMark()}<span>pr-captcha</span></a>
-      <nav class="site-nav" aria-label="Primary navigation">
-        <a href="/">Home</a>
-        <a href="/demo">Demo</a>
-        <a href="/queue-pressure">Queue</a>
-        <a href="/badge-builder">Badge</a>
-        <a href="/proof-card">Proof</a>
-        <a href="/github-app-manifest" aria-current="page">Manifest</a>
-        <a href="/diagnostics">Diagnostics</a>
-        <a href="/status">Status</a>
-        <a href="https://github.com/aryabyte21/pr-captcha">GitHub</a>
-      </nav>
+      <nav class="site-nav" aria-label="Primary navigation"><a href="/">Home</a><a href="/demo">Demo</a><a href="/evidence">Evidence</a><a href="/setup-wizard">Setup</a><a href="/trust">Trust</a><a href="https://github.com/aryabyte21/pr-captcha">GitHub</a></nav>
       <a class="button dark header-cta" href="/setup-wizard">Open setup wizard</a>
     </header>
     <main id="main" class="preview-page manifest-page">
@@ -2201,17 +2083,7 @@ export function renderGitHubAppManifestCallbackPage(input: {
     "GitHub App manifest callback",
     `<header class="site-header utility-header">
       <a class="brand" href="/">${brandMark()}<span>pr-captcha</span></a>
-      <nav class="site-nav" aria-label="Primary navigation">
-        <a href="/">Home</a>
-        <a href="/demo">Demo</a>
-        <a href="/queue-pressure">Queue</a>
-        <a href="/badge-builder">Badge</a>
-        <a href="/proof-card">Proof</a>
-        <a href="/setup-wizard">Wizard</a>
-        <a href="/diagnostics">Diagnostics</a>
-        <a href="/status">Status</a>
-        <a href="https://github.com/aryabyte21/pr-captcha">GitHub</a>
-      </nav>
+      <nav class="site-nav" aria-label="Primary navigation"><a href="/">Home</a><a href="/demo">Demo</a><a href="/evidence">Evidence</a><a href="/setup-wizard">Setup</a><a href="/trust">Trust</a><a href="https://github.com/aryabyte21/pr-captcha">GitHub</a></nav>
       <a class="button dark header-cta" href="/github-app-manifest">Back to manifest</a>
     </header>
     <main id="main" class="preview-page manifest-page">
@@ -2335,17 +2207,7 @@ export function renderConfigPreviewPage(baseUrl?: string): string {
     "Preview pr-captcha.yml",
     `<header class="site-header utility-header">
       <a class="brand" href="/">${brandMark()}<span>pr-captcha</span></a>
-      <nav class="site-nav" aria-label="Primary navigation">
-        <a href="/">Home</a>
-        <a href="/demo">Demo</a>
-        <a href="/queue-pressure">Queue</a>
-        <a href="/badge-builder">Badge</a>
-        <a href="/proof-card">Proof</a>
-        <a href="/setup-wizard">Wizard</a>
-        <a href="/diagnostics">Diagnostics</a>
-        <a href="/status">Status</a>
-        <a href="https://github.com/aryabyte21/pr-captcha">GitHub</a>
-      </nav>
+      <nav class="site-nav" aria-label="Primary navigation"><a href="/">Home</a><a href="/demo">Demo</a><a href="/evidence">Evidence</a><a href="/setup-wizard">Setup</a><a href="/trust">Trust</a><a href="https://github.com/aryabyte21/pr-captcha">GitHub</a></nav>
       <a class="button dark header-cta" href="/setup.md">Open setup</a>
     </header>
     <main id="main" class="preview-page">
@@ -2426,15 +2288,7 @@ export function renderSetupWizardPage(baseUrl?: string): string {
     "Choose a policy",
     `<header class="site-header utility-header">
       <a class="brand" href="/">${brandMark()}<span>pr-captcha</span></a>
-      <nav class="site-nav" aria-label="Primary navigation">
-        <a href="/">Home</a>
-        <a href="/launch">Install</a>
-        <a href="/setup-wizard" aria-current="page">Policy</a>
-        <a href="/rehearsal">Test PR</a>
-        <a href="/status">Status</a>
-        <a href="/trust">Trust</a>
-        <a href="https://github.com/aryabyte21/pr-captcha">GitHub</a>
-      </nav>
+      <nav class="site-nav" aria-label="Primary navigation"><a href="/">Home</a><a href="/demo">Demo</a><a href="/evidence">Evidence</a><a href="/setup-wizard">Setup</a><a href="/trust">Trust</a><a href="https://github.com/aryabyte21/pr-captcha">GitHub</a></nav>
       <a class="button dark header-cta" href="/config-preview">Preview config</a>
     </header>
     <main id="main" class="preview-page">
@@ -2605,17 +2459,7 @@ export function renderRepositoryDiagnosticsPage(baseUrl?: string): string {
     "Repository diagnostics",
     `<header class="site-header utility-header">
       <a class="brand" href="/">${brandMark()}<span>pr-captcha</span></a>
-      <nav class="site-nav" aria-label="Primary navigation">
-        <a href="/">Home</a>
-        <a href="/demo">Demo</a>
-        <a href="/queue-pressure">Queue</a>
-        <a href="/badge-builder">Badge</a>
-        <a href="/proof-card">Proof</a>
-        <a href="/setup-wizard">Wizard</a>
-        <a href="/config-preview">Preview</a>
-        <a href="/status">Status</a>
-        <a href="https://github.com/aryabyte21/pr-captcha">GitHub</a>
-      </nav>
+      <nav class="site-nav" aria-label="Primary navigation"><a href="/">Home</a><a href="/demo">Demo</a><a href="/evidence">Evidence</a><a href="/setup-wizard">Setup</a><a href="/trust">Trust</a><a href="https://github.com/aryabyte21/pr-captcha">GitHub</a></nav>
       <a class="button dark header-cta" href="/setup.md">Open setup</a>
     </header>
     <main id="main" class="preview-page">
@@ -2711,16 +2555,7 @@ export function renderStatusPage(baseUrl?: string): string {
     "pr-captcha status",
     `<header class="site-header utility-header">
       <a class="brand" href="/">${brandMark()}<span>pr-captcha</span></a>
-      <nav class="site-nav" aria-label="Primary navigation">
-        <a href="/">Home</a>
-        <a href="/launch">Install</a>
-        <a href="/setup-wizard">Policy</a>
-        <a href="/rehearsal">Test PR</a>
-        <a href="/diagnostics">Diagnostics</a>
-        <a href="/status" aria-current="page">Status</a>
-        <a href="/trust">Trust</a>
-        <a href="https://github.com/aryabyte21/pr-captcha">GitHub</a>
-      </nav>
+      <nav class="site-nav" aria-label="Primary navigation"><a href="/">Home</a><a href="/demo">Demo</a><a href="/evidence">Evidence</a><a href="/setup-wizard">Setup</a><a href="/trust">Trust</a><a href="https://github.com/aryabyte21/pr-captcha">GitHub</a></nav>
       <a class="button dark header-cta" href="/diagnostics">Run diagnostics</a>
     </header>
     <main id="main" class="preview-page">
@@ -7043,9 +6878,6 @@ export function renderSitemapXml(baseUrl: string): string {
     "/radar",
     "/pilot",
     "/trust",
-    "/badge-builder",
-    "/proof-card",
-    "/scorecard-builder",
     "/github-app-manifest",
     "/launch",
     "/rehearsal",

@@ -33,13 +33,6 @@ describe("public launch routes", () => {
     expect(xml).toContain("<loc>https://captcha.example.test/pilot</loc>");
     expect(xml).toContain("<loc>https://captcha.example.test/trust</loc>");
     expect(xml).toContain(
-      "<loc>https://captcha.example.test/badge-builder</loc>",
-    );
-    expect(xml).toContain("<loc>https://captcha.example.test/proof-card</loc>");
-    expect(xml).toContain(
-      "<loc>https://captcha.example.test/scorecard-builder</loc>",
-    );
-    expect(xml).toContain(
       "<loc>https://captcha.example.test/github-app-manifest</loc>",
     );
     expect(xml).toContain("<loc>https://captcha.example.test/launch</loc>");
@@ -206,104 +199,6 @@ describe("public launch routes", () => {
     expect(html).toContain(
       '<link rel="canonical" href="https://captcha.example.test/trust" />',
     );
-  });
-
-  it("renders the README badge builder", async () => {
-    const response = await app.request("/badge-builder", {}, env);
-
-    expect(response.status).toBe(200);
-    const html = await response.text();
-    expect(html).toContain("Give maintainers a public proof mark");
-    expect(html).toContain("data-badge-form");
-    expect(html).toContain("data-badge-markdown");
-    expect(html).toContain(
-      '<link rel="canonical" href="https://captcha.example.test/badge-builder" />',
-    );
-  });
-
-  it("renders a public README badge SVG", async () => {
-    const response = await app.request(
-      "/badge.svg?label=protected%20by&message=pr-captcha&tone=amber&style=flat",
-      {},
-      env,
-    );
-
-    expect(response.status).toBe(200);
-    expect(response.headers.get("Content-Type")).toContain("image/svg+xml");
-    const svg = await response.text();
-    expect(svg).toContain("<svg");
-    expect(svg).toContain("protected by pr-captcha");
-    expect(svg).toContain("#b45309");
-    expect(svg).toContain('rx="0"');
-  });
-
-  it("renders the PR proof-card builder", async () => {
-    const response = await app.request("/proof-card", {}, env);
-
-    expect(response.status).toBe(200);
-    const html = await response.text();
-    expect(html).toContain("Turn a verified PR into proof");
-    expect(html).toContain("data-proof-form");
-    expect(html).toContain("data-proof-preview");
-    expect(html).toContain(
-      '<link rel="canonical" href="https://captcha.example.test/proof-card" />',
-    );
-  });
-
-  it("renders a public PR proof-card SVG", async () => {
-    const response = await app.request(
-      "/proof.svg?repo=octo-org%2Fawesome-repo&pr=184&sha=8f31c9a&user=some-user&result=pending&theme=dark",
-      {},
-      env,
-    );
-
-    expect(response.status).toBe(200);
-    expect(response.headers.get("Content-Type")).toContain("image/svg+xml");
-    const svg = await response.text();
-    expect(svg).toContain('width="1200" height="630"');
-    expect(svg).toContain("octo-org/awesome-repo");
-    expect(svg).toContain("Verification pending");
-    expect(svg).toContain("8f31c9a");
-  });
-
-  it("renders the OSS PR queue scorecard builder", async () => {
-    const response = await app.request(
-      "/scorecard-builder?repo=https%3A%2F%2Fgithub.com%2Ftldraw%2Ftldraw%2Fpulls",
-      {},
-      env,
-    );
-
-    expect(response.status).toBe(200);
-    const html = await response.text();
-    expect(html).toContain("Repository queue scorecard");
-    expect(html).toContain("data-scorecard-form");
-    expect(html).toContain("data-scorecard-preview");
-    expect(html).toContain("data-scorecard-url");
-    expect(html).toContain("data-scorecard-social");
-    expect(html).toContain("data-scorecard-issue");
-    expect(html).toContain("data-scorecard-open-issue");
-    expect(html).toContain("data-scorecard-share");
-    expect(html).toContain('value="tldraw/tldraw"');
-    expect(html).toContain("/api/public/repo-evidence");
-    expect(html).toContain(
-      '<link rel="canonical" href="https://captcha.example.test/scorecard-builder" />',
-    );
-  });
-
-  it("renders a public repo queue scorecard SVG", async () => {
-    const response = await app.request(
-      "/scorecard.svg?repo=octo-org%2Fawesome-repo&risk=high&open=184&fork=24&unknown=9&labels=7&theme=dark",
-      {},
-      env,
-    );
-
-    expect(response.status).toBe(200);
-    expect(response.headers.get("Content-Type")).toContain("image/svg+xml");
-    const svg = await response.text();
-    expect(svg).toContain('width="1200" height="630"');
-    expect(svg).toContain("octo-org/awesome-repo");
-    expect(svg).toContain("HIGH RISK");
-    expect(svg).toContain("protected by pr-captcha");
   });
 
   it("renders the GitHub App manifest builder", async () => {
