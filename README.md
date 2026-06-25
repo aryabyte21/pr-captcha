@@ -12,24 +12,43 @@
   <a href="https://github.com/apps/pr-captcha/installations/new"><img alt="Install the GitHub App" src="https://img.shields.io/badge/Install_the_GitHub_App-0b8f4d?style=for-the-badge&logo=github&logoColor=white"></a>
   &nbsp;
   <a href="https://pr-captcha.aryaabyte.workers.dev/"><img alt="Open the live site" src="https://img.shields.io/badge/Open_the_live_site-13161c?style=for-the-badge&logo=cloudflare&logoColor=white"></a>
+  &nbsp;
+  <a href="https://github.com/aryabyte21/pr-captcha"><img alt="Star on GitHub" src="https://img.shields.io/github/stars/aryabyte21/pr-captcha?style=for-the-badge&logo=github&label=Star&color=24292f"></a>
 </p>
 
 <p align="center">
-  <img alt="Status: MVP" src="https://img.shields.io/badge/status-MVP-black">
-  <img alt="Runtime: Cloudflare Workers" src="https://img.shields.io/badge/runtime-Cloudflare%20Workers-f38020">
-  <img alt="Captcha: Turnstile" src="https://img.shields.io/badge/captcha-Turnstile-0b8f4d">
-  <img alt="GitHub App" src="https://img.shields.io/badge/GitHub-App-24292f">
+  <video src="https://github.com/aryabyte21/pr-captcha/raw/main/docs/assets/pr-captcha-demo.mp4" width="760" autoplay loop muted playsinline>
+    <a href="https://pr-captcha.aryaabyte.workers.dev/">Watch the 30-second demo</a>
+  </video>
 </p>
 
-<p align="center">
-  <strong>Slop waits outside. Review still decides.</strong>
-</p>
+A free hosted GitHub App that checks ID at the door of your pull request queue.
 
-`pr-captcha` is a free hosted GitHub App that checks ID at the door of your pull request queue. Every unknown PR has to prove a real, browser-present GitHub human before it touches your queue or your CI. It is not AI detection: it is a door.
+## What it does
 
-Verification is bound to the exact head SHA, so a new commit needs a new check. The Worker never checks out, builds, or runs the patch: it reads metadata, asks for a browser CAPTCHA, and publishes a SHA-bound human-origin signal. For fork workflows GitHub already holds, it can release CI after verification.
+- Posts a `pr-captcha/human` check on every PR, bound to the exact head SHA.
+- Makes the contributor prove they are a logged-in GitHub human with a browser CAPTCHA.
+- Optionally releases held fork CI once a human is verified.
 
-Hosted Worker: https://pr-captcha.aryaabyte.workers.dev/
+## What it never does
+
+- Never checks out, builds, or runs your PR's code.
+- Never guesses whether a patch was written by AI.
+- Never trusts an old verification: a new commit means a new check.
+
+## Quick config
+
+```yaml
+# .github/pr-captcha.yml
+mode: hybrid
+apply_to:
+  fork_prs: true
+  outside_contributors: true
+checks:
+  create_required_check: true
+```
+
+Add the file, [install the app](https://github.com/apps/pr-captcha/installations/new), then require `pr-captcha/human` in branch protection. That is the whole setup.
 
 Install the GitHub App: https://github.com/apps/pr-captcha/installations/new
 

@@ -168,6 +168,7 @@ export function renderHome(baseUrl?: string): string {
       .step p { font-size: 13px; color: var(--muted); margin: 0; line-height: 1.45; }
       .step .mono { color: var(--text); }
       .twocol { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: center; }
+      .demo-twocol { grid-template-columns: 0.78fr 1.22fr; gap: 40px; }
       .drake-card { border: 1px solid var(--line); border-radius: 14px; overflow: hidden; background: var(--surface); box-shadow: var(--shadow); }
       .drake-row { display: flex; align-items: center; gap: 16px; padding: 20px; }
       .drake-row + .drake-row { border-top: 1px solid var(--line-2); }
@@ -203,6 +204,8 @@ export function renderHome(baseUrl?: string): string {
         .explore { grid-template-columns: 1fr; }
         nav.main { display: none; }
       }
+      .demo-figure { margin: 0; border: 1px solid var(--line); border-radius: 18px; overflow: hidden; background: var(--surface); box-shadow: 0 40px 100px -48px rgba(0,0,0,0.6); }
+      .demo-figure video, .demo-figure img { display: block; width: 100%; height: auto; }
     </style>
   </head>
   <body>
@@ -247,6 +250,18 @@ export function renderHome(baseUrl?: string): string {
               <div class="check"><span class="ic no">○</span><div><div class="name">ci / build &amp; test</div><div class="desc">Fork workflow held until a human is verified.</div></div><span class="state held">Held</span></div>
               <div class="foot"><span>identity <b>GitHub OAuth</b></span><span>presence <b>Turnstile</b></span><span>scope <b>head SHA</b></span></div>
             </div>
+          </div>
+        </section>
+        <section class="blk demo-reel">
+          <div class="twocol demo-twocol">
+            <div class="head">
+              <span class="eyebrow">30 seconds, start to finish</span>
+              <h2>Watch it work.</h2>
+              <p>A drive-by PR opens, the human check posts, a contributor clears the door, and held CI releases. No code ever runs.</p>
+            </div>
+            <figure class="demo-figure">
+              <video src="/assets/pr-captcha-demo.mp4" autoplay loop muted playsinline preload="metadata" width="1624" height="1080" aria-label="pr-captcha gating a pull request from open to released CI"></video>
+            </figure>
           </div>
         </section>
       </div>
@@ -310,6 +325,7 @@ export function renderHome(baseUrl?: string): string {
             </div>
             <div style="display: flex; gap: 12px; flex-wrap: wrap">
               <a class="btn primary" href="${GITHUB_APP_INSTALL_URL}">Install free</a>
+              <a class="btn ghost" href="https://github.com/aryabyte21/pr-captcha">★ Star on GitHub</a>
               <a class="btn ghost" href="/trust">Read the trust docs</a>
             </div>
           </div>
@@ -6911,7 +6927,6 @@ function layout(
       .button {
         font: inherit;
       }
-      .site-header,
       .home,
       .site-footer {
         width: min(1180px, calc(100% - 40px));
@@ -6921,12 +6936,13 @@ function layout(
         position: sticky;
         top: 0;
         z-index: 10;
+        width: 100%;
         min-height: 62px;
         display: flex;
         align-items: center;
         justify-content: space-between;
         gap: 18px;
-        padding: 0 4px;
+        padding: 0 max(24px, calc((100% - 1180px) / 2));
         border-bottom: 1px solid var(--line);
         background: color-mix(in srgb, var(--paper) 82%, transparent);
         backdrop-filter: saturate(150%) blur(10px);
@@ -12354,6 +12370,7 @@ function layout(
         .site-header {
           align-items: flex-start;
           flex-direction: column;
+          margin: 0 auto;
           padding: 18px 0;
         }
         .site-nav {

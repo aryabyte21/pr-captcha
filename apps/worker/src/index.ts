@@ -199,6 +199,7 @@ function securityPolicy(): string {
     "frame-ancestors 'none'",
     "frame-src https://challenges.cloudflare.com",
     "img-src 'self' data: https://challenges.cloudflare.com",
+    "media-src 'self'",
     "script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com",
     "font-src 'self'",
     "style-src 'unsafe-inline'",
