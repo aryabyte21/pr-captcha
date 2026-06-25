@@ -25,6 +25,8 @@ Verification is bound to the exact head SHA, so a new commit needs a new check. 
 
 Hosted Worker: https://pr-captcha.aryaabyte.workers.dev/
 
+Install the GitHub App: https://github.com/apps/pr-captcha/installations/new
+
 ## Why
 
 When a PR costs nothing to send, maintainers inherit the spam. Reviews, labels, and branch protection all act after the queue already sees the work. pr-captcha adds the missing step at intake: a cheap human check before a PR earns attention.

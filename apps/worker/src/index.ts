@@ -12,6 +12,7 @@ import {
   shouldGatePullRequest,
 } from "./config";
 import {
+  constantTimeEqual,
   sha256,
   signPayload,
   verifyGitHubWebhook,
@@ -2437,7 +2438,7 @@ async function requireAdmin(
     sha256(provided),
     sha256(env.ADMIN_TOKEN.trim()),
   ]);
-  if (providedHash !== expectedHash) {
+  if (!constantTimeEqual(providedHash, expectedHash)) {
     return { ok: false, status: 401, error: "Invalid admin bearer token" };
   }
   return { ok: true };
@@ -2710,6 +2711,13 @@ function readinessWarnings(env: Env): Array<{ code: string; message: string }> {
         "Cloudflare Turnstile test keys are configured. Replace them before production enforcement.",
     });
   }
+  if (usesInsecureProductionBaseUrl(env)) {
+    warnings.push({
+      code: "insecure_app_base_url",
+      message:
+        "APP_BASE_URL uses HTTP outside local development. Use HTTPS before production enforcement.",
+    });
+  }
   return warnings;
 }
 
@@ -2720,6 +2728,23 @@ function validAppBaseUrl(env: Pick<Env, "APP_BASE_URL">): boolean {
   } catch {
     return false;
   }
+}
+
+function usesInsecureProductionBaseUrl(
+  env: Pick<Env, "APP_BASE_URL">,
+): boolean {
+  try {
+    const url = new URL(appBaseUrl(env));
+    return url.protocol === "http:" && !isLocalHostname(url.hostname);
+  } catch {
+    return false;
+  }
+}
+
+function isLocalHostname(hostname: string): boolean {
+  return (
+    hostname === "localhost" || hostname === "127.0.0.1" || hostname === "::1"
+  );
 }
 
 app.notFound((c) => {

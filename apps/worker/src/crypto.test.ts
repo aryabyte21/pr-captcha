@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { signPayload, verifyGitHubWebhook, verifyPayload } from "./crypto";
+import {
+  constantTimeEqual,
+  signPayload,
+  verifyGitHubWebhook,
+  verifyPayload,
+} from "./crypto";
 
 describe("signed payloads", () => {
   it("refuses to sign payloads without a configured secret", async () => {
@@ -62,6 +67,14 @@ describe("GitHub webhook signatures", () => {
     await expect(verifyGitHubWebhook(body, signature, undefined)).resolves.toBe(
       false,
     );
+  });
+});
+
+describe("constant-time comparison", () => {
+  it("requires equal strings with equal lengths", () => {
+    expect(constantTimeEqual("same", "same")).toBe(true);
+    expect(constantTimeEqual("same", "diff")).toBe(false);
+    expect(constantTimeEqual("same", "same-but-longer")).toBe(false);
   });
 });
 
