@@ -53,6 +53,17 @@ export function renderHome(baseUrl?: string): string {
     <meta name="twitter:image" content="${ogImage}" />
     <link rel="icon" href="/favicon.svg?v=2" type="image/svg+xml" />
     <style>
+      @view-transition {
+        navigation: auto;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        ::view-transition-group(*),
+        ::view-transition-old(*),
+        ::view-transition-new(*) {
+          animation: none !important;
+        }
+      }
+
       @font-face { font-family: "Hanken Grotesk"; font-style: normal; font-weight: 400 500; font-display: swap; src: url("/assets/fonts/hanken-400.woff2") format("woff2"); }
       @font-face { font-family: "Hanken Grotesk"; font-style: normal; font-weight: 600 800; font-display: swap; src: url("/assets/fonts/hanken-600.woff2") format("woff2"); }
       @font-face { font-family: "JetBrains Mono"; font-style: normal; font-weight: 400 700; font-display: swap; src: url("/assets/fonts/jetbrains-mono-500.woff2") format("woff2"); }
@@ -71,6 +82,7 @@ export function renderHome(baseUrl?: string): string {
         --grid: rgba(255,255,255,0.022);
       }
       html[data-theme="light"] {
+        color-scheme: light;
         --paper: #fafaf8; --surface: #ffffff; --ink: #0b0e14; --text: #16191f;
         --muted: #5b626d; --faint: #8b919b; --line: #e8e7e2; --line-2: #f0efeb;
         --mark-bg: #0b0e14; --mark-fg: #ffffff; --btn-bg: #0b0e14; --btn-fg: #ffffff; --btn-bg-hover: #23262e;
@@ -81,7 +93,7 @@ export function renderHome(baseUrl?: string): string {
       }
       * { box-sizing: border-box; }
       button, a, .btn, .button, .tg { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
-      html { color-scheme: light dark; scroll-behavior: smooth; scroll-padding-top: 84px; }
+      html { color-scheme: dark; background: var(--paper); scroll-behavior: smooth; scroll-padding-top: 84px; }
       body { margin: 0; background: linear-gradient(var(--grid) 1px, transparent 1px) 0 0 / 100% 112px, var(--paper); color: var(--text); font-family: var(--sans); font-size: 16px; line-height: 1.55; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; transition: background-color 0.3s ease, color 0.3s ease; }
       a { color: inherit; text-decoration: none; }
       ::selection { background: var(--mark-signal); color: var(--surface); }
@@ -6638,7 +6650,8 @@ export function renderGatePage(input: {
     : "";
   const gateState = input.verified ? "verified" : "pending";
 
-  const verifiedBody = `<h1>You're verified</h1>
+  const verifiedBody = `<div class="gate-seal" aria-hidden="true">✓</div>
+          <h1>You're verified</h1>
           <div class="notice success"><strong>Human check passed</strong> <span>${escapeHtml(input.successDetail ?? "The required check can turn green for this exact commit.")}</span></div>
           <p class="intro">Recorded for ${prLink} at <code>${escapeHtml(shortSha)}</code>, turning <code>pr-captcha/human</code> green.</p>
           <a class="button dark full" href="${escapeHtml(pullRequestUrl)}">Return to pull request</a>
@@ -6652,16 +6665,42 @@ export function renderGatePage(input: {
   const pendingBody = `<h1>Finish this PR check</h1>
           <p class="intro">Signed in as <strong>${escapeHtml(input.session.login)}</strong>. Verifying ${prLink} at <code>${escapeHtml(shortSha)}</code> to turn <code>pr-captcha/human</code> green.</p>
           ${error}
-          <form method="post" action="/gate/${escapeHtml(input.gate.id)}">
+          <form method="post" action="/gate/${escapeHtml(input.gate.id)}" data-gate-form>
             <input type="hidden" name="token" value="${escapeHtml(input.token)}" />
             <input type="hidden" name="csrf_token" value="${escapeHtml(input.csrfToken)}" />
             <div class="turnstile-wrap">
-              <div class="cf-turnstile" data-sitekey="${escapeHtml(input.turnstileSiteKey)}"></div>
+              <div class="cf-turnstile" data-sitekey="${escapeHtml(input.turnstileSiteKey)}" data-callback="ptArm"></div>
             </div>
             <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
-            <button class="button dark full" type="submit">Complete human check</button>
+            <button class="button dark full" type="submit" data-gate-submit disabled>
+              <span class="spinner" aria-hidden="true"></span>
+              <span data-label>Solve the check to continue</span>
+            </button>
           </form>
-          <p class="fine-print">No PR code runs here. The receipt is bound to this commit only: a new commit needs a new check.</p>`;
+          <p class="fine-print">No PR code runs here. The receipt is bound to this commit only: a new commit needs a new check.</p>
+          <script>
+            (function () {
+              var b = document.querySelector("[data-gate-submit]");
+              var l = b && b.querySelector("[data-label]");
+              var f = document.querySelector("[data-gate-form]");
+              window.ptArm = function () {
+                if (!b) return;
+                b.disabled = false;
+                if (l) l.textContent = "Complete human check";
+              };
+              window.setTimeout(function () {
+                if (b && b.disabled && !b.classList.contains("is-loading")) window.ptArm();
+              }, 7000);
+              if (f && b) {
+                f.addEventListener("submit", function () {
+                  b.classList.add("is-loading");
+                  b.setAttribute("aria-busy", "true");
+                  b.disabled = true;
+                  if (l) l.textContent = "Verifying…";
+                });
+              }
+            })();
+          </script>`;
 
   return layout(
     input.verified ? "Verified" : "Finish this PR check",
@@ -6746,6 +6785,17 @@ function layout(
     ${canonical}
     <link rel="icon" href="/favicon.svg?v=2" type="image/svg+xml" />
     <style>
+      @view-transition {
+        navigation: auto;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        ::view-transition-group(*),
+        ::view-transition-old(*),
+        ::view-transition-new(*) {
+          animation: none !important;
+        }
+      }
+
       @font-face { font-family: "Hanken Grotesk"; font-style: normal; font-weight: 400 500; font-display: swap; src: url("/assets/fonts/hanken-400.woff2") format("woff2"); }
       @font-face { font-family: "Hanken Grotesk"; font-style: normal; font-weight: 600 800; font-display: swap; src: url("/assets/fonts/hanken-600.woff2") format("woff2"); }
       @font-face { font-family: "JetBrains Mono"; font-style: normal; font-weight: 400 700; font-display: swap; src: url("/assets/fonts/jetbrains-mono-500.woff2") format("woff2"); }
@@ -6812,6 +6862,7 @@ function layout(
       html {
         scroll-behavior: smooth;
         scroll-padding-top: 84px;
+        background: var(--paper);
       }
       body {
         margin: 0;
@@ -11894,12 +11945,11 @@ function layout(
         min-height: 100vh;
         display: grid;
         place-items: center;
-        padding: 34px 20px;
+        padding: 40px 20px;
         background:
-          radial-gradient(circle at 50% 0%, rgba(17, 152, 95, 0.09), transparent 32rem),
-          linear-gradient(90deg, rgba(21, 31, 44, 0.03) 1px, transparent 1px),
-          linear-gradient(180deg, rgba(21, 31, 44, 0.025) 1px, transparent 1px);
-        background-size: auto, 72px 72px, 72px 72px;
+          radial-gradient(circle at 50% 24%, rgba(54, 201, 138, 0.10), transparent 36rem),
+          radial-gradient(circle at 50% 120%, rgba(54, 201, 138, 0.05), transparent 40rem),
+          var(--paper);
       }
       .gate-shell {
         width: min(540px, 100%);
@@ -11910,13 +11960,89 @@ function layout(
         margin-top: 18px;
       }
       .gate {
+        position: relative;
         width: 100%;
-        border: 1px solid rgba(21, 31, 44, 0.11);
-        border-radius: 8px;
-        background: var(--surface);
-        box-shadow: var(--shadow);
-        padding: 30px;
-        text-align: left;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        padding: 38px 34px 30px;
+        text-align: center;
+        background: color-mix(in srgb, var(--surface) 88%, transparent);
+        backdrop-filter: blur(14px) saturate(125%);
+        -webkit-backdrop-filter: blur(14px) saturate(125%);
+        box-shadow:
+          inset 0 1px 0 color-mix(in srgb, var(--text) 9%, transparent),
+          0 30px 80px -42px rgba(0, 0, 0, 0.85);
+      }
+      .gate::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        padding: 1px;
+        background: linear-gradient(
+          180deg,
+          color-mix(in srgb, var(--text) 16%, transparent),
+          transparent 55%
+        );
+        -webkit-mask:
+          linear-gradient(#000 0 0) content-box,
+          linear-gradient(#000 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        pointer-events: none;
+      }
+      .gate > * {
+        position: relative;
+      }
+      .gate .brand.centered {
+        justify-content: center;
+      }
+      .gate-step {
+        display: block;
+        margin: 26px 0 10px;
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--faint);
+      }
+      .gate-seal {
+        width: 56px;
+        height: 56px;
+        margin: 0 auto 6px;
+        display: grid;
+        place-items: center;
+        border-radius: 50%;
+        background: var(--pass-wash);
+        color: var(--pass);
+        font-size: 26px;
+        font-weight: 700;
+      }
+      .button .spinner {
+        display: none;
+        width: 16px;
+        height: 16px;
+        margin-right: 9px;
+        border: 2px solid currentColor;
+        border-top-color: transparent;
+        border-radius: 50%;
+        animation: gate-spin 0.7s linear infinite;
+      }
+      .button.is-loading .spinner {
+        display: inline-block;
+      }
+      .button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+      .button.is-loading {
+        cursor: wait;
+        opacity: 0.92;
+      }
+      @keyframes gate-spin {
+        to {
+          transform: rotate(360deg);
+        }
       }
       .gate .brand.centered {
         justify-content: flex-start;
@@ -12007,11 +12133,7 @@ function layout(
       .turnstile-wrap {
         display: grid;
         place-items: center;
-        min-height: 104px;
-        margin-top: 18px;
-        border: 1px solid var(--line);
-        border-radius: 6px;
-        background: linear-gradient(var(--surface), var(--surface));
+        min-height: 72px;
       }
       .button.full {
         width: 100%;
