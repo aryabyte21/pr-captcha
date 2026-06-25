@@ -61,6 +61,7 @@ import {
 } from "./oauth";
 import {
   renderFaviconSvg,
+  renderBadgeSvg,
   renderConfigPreviewPage,
   renderDemoPage,
   renderEvidenceScannerPage,
@@ -394,6 +395,21 @@ app.get("/favicon.svg", (c) =>
     "Content-Type": "image/svg+xml; charset=utf-8",
     "Cache-Control": "public, max-age=86400",
   }),
+);
+app.get("/badge.svg", (c) =>
+  c.body(
+    renderBadgeSvg({
+      label: c.req.query("label") || undefined,
+      message: c.req.query("message") || undefined,
+      tone: c.req.query("tone") || undefined,
+      style: c.req.query("style") || undefined,
+    }),
+    200,
+    {
+      "Content-Type": "image/svg+xml; charset=utf-8",
+      "Cache-Control": "public, max-age=3600",
+    },
+  ),
 );
 app.get("/og.svg", (c) =>
   c.body(renderOpenGraphImageSvg(), 200, {

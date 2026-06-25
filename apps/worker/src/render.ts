@@ -12,7 +12,7 @@ type ScorecardRisk = "low" | "medium" | "high";
 type ScorecardTheme = "light" | "dark";
 
 const GITHUB_APP_INSTALL_URL =
-  "https://github.com/apps/pr-captcha-aryabyte21/installations/new";
+  "https://github.com/apps/pr-captcha/installations/new";
 
 export function renderHome(baseUrl?: string): string {
   const canonical = baseUrl
@@ -83,7 +83,7 @@ export function renderHome(baseUrl?: string): string {
         --grid: rgba(11,14,20,0.025); --mark-signal: #16a35c;
       }
       * { box-sizing: border-box; }
-      html { color-scheme: light dark; scroll-behavior: smooth; }
+      html { color-scheme: light dark; scroll-behavior: smooth; scroll-padding-top: 84px; }
       body { margin: 0; background: linear-gradient(var(--grid) 1px, transparent 1px) 0 0 / 100% 112px, var(--paper); color: var(--text); font-family: var(--sans); font-size: 16px; line-height: 1.55; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; transition: background-color 0.3s ease, color 0.3s ease; }
       a { color: inherit; text-decoration: none; }
       ::selection { background: var(--mark-signal); color: var(--surface); }
@@ -3365,7 +3365,6 @@ function evidenceScannerScript(): string {
           "",
           "Next steps",
           "1. Review the live report: " + url,
-          "2. Share the scorecard: " + appLink("/scorecard-builder", data.repository),
           "3. Plan a 7-day pilot: " + appLink("/pilot", data.repository),
           "4. Generate the policy: " + appLink("/setup-wizard", data.repository),
           "5. Test the gate flow: " + appLink("/demo"),
@@ -3707,7 +3706,7 @@ function spamRadarScript(): string {
           actions.className = "radar-cluster-actions";
           actions.appendChild(actionLink("Scan", repoPath(cluster.repository, "/evidence")));
           actions.appendChild(actionLink("Pilot", repoPath(cluster.repository, "/pilot")));
-          actions.appendChild(actionLink("Proof", repoPath(cluster.repository, "/proof-card")));
+          actions.appendChild(actionLink("Demo", repoPath(cluster.repository, "/demo")));
           row.appendChild(button);
           row.appendChild(actions);
           clusters.appendChild(row);
@@ -3725,7 +3724,7 @@ function spamRadarScript(): string {
         });
         var installPath = cluster ? window.location.origin + repoPath(cluster.repository, "/evidence") : window.location.origin + "/evidence";
         var pilotPath = cluster ? window.location.origin + repoPath(cluster.repository, "/pilot") : window.location.origin + "/pilot";
-        var proofPath = cluster ? window.location.origin + repoPath(cluster.repository, "/proof-card") : window.location.origin + "/proof-card";
+        var proofPath = cluster ? window.location.origin + repoPath(cluster.repository, "/demo") : window.location.origin + "/demo";
         return [
           "pr-captcha maintainer install packet",
           "Radar: " + window.location.origin + "/radar",
@@ -3740,7 +3739,7 @@ function spamRadarScript(): string {
           "Recommendation: " + data.recommendation,
           "Install path: " + installPath,
           "Pilot path: " + pilotPath,
-          "Proof card: " + proofPath,
+          "Demo: " + proofPath,
           "Fork rehearsal: " + window.location.origin + "/rehearsal",
           "Gate trace: " + window.location.origin + "/gate-trace",
           "Acceptance plan:",
@@ -8034,6 +8033,7 @@ function layout(
       }
       html {
         scroll-behavior: smooth;
+        scroll-padding-top: 84px;
       }
       body {
         margin: 0;
