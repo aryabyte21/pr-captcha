@@ -12,363 +12,326 @@ type ScorecardRisk = "low" | "medium" | "high";
 type ScorecardTheme = "light" | "dark";
 
 export function renderHome(baseUrl?: string): string {
-  const canonicalUrl = baseUrl;
-  const imageUrl = baseUrl ? `${baseUrl}/og.svg` : "/og.svg";
+  const canonical = baseUrl
+    ? `<link rel="canonical" href="${escapeHtml(baseUrl)}" />`
+    : "";
+  const ogImage = baseUrl ? `${baseUrl}/og.svg` : "/og.svg";
+  const mascot = `<svg viewBox="0 0 48 48" aria-hidden="true">
+        <rect class="m-tile" x="3" y="3" width="42" height="42" rx="13"></rect>
+        <circle class="m-blk" cx="15" cy="14.5" r="5.6"></circle>
+        <circle class="m-blk" cx="33" cy="14.5" r="5.6"></circle>
+        <circle class="m-face" cx="24" cy="26" r="14.2"></circle>
+        <rect class="m-blk" x="12.4" y="21.6" width="23.2" height="7.4" rx="3.7"></rect>
+        <rect class="m-blk" x="22.6" y="22.4" width="2.8" height="2"></rect>
+        <rect class="m-glare" x="15" y="23" width="4.6" height="1.5" rx="0.75"></rect>
+        <path class="m-blk" d="M22 31.2h4l-2 2.3z"></path>
+        <path class="m-line" d="M21.3 33.6c.9 1.4 4.5 1.4 5.4 0"></path>
+        <path class="m-blk" d="M24 40.5l-5 -3v6z"></path>
+        <path class="m-blk" d="M24 40.5l5 -3v6z"></path>
+        <circle class="m-blk" cx="24" cy="40.5" r="1.9"></circle>
+      </svg>`;
 
-  return layout(
-    "pr-captcha",
-    `<header class="site-header">
-      <a class="brand" href="/">${brandMark()}<span>pr-captcha</span></a>
-      <nav class="site-nav" aria-label="Primary navigation">
-        <a href="/setup-wizard">Setup</a>
-        <a href="/trust">Trust</a>
-        <a href="/github-app-manifest">GitHub App</a>
-        <a href="/status">Operations</a>
-        <a href="https://github.com/aryabyte21/pr-captcha">GitHub</a>
-      </nav>
-      <a class="button dark header-cta" href="/launch">Start free</a>
+  return `<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>pr-captcha</title>
+    <meta name="description" content="pr-captcha makes AI slop and PR spam prove a human is present before it touches your queue or your CI. A GitHub-authenticated, SHA-bound human check at the door. Not AI detection." />
+    ${canonical}
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="pr-captcha" />
+    <meta property="og:title" content="Your repo has a bouncer now." />
+    <meta property="og:description" content="A GitHub-authenticated, SHA-bound human check at the door of your pull request queue. Not AI detection." />
+    <meta property="og:image" content="${ogImage}" />
+    <meta property="og:image:type" content="image/svg+xml" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Your repo has a bouncer now." />
+    <meta name="twitter:description" content="A GitHub-authenticated, SHA-bound human check at the door of your pull request queue." />
+    <meta name="twitter:image" content="${ogImage}" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <style>
+      @font-face { font-family: "Hanken Grotesk"; font-style: normal; font-weight: 400 500; font-display: swap; src: url("/assets/fonts/hanken-400.woff2") format("woff2"); }
+      @font-face { font-family: "Hanken Grotesk"; font-style: normal; font-weight: 600 800; font-display: swap; src: url("/assets/fonts/hanken-600.woff2") format("woff2"); }
+      @font-face { font-family: "JetBrains Mono"; font-style: normal; font-weight: 400 700; font-display: swap; src: url("/assets/fonts/jetbrains-mono-500.woff2") format("woff2"); }
+      :root {
+        --sys: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        --sans: "Hanken Grotesk", var(--sys);
+        --mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+        --mark-signal: #2ec27e;
+        --paper: #0a0c10; --surface: #13161c; --ink: #f3f4f6; --text: #e6e8ec;
+        --muted: #98a0ab; --faint: #6a7280; --line: #232831; --line-2: #1a1e25;
+        --mark-bg: #f3f4f6; --mark-fg: #0a0c10; --btn-bg: #f3f4f6; --btn-fg: #0b0e14; --btn-bg-hover: #ffffff;
+        --pass: #36c98a; --pass-wash: rgba(54,201,138,0.14);
+        --deny: #ff6f5e; --deny-wash: rgba(255,111,94,0.14);
+        --held: #97a0ad; --held-wash: rgba(151,160,173,0.13);
+        --shadow: 0 1px 0 rgba(0,0,0,0.4), 0 26px 60px -34px rgba(0,0,0,0.8);
+        --grid: rgba(255,255,255,0.022);
+      }
+      html[data-theme="light"] {
+        --paper: #fafaf8; --surface: #ffffff; --ink: #0b0e14; --text: #16191f;
+        --muted: #5b626d; --faint: #8b919b; --line: #e8e7e2; --line-2: #f0efeb;
+        --mark-bg: #0b0e14; --mark-fg: #ffffff; --btn-bg: #0b0e14; --btn-fg: #ffffff; --btn-bg-hover: #23262e;
+        --pass: #0a7d4f; --pass-wash: #e7f4ee; --deny: #c2392a; --deny-wash: #fbece9;
+        --held: #6b7280; --held-wash: #f0f1f3;
+        --shadow: 0 1px 0 rgba(11,14,20,0.02), 0 22px 48px -30px rgba(11,14,20,0.3);
+        --grid: rgba(11,14,20,0.025); --mark-signal: #16a35c;
+      }
+      * { box-sizing: border-box; }
+      html { color-scheme: light dark; scroll-behavior: smooth; }
+      body { margin: 0; background: linear-gradient(var(--grid) 1px, transparent 1px) 0 0 / 100% 112px, var(--paper); color: var(--text); font-family: var(--sans); font-size: 16px; line-height: 1.55; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; transition: background-color 0.3s ease, color 0.3s ease; }
+      a { color: inherit; text-decoration: none; }
+      ::selection { background: var(--mark-signal); color: var(--surface); }
+      .wrap { width: min(1080px, calc(100% - 48px)); margin-inline: auto; }
+      .mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+      .eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+      :focus-visible { outline: 2px solid var(--mark-signal); outline-offset: 3px; border-radius: 4px; }
+      .skip-link { position: fixed; top: 14px; left: 14px; z-index: 60; background: var(--ink); color: var(--paper); padding: 9px 13px; border-radius: 8px; font-size: 13px; font-weight: 700; transform: translateY(-160%); }
+      .skip-link:focus { transform: none; }
+      svg .m-tile { fill: #f3f3f4; } svg .m-blk { fill: #15181e; } svg .m-face { fill: #ffffff; stroke: #15181e; stroke-width: 1; } svg .m-glare { fill: #ffffff; opacity: 0.9; } svg .m-line { fill: none; stroke: #15181e; stroke-width: 1; stroke-linecap: round; }
+      .mark { width: 30px; height: 30px; flex: none; display: inline-flex; }
+      .mark svg, .brand svg { display: block; width: 100%; height: 100%; }
+      .mascot-xl { width: 104px; height: 104px; }
+      .mascot-xl svg { animation: bob 4.5s ease-in-out infinite; transform-origin: 50% 60%; }
+      @keyframes bob { 0%,100% { transform: translateY(0) rotate(-1deg); } 50% { transform: translateY(-5px) rotate(1deg); } }
+      header.site { position: sticky; top: 0; z-index: 30; background: color-mix(in srgb, var(--paper) 80%, transparent); backdrop-filter: saturate(150%) blur(10px); border-bottom: 1px solid var(--line); }
+      .bar { display: flex; align-items: center; gap: 28px; height: 62px; }
+      .brand { display: inline-flex; align-items: center; gap: 11px; font-weight: 680; letter-spacing: -0.02em; font-size: 18px; }
+      .brand .tag { font-family: var(--mono); font-size: 11px; color: var(--faint); letter-spacing: 0.02em; padding: 2px 6px; border: 1px solid var(--line); border-radius: 5px; }
+      nav.main { margin-left: auto; display: flex; gap: 24px; font-size: 14px; color: var(--muted); }
+      nav.main a:hover { color: var(--text); }
+      .tg { display: grid; place-items: center; width: 34px; height: 30px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); color: var(--muted); cursor: pointer; font-size: 14px; }
+      .tg:hover { color: var(--text); }
+      .btn { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 560; letter-spacing: -0.01em; font-family: inherit; padding: 9px 16px; border-radius: 9px; border: 1px solid transparent; cursor: pointer; transition: transform 0.12s ease, background 0.16s ease, border-color 0.16s ease, color 0.16s; }
+      .btn:active { transform: translateY(1px); }
+      .btn.primary { background: var(--btn-bg); color: var(--btn-fg); }
+      .btn.primary:hover { background: var(--btn-bg-hover); }
+      .btn.ghost { border-color: var(--line); color: var(--text); background: var(--surface); }
+      .btn.ghost:hover { border-color: var(--text); }
+      .btn.sm { padding: 7px 13px; font-size: 13px; }
+      .hero { display: grid; grid-template-columns: 1.04fr 0.96fr; gap: 56px; align-items: center; padding: 88px 0 76px; }
+      .hero h1 { font-size: clamp(40px, 6.2vw, 70px); line-height: 0.97; letter-spacing: -0.038em; font-weight: 680; margin: 18px 0 0; text-wrap: balance; }
+      .hero h1 em { font-style: normal; background: linear-gradient(var(--mark-signal), var(--mark-signal)) left bottom / 100% 0.1em no-repeat; padding-bottom: 0.02em; }
+      .hero .lede { font-size: 19px; color: var(--muted); margin: 22px 0 0; max-width: 33ch; line-height: 1.5; }
+      .hero .cta { display: flex; gap: 12px; margin-top: 30px; flex-wrap: wrap; }
+      .proofline { margin-top: 26px; display: flex; flex-wrap: wrap; gap: 8px 18px; font-family: var(--mono); font-size: 12.5px; color: var(--muted); }
+      .proofline span { display: inline-flex; align-items: center; gap: 6px; }
+      .proofline b { color: var(--text); font-weight: 600; }
+      .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--pass); display: inline-block; }
+      .hero-right { position: relative; }
+      .mascot-hero { position: absolute; top: -48px; left: 2px; z-index: 3; }
+      .receipt { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow); overflow: hidden; }
+      .receipt .top { display: flex; align-items: center; gap: 10px; padding: 13px 16px; border-bottom: 1px solid var(--line-2); font-size: 13px; }
+      .receipt .top .repo { font-family: var(--mono); color: var(--muted); }
+      .receipt .top .pr { margin-left: auto; font-family: var(--mono); font-size: 12px; color: var(--faint); }
+      .check { display: flex; align-items: flex-start; gap: 12px; padding: 16px; }
+      .check + .check { border-top: 1px solid var(--line-2); }
+      .check .ic { width: 22px; height: 22px; border-radius: 50%; flex: none; display: grid; place-items: center; margin-top: 1px; font-size: 12px; font-weight: 700; }
+      .ic.ok { background: var(--pass-wash); color: var(--pass); } .ic.no { background: var(--held-wash); color: var(--held); }
+      .check .name { font-family: var(--mono); font-size: 13.5px; font-weight: 600; }
+      .check .desc { color: var(--muted); font-size: 13px; margin-top: 2px; }
+      .check .state { margin-left: auto; font-family: var(--mono); font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase; padding: 3px 8px; border-radius: 999px; align-self: center; }
+      .state.pass { background: var(--pass-wash); color: var(--pass); } .state.held { background: var(--held-wash); color: var(--held); }
+      .receipt .foot { padding: 12px 16px; background: var(--line-2); display: flex; gap: 16px; font-family: var(--mono); font-size: 11.5px; color: var(--muted); flex-wrap: wrap; }
+      .receipt .foot b { color: var(--text); font-weight: 600; }
+      .band { border-block: 1px solid var(--line); background: var(--surface); }
+      .band .wrap { display: grid; grid-template-columns: 1.3fr repeat(3, 1fr); gap: 36px; padding: 40px 0; align-items: center; }
+      .band .pitch p { font-size: 17px; line-height: 1.5; letter-spacing: -0.01em; max-width: 32ch; margin: 12px 0 0; }
+      .band .pitch b { font-weight: 620; }
+      .stat .n { font-size: 34px; font-weight: 680; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+      .stat .l { font-size: 13px; color: var(--muted); margin-top: 4px; line-height: 1.35; }
+      .stat .n.bad { color: var(--deny); }
+      section.blk { padding: 76px 0; }
+      .head { max-width: 56ch; }
+      .head h2 { font-size: clamp(28px, 3.6vw, 38px); letter-spacing: -0.03em; font-weight: 660; margin: 12px 0 0; text-wrap: balance; }
+      .head p { color: var(--muted); font-size: 17px; margin: 14px 0 0; }
+      .steps { margin-top: 44px; display: grid; grid-template-columns: repeat(5, 1fr); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--surface); }
+      .step { padding: 22px 20px; border-right: 1px solid var(--line-2); }
+      .step:last-child { border-right: none; }
+      .step .k { font-family: var(--mono); font-size: 12px; color: var(--mark-signal); font-weight: 600; }
+      .step h3 { font-size: 15px; margin: 12px 0 6px; letter-spacing: -0.01em; }
+      .step p { font-size: 13px; color: var(--muted); margin: 0; line-height: 1.45; }
+      .step .mono { color: var(--text); }
+      .twocol { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: center; }
+      .drake-card { border: 1px solid var(--line); border-radius: 14px; overflow: hidden; background: var(--surface); box-shadow: var(--shadow); }
+      .drake-row { display: flex; align-items: center; gap: 16px; padding: 20px; }
+      .drake-row + .drake-row { border-top: 1px solid var(--line-2); }
+      .drake-row .face { width: 54px; height: 54px; border-radius: 13px; flex: none; display: grid; place-items: center; font-size: 28px; }
+      .drake-row.reject .face { background: var(--deny-wash); } .drake-row.accept .face { background: var(--pass-wash); }
+      .drake-row .txt { font-size: 16px; font-weight: 600; letter-spacing: -0.01em; line-height: 1.35; }
+      .drake-row .sub { font-size: 13px; color: var(--muted); font-weight: 400; margin-top: 3px; }
+      .explore { margin-top: 44px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+      .explore a { border: 1px solid var(--line); border-radius: 12px; padding: 16px; background: var(--surface); transition: border-color 0.15s, transform 0.12s; }
+      .explore a:hover { border-color: var(--text); transform: translateY(-1px); }
+      .explore .rn { font-family: var(--mono); font-size: 13px; font-weight: 600; }
+      .explore .rd { font-size: 12.5px; color: var(--muted); margin-top: 4px; }
+      .final { background: var(--ink); color: var(--paper); border-radius: 18px; padding: 56px 48px; display: flex; align-items: center; justify-content: space-between; gap: 32px; flex-wrap: wrap; border: 1px solid var(--line); }
+      .final h2 { font-size: clamp(26px, 3.4vw, 36px); letter-spacing: -0.03em; font-weight: 640; margin: 0; max-width: 18ch; text-wrap: balance; }
+      .final .quip { font-family: var(--mono); font-size: 12.5px; color: color-mix(in srgb, var(--paper) 55%, transparent); margin-top: 12px; }
+      .final .btn.primary { background: var(--paper); color: var(--ink); }
+      .final .btn.ghost { background: transparent; color: var(--paper); border-color: color-mix(in srgb, var(--paper) 28%, transparent); }
+      footer.site { border-top: 1px solid var(--line); padding: 40px 0; color: var(--muted); font-size: 13px; }
+      footer.site .wrap { display: flex; gap: 18px; align-items: center; flex-wrap: wrap; }
+      footer.site nav { display: flex; gap: 18px; margin-left: auto; flex-wrap: wrap; }
+      footer.site a:hover { color: var(--text); }
+      @media (prefers-reduced-motion: reduce) { .mascot-xl svg { animation: none; } * { transition: none !important; } }
+      @media (max-width: 860px) {
+        .hero { grid-template-columns: 1fr; gap: 40px; padding: 52px 0; }
+        .mascot-hero { position: static; margin-bottom: 14px; }
+        .band .wrap { grid-template-columns: 1fr 1fr; gap: 28px; }
+        .band .pitch { grid-column: 1 / -1; }
+        .steps { grid-template-columns: 1fr 1fr; }
+        .step { border-bottom: 1px solid var(--line-2); }
+        .twocol { grid-template-columns: 1fr; }
+        .explore { grid-template-columns: 1fr; }
+        nav.main { display: none; }
+      }
+    </style>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site">
+      <div class="wrap bar">
+        <a class="brand" href="/"><span class="mark" aria-hidden="true">${mascot}</span><span>pr-captcha</span><span class="tag">free · hosted</span></a>
+        <nav class="main" aria-label="Primary navigation">
+          <a href="#how">How it works</a>
+          <a href="#short">The idea</a>
+          <a href="/trust">Trust</a>
+          <a href="/setup-wizard">Docs</a>
+          <a href="https://github.com/aryabyte21/pr-captcha">GitHub</a>
+        </nav>
+        <button class="tg" id="theme" type="button" aria-label="Toggle light or dark">☀</button>
+        <a class="btn primary sm" href="/setup-wizard">Install free</a>
+      </div>
     </header>
-    <main id="main" class="home">
-      <section class="hero" data-motion-zone>
-        <div class="hero-copy motion-reveal">
-          <h1>Make PR spam knock first.</h1>
-          <p>Install the free hosted app, pick a simple policy, and make untrusted PRs prove a human is present before your repo has to care.</p>
-          <div class="actions">
-            <a class="button primary" href="/launch">Start free</a>
-            <a class="button light" href="/setup-wizard">Make policy</a>
-            <a class="button light" href="/demo">Watch demo</a>
-          </div>
-          <p class="proof-line"><span class="success-shield">✓</span>Hosted Worker. SHA-bound. No patch checkout.</p>
-          <div class="signal-rail" aria-label="pr-captcha guarantees">
-            <span>No AI detection</span>
-            <span>No patch checkout</span>
-            <span>No stale SHA reuse</span>
-          </div>
-        </div>
-        <div class="hero-media motion-reveal" aria-label="pr-captcha verification receipt preview">
-          <figure>
-            <img src="/assets/anti-slop-gate-hero.png" alt="Maintainer desk with a pull request queue and pr-captcha verification receipt" />
-            <figcaption>Verification is a receipt, not a code-quality judgment.</figcaption>
-          </figure>
-          <div class="hero-proof-grid" aria-label="pr-captcha receipt fields">
-            <div><span>Identity</span><strong>GitHub OAuth</strong></div>
-            <div><span>Presence</span><strong>Turnstile</strong></div>
-            <div><span>Scope</span><strong>Exact head SHA</strong></div>
-          </div>
-        </div>
-      </section>
-      <section class="proof-section" id="proof">
-        <div class="section-heading split">
+    <main id="main">
+      <div class="wrap">
+        <section class="hero">
           <div>
-            <h2>AI slop should wait outside the queue.</h2>
-          <p>Busy projects already have reviews, labels, and branch protection. The weak point is earlier: PR spam can ask for attention faster than maintainers can classify it. OpenClaw made the inbox problem obvious: cheap PRs need cheap sender friction.</p>
-          </div>
-          <span data-pr-count-status>Live open-PR counts from GitHub</span>
-        </div>
-        <div class="queue-strip" data-pr-counts aria-label="Open pull request counts from public GitHub repositories">
-          ${queueStat("microsoft/vscode", "2,044", "open PRs", "loading live count")}
-          ${queueStat("kubernetes/kubernetes", "926", "open PRs", "loading live count")}
-          ${queueStat("vercel/next.js", "1,900+", "open PRs", "loading live count")}
-          ${queueStat("rust-lang/rust", "1,113", "open PRs", "loading live count")}
-        </div>
-        <div class="proof-grid">
-          ${ossProofCard({
-            image: "/assets/oss-pr-vscode.png",
-            href: "https://github.com/microsoft/vscode/pull/321316",
-            repo: "microsoft/vscode",
-            title: "A tiny-looking asset PR can touch 74 files.",
-            meta: "#321316 · 74 files changed · 3 checks",
-          })}
-          ${ossProofCard({
-            image: "/assets/oss-pr-kubernetes.png",
-            href: "https://github.com/kubernetes/kubernetes/pull/139723",
-            repo: "kubernetes/kubernetes",
-            title: "Maintainer labels help, but they arrive after triage.",
-            meta: "#139723 · cleanup labels · 926 open PRs",
-          })}
-          ${ossProofCard({
-            image: "/assets/oss-pr-nextjs.png",
-            href: "https://github.com/vercel/next.js/pull/94747",
-            repo: "vercel/next.js",
-            title: "Modern JS repos attach huge status surfaces.",
-            meta: "#94747 · 120 checks · 1.9k open PRs",
-          })}
-        </div>
-        <p class="proof-footnote">Counts refresh from GitHub on page load, with static fallbacks if the public API is unavailable. Screenshots are examples of queue scale, not accusations about those contributors. The threat model is cheap automation around the queue: bot accounts and AI slop can open PRs faster than humans can classify them.</p>
-      </section>
-      <section class="pressure-section" id="anti-slop" data-motion-zone>
-        <div class="pressure-copy motion-reveal">
-          <h2>The gate is for attention, not taste policing.</h2>
-          <p>pr-captcha does not guess whether a patch was written by a model. It asks for a signed, browser-present human before the queue spends trust.</p>
-        </div>
-        <div class="pressure-accordion" aria-label="Where pr-captcha fits in the pull request queue">
-          ${pressurePanel(
-            "/assets/oss-pr-vscode.png",
-            "Drive-by patches",
-            "A tiny-looking PR can still demand reviewer context, status checks, and maintainers who know the project.",
-          )}
-          ${pressurePanel(
-            "/assets/oss-pr-kubernetes.png",
-            "Queue triage",
-            "Labels and reviews help after the queue sees the work. pr-captcha asks for human presence before that.",
-          )}
-          ${pressurePanel(
-            "/assets/oss-pr-nextjs.png",
-            "Expensive automation",
-            "Use the signal to keep heavyweight jobs and fork workflows behind a cheap human-origin check.",
-          )}
-          ${pressurePanel(
-            "/assets/anti-slop-gate-hero.png",
-            "Maintainer control",
-            "Every repository decides where the receipt matters: advisory signal, branch protection, or workflow gate.",
-          )}
-        </div>
-      </section>
-      <section class="timeline-section" id="how">
-        <div class="section-heading">
-          <h2>What happens on a PR</h2>
-          <p>The gate is deliberately boring: read metadata, bind the SHA, require the right GitHub user, then publish a human-origin signal.</p>
-        </div>
-        <div class="timeline">
-          ${timelineItem("1", "PR opened", "A PR arrives under an enabled target: every PR by default, or a narrower configured target.")}
-          ${timelineItem("2", "Intake check posted", "pr-captcha comments and creates a SHA-bound required check.")}
-          ${timelineItem("3", "Human shows up", "Contributor logs in with GitHub and completes browser verification.")}
-          ${timelineItem("4", "Signal published", "pr-captcha marks the exact SHA as human-verified.")}
-          ${timelineItem("5", "Repo policy decides", "Use the signal for triage, merge protection, or held fork workflows.")}
-        </div>
-      </section>
-      <section class="integration-section" id="integration">
-        <div class="section-heading">
-          <h2>Integration paths</h2>
-          <p>Use pr-captcha as a PR intake check first. Wire it into CI only where untrusted automation should wait behind a tiny human check.</p>
-        </div>
-        <div class="comparison-wrap">
-          <table class="comparison-table">
-            <thead>
-              <tr>
-                <th></th>
-                <th>PR intake check</th>
-                <th>Native fork release</th>
-                <th>Workflow gate</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <th>When to use</th>
-                <td>Busy public repos that need a human-origin signal before triage.</td>
-                <td>Repos using GitHub's approval queue for fork workflows.</td>
-                <td>Repos where heavy jobs should wait on the signal.</td>
-              </tr>
-              <tr>
-                <th>How it works</th>
-                <td>Creates a required check and PR comment as soon as the PR opens.</td>
-                <td>Approves GitHub's held fork workflow after verification.</td>
-                <td>A tiny job runs first. Heavy jobs wait on it.</td>
-              </tr>
-              <tr>
-                <th>CI effect</th>
-                <td>No jobs by itself.</td>
-                <td>Held jobs stay held until approved.</td>
-                <td>One tiny job gates the rest.</td>
-              </tr>
-              <tr>
-                <th>Setup</th>
-                <td>Install the app and enable the required check.</td>
-                <td>Enable fork approval and install the app.</td>
-                <td>Add one step to your workflow.</td>
-              </tr>
-              <tr>
-                <th>Blocks CI</th>
-                <td><span class="no">No</span>, it is an intake signal.</td>
-                <td><span class="yes">Yes</span>, before any jobs start.</td>
-                <td><span class="partial">Partial</span>, blocks heavy jobs.</td>
-              </tr>
-              <tr>
-                <th>Best for</th>
-                <td>Open-source PR queues with heavy triage load.</td>
-                <td>Fork PRs that GitHub already holds.</td>
-                <td>Private repos and broad adoption.</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="integration-mobile">
-          ${integrationMobileCard("PR intake check", [
-            "Best for public repos with heavy triage load.",
-            "Creates a required check and PR comment.",
-            "Does not run jobs by itself.",
-            "Works before review and labels settle.",
-          ])}
-          ${integrationMobileCard("Native fork release", [
-            "Best when GitHub already holds fork workflows.",
-            "Approves the held run after verification.",
-            "Held jobs stay held until approved.",
-            "Protects public fork automation.",
-          ])}
-          ${integrationMobileCard("Workflow gate", [
-            "Best when heavy jobs should wait.",
-            "A tiny job runs first.",
-            "Heavy jobs wait on it.",
-            "One tiny job gates the rest.",
-          ])}
-        </div>
-      </section>
-      <section class="setup-section" id="setup">
-        <div class="setup-copy">
-          <h2>Install the gate in one pass</h2>
-          <p>Start with the GitHub App check, then add the workflow gate only where heavy automation should wait. Keep the path narrow: permissions, Worker, policy, branch protection.</p>
-          <div class="setup-actions">
-            <a class="button light" href="/demo">Watch demo</a>
-            <a class="button primary" href="/github-app-manifest">Create GitHub App</a>
-            <a class="button light" href="/setup-wizard">Run setup wizard</a>
-            <a class="button light" href="/status">Gate status</a>
-            <a class="button light" href="/setup.md">Open setup guide</a>
-            <a class="button light" href="/config-preview">Preview config</a>
-            <a class="button light" href="/diagnostics">Run diagnostics</a>
-            <button class="button light" type="button" data-copy-workflow>Copy workflow gate</button>
-          </div>
-          <div class="setup-steps">
-            ${setupStep(
-              "1",
-              "Create GitHub App",
-              "Install metadata, checks, issues, pull requests, actions, and workflow permissions.",
-              "/github-app.md",
-              "Permission guide",
-            )}
-            ${setupStep(
-              "2",
-              "Deploy Worker",
-              "Bind D1, set GitHub OAuth, Turnstile, webhook, and session secrets.",
-              "/setup.md#2-create-cloudflare-resources",
-              "Worker setup",
-            )}
-            ${setupStep(
-              "3",
-              "Add pr-captcha.yml",
-              "Gate every PR by default, or narrow by first-time, outside, fork, and bot targets per repository.",
-              "/config.md",
-              "Config reference",
-            )}
-            ${setupStep(
-              "4",
-              "Protect pr-captcha/human",
-              "Require the SHA-bound check where the signal should gate merge or automation.",
-              "/setup.md#6-enable-branch-protection",
-              "Branch protection",
-            )}
-          </div>
-        </div>
-        <div class="setup-board" aria-label="Production setup preview">
-          <div class="workflow-panel">
-            <div class="panel-top">
-              <strong>Workflow gate</strong>
-              <span>optional CI guard</span>
+            <span class="eyebrow">Human-presence check for pull requests</span>
+            <h1>Your repo<br />has a <em>bouncer</em><br />now.</h1>
+            <p class="lede">pr-captcha checks ID at the door. Every unknown PR has to prove a real GitHub human is present before it touches your queue or your CI.</p>
+            <div class="cta">
+              <a class="btn primary" href="/setup-wizard">Install the GitHub App</a>
+              <a class="btn ghost" href="/demo">Watch the 60s demo</a>
             </div>
-            <pre><code data-workflow-source>${escapeHtml(workflowGateYaml())}</code></pre>
+            <div class="proofline">
+              <span><span class="dot"></span><b>1 user</b></span>
+              <span><span class="dot"></span><b>1 commit</b></span>
+              <span><span class="dot"></span><b>0 patch executed</b></span>
+              <span>· bound to the exact head SHA</span>
+            </div>
           </div>
-          <div class="ready-panel">
+          <div class="hero-right">
+            <div class="mascot-hero mascot-xl" aria-hidden="true">${mascot}</div>
+            <div class="receipt" aria-label="Example pull request checks">
+              <div class="top"><span style="color: var(--pass)">●</span><span class="repo">octo-org/awesome-repo</span><span class="pr">#184 · a1b2c3d</span></div>
+              <div class="check"><span class="ic ok">✓</span><div><div class="name">pr-captcha / human</div><div class="desc">Verified by @real-contributor for this exact commit.</div></div><span class="state pass">Pass</span></div>
+              <div class="check"><span class="ic no">○</span><div><div class="name">ci / build &amp; test</div><div class="desc">Fork workflow held until a human is verified.</div></div><span class="state held">Held</span></div>
+              <div class="foot"><span>identity <b>GitHub OAuth</b></span><span>presence <b>Turnstile</b></span><span>scope <b>head SHA</b></span></div>
+            </div>
+          </div>
+        </section>
+      </div>
+      <div class="band">
+        <div class="wrap">
+          <div class="pitch">
+            <span class="eyebrow">The inbox problem, for code</span>
+            <p>When a PR costs nothing to send, maintainers inherit the spam. One fast-growing repo went from <b>2 PRs a week to 3,400</b> while its merge rate fell off a cliff.</p>
+          </div>
+          <div class="stat"><div class="n">3,400</div><div class="l">PRs per week at peak, up from 2</div></div>
+          <div class="stat"><div class="n bad">9.3%</div><div class="l">merged, down from 48%</div></div>
+          <div class="stat"><div class="n bad">106</div><div class="l">PRs from one account in a day, ~3s apart</div></div>
+        </div>
+      </div>
+      <div class="wrap">
+        <section class="blk" id="how">
+          <div class="head">
+            <span class="eyebrow">Deliberately boring</span>
+            <h2>Not AI detection. A door.</h2>
+            <p>pr-captcha never guesses whether a patch was written by a model, and never checks out or runs the code. It reads metadata, binds the commit, and asks for one logged-in human.</p>
+          </div>
+          <div class="steps">
+            <div class="step"><div class="k">01</div><h3>PR opens</h3><p>A pull request lands under your policy: everything, or a narrower target.</p></div>
+            <div class="step"><div class="k">02</div><h3>Check posted</h3><p>A SHA-bound <span class="mono">pr-captcha/human</span> check and one comment appear.</p></div>
+            <div class="step"><div class="k">03</div><h3>Human shows</h3><p>Contributor signs in with GitHub and clears a browser check.</p></div>
+            <div class="step"><div class="k">04</div><h3>Signal published</h3><p>The exact commit is marked human-verified. New commit, new check.</p></div>
+            <div class="step"><div class="k">05</div><h3>You decide</h3><p>Use it for triage, branch protection, or releasing held CI.</p></div>
+          </div>
+        </section>
+        <section class="blk" id="short" style="padding-top: 0">
+          <div class="twocol">
+            <div class="head">
+              <span class="eyebrow">The short version</span>
+              <h2>Stop refereeing taste. Charge at the door.</h2>
+              <p>You can't reliably detect AI, and you shouldn't have to. Move the cost to the sender: a logged-in human, bound to one commit. Cheap for real contributors, annoying for spray-and-pray bots.</p>
+            </div>
+            <div class="drake-card" aria-label="Two ways to handle slop">
+              <div class="drake-row reject"><div class="face">🙅‍♂️</div><div><div class="txt">Detect whether the patch was written by AI</div><div class="sub">false positives, an arms race, angry humans</div></div></div>
+              <div class="drake-row accept"><div class="face">😎</div><div><div class="txt">Make the sender prove they're one human</div><div class="sub">bound to the commit, zero code executed</div></div></div>
+            </div>
+          </div>
+        </section>
+        <section class="blk" id="explore" style="padding-top: 0">
+          <div class="head">
+            <span class="eyebrow">Kick the tires</span>
+            <h2>See it before you install.</h2>
+            <p>Every tool below runs on the free hosted Worker. No install required to look around.</p>
+          </div>
+          <div class="explore">
+            <a href="/demo"><div class="rn">/demo</div><div class="rd">Interactive dry run of the full gate</div></a>
+            <a href="/evidence"><div class="rn">/evidence</div><div class="rd">Scan a repo for queue risk</div></a>
+            <a href="/queue-pressure"><div class="rn">/queue-pressure</div><div class="rd">Estimate attention at risk</div></a>
+            <a href="/setup-wizard"><div class="rn">/setup-wizard</div><div class="rd">Generate a policy file</div></a>
+            <a href="/launch"><div class="rn">/launch</div><div class="rd">Production install cockpit</div></a>
+            <a href="/status"><div class="rn">/status</div><div class="rd">Live service health</div></a>
+          </div>
+        </section>
+        <section class="blk" style="padding-top: 0">
+          <div class="final">
             <div>
-              <h3>Ready check</h3>
-              <p>Before a public install, confirm the Worker can reach D1, GitHub, OAuth, Turnstile, and the repo policy file.</p>
+              <h2>Give your repo a door.</h2>
+              <div class="quip">$ git push → "who sent this?" → review still decides.</div>
             </div>
-            <div class="setup-signals">
-              ${setupSignal("No PR checkout", "Metadata only")}
-              ${setupSignal("SHA-bound", "New commit resets")}
-              ${setupSignal("Audit trail", "Every gate event")}
-              ${setupSignal("Fail closed", "Malformed status blocked")}
+            <div style="display: flex; gap: 12px; flex-wrap: wrap">
+              <a class="btn primary" href="/setup-wizard">Install free</a>
+              <a class="btn ghost" href="/trust">Read the trust docs</a>
             </div>
           </div>
+        </section>
+      </div>
+      <footer class="site">
+        <div class="wrap">
+          <span class="brand" style="font-size: 14px"><span class="mark" style="width: 20px; height: 20px" aria-hidden="true">${mascot}</span>pr-captcha</span>
+          <span>A bouncer for your pull request queue.</span>
+          <nav aria-label="Footer">
+            <a href="/trust">Trust</a>
+            <a href="/status">Status</a>
+            <a href="https://github.com/aryabyte21/pr-captcha">GitHub</a>
+          </nav>
         </div>
-      </section>
-      <section class="security-band" id="security">
-        <div>
-          <h2>Security model: metadata only.</h2>
-          <p>The privileged app reads PR metadata, verifies a GitHub session and Turnstile token, then publishes a SHA-bound check result. It never checks out or executes the pull request patch.</p>
-        </div>
-        <div class="security-grid">
-          <span>GitHub OAuth</span>
-          <span>Exact head SHA</span>
-          <span>Server-side CAPTCHA</span>
-          <span>Installation token</span>
-        </div>
-      </section>
-      <section class="roadmap-section" id="roadmap">
-        <div class="section-heading">
-          <h2>Production path</h2>
-          <p>Ship the smallest credible control first, then harden the operational edges that matter for public repositories.</p>
-        </div>
-        <div class="roadmap-grid">
-          ${roadmapCard(
-            "1",
-            "Beta",
-            [
-              "Core PR intake check",
-              "Turnstile verification",
-              "Checks, comments, workflow release",
-              "YAML configuration",
-              "Audit logging",
-            ],
-            "Goal: prove value with real repositories.",
-          )}
-          ${roadmapCard(
-            "2",
-            "Hardening",
-            [
-              "Rate limiting and abuse controls",
-              "Replay protection and SHA binding",
-              "Idempotent approvals",
-              "Observability and alerts",
-              "Comprehensive tests",
-            ],
-            "Goal: secure, reliable, and boring.",
-          )}
-          ${roadmapCard(
-            "3",
-            "Launch",
-            [
-              "Highly available deploy",
-              "Backups and disaster recovery",
-              "Documentation and guides",
-              "Community feedback loop",
-              "Uptime and incident response",
-            ],
-            "Goal: trusted by maintainers at scale.",
-          )}
-        </div>
-      </section>
+      </footer>
     </main>
-    <footer class="site-footer">
-      <div>
-        <div class="brand footer-brand">${brandMark()}<span>pr-captcha</span></div>
-        <p>Anti AI-slop checks for GitHub PR queues.</p>
-        <strong>Make AI slop prove a human is present.</strong>
-      </div>
-      <div class="footer-points">
-        <span>GitHub App</span>
-        <span>SHA-bound</span>
-        <span>Maintainer control</span>
-        <span>Real humans</span>
-      </div>
-      <div class="footer-actions">
-        <a class="button light-on-dark" href="/demo">Watch demo</a>
-        <a class="button ghost-on-dark" href="/queue-pressure">Queue pressure</a>
-        <a class="button ghost-on-dark" href="/badge-builder">README badge</a>
-        <a class="button ghost-on-dark" href="/proof-card">Proof card</a>
-        <a class="button ghost-on-dark" href="#setup">View setup</a>
-        <a class="button ghost-on-dark" href="/status">Status</a>
-        <a class="button ghost-on-dark" href="https://github.com/aryabyte21/pr-captcha">GitHub</a>
-      </div>
-    </footer>
-    ${liveCountScript()}
-    ${copyWorkflowScript()}
-    ${homeMotionScript()}`,
-    {
-      title: "pr-captcha",
-      description: defaultDescription,
-      canonicalUrl,
-      imageUrl,
-    },
-  );
+    <script>
+      (function () {
+        var root = document.documentElement;
+        function get(k, d) { try { return localStorage.getItem(k) || d; } catch (e) { return d; } }
+        function set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+        var prefersLight = window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches;
+        root.setAttribute("data-theme", get("theme", prefersLight ? "light" : "dark"));
+        var btn = document.getElementById("theme");
+        function sync() { btn.textContent = root.getAttribute("data-theme") === "dark" ? "☀" : "☾"; }
+        sync();
+        btn.addEventListener("click", function () {
+          var next = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
+          root.setAttribute("data-theme", next); set("theme", next); sync();
+        });
+      })();
+    </script>
+  </body>
+</html>`;
 }
 
 export function renderDemoPage(baseUrl?: string): string {
@@ -6770,9 +6733,12 @@ function statusPageScript(): string {
 
 export function renderFaviconSvg(): string {
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
-    <rect x="3" y="3" width="42" height="42" rx="12" fill="#080d14"/>
-    <path fill="#fff" fill-rule="evenodd" d="M17 36V13h10.3C34 13 38 16.8 38 22.3S34 31.8 27.3 31.8H23V36h-6Zm6-10.2h4c3 0 4.8-1.3 4.8-3.5S30 18.8 27 18.8h-4v7Z"/>
-    <circle cx="35" cy="35" r="5" fill="#16a35c"/>
+    <rect x="3" y="3" width="42" height="42" rx="13" fill="#f3f3f4"/>
+    <circle cx="15" cy="14.5" r="5.6" fill="#15181e"/>
+    <circle cx="33" cy="14.5" r="5.6" fill="#15181e"/>
+    <circle cx="24" cy="26" r="14.2" fill="#fff" stroke="#15181e"/>
+    <rect x="12.4" y="21.6" width="23.2" height="7.4" rx="3.7" fill="#15181e"/>
+    <path fill="#15181e" d="M22 31.2h4l-2 2.3z"/>
   </svg>`;
 }
 
@@ -7141,9 +7107,18 @@ Canonical: ${baseUrl}/.well-known/security.txt
 function brandMark(size: "default" | "small" | "tiny" = "default"): string {
   const className = size === "default" ? "brand-mark" : `brand-mark ${size}`;
   return `<svg class="${className}" viewBox="0 0 48 48" aria-hidden="true">
-    <rect x="3" y="3" width="42" height="42" rx="12"></rect>
-    <path fill-rule="evenodd" d="M17 36V13h10.3C34 13 38 16.8 38 22.3S34 31.8 27.3 31.8H23V36h-6Zm6-10.2h4c3 0 4.8-1.3 4.8-3.5S30 18.8 27 18.8h-4v7Z"></path>
-    <circle cx="35" cy="35" r="5"></circle>
+    <rect class="m-tile" x="3" y="3" width="42" height="42" rx="13"></rect>
+    <circle class="m-blk" cx="15" cy="14.5" r="5.6"></circle>
+    <circle class="m-blk" cx="33" cy="14.5" r="5.6"></circle>
+    <circle class="m-face" cx="24" cy="26" r="14.2"></circle>
+    <rect class="m-blk" x="12.4" y="21.6" width="23.2" height="7.4" rx="3.7"></rect>
+    <rect class="m-blk" x="22.6" y="22.4" width="2.8" height="2"></rect>
+    <rect class="m-glare" x="15" y="23" width="4.6" height="1.5" rx="0.75"></rect>
+    <path class="m-blk" d="M22 31.2h4l-2 2.3z"></path>
+    <path class="m-line" d="M21.3 33.6c.9 1.4 4.5 1.4 5.4 0"></path>
+    <path class="m-blk" d="M24 40.5l-5 -3v6z"></path>
+    <path class="m-blk" d="M24 40.5l5 -3v6z"></path>
+    <circle class="m-blk" cx="24" cy="40.5" r="1.9"></circle>
   </svg>`;
 }
 
@@ -8225,6 +8200,9 @@ function layout(
     ${canonical}
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <style>
+      @font-face { font-family: "Hanken Grotesk"; font-style: normal; font-weight: 400 500; font-display: swap; src: url("/assets/fonts/hanken-400.woff2") format("woff2"); }
+      @font-face { font-family: "Hanken Grotesk"; font-style: normal; font-weight: 600 800; font-display: swap; src: url("/assets/fonts/hanken-600.woff2") format("woff2"); }
+      @font-face { font-family: "JetBrains Mono"; font-style: normal; font-weight: 400 700; font-display: swap; src: url("/assets/fonts/jetbrains-mono-500.woff2") format("woff2"); }
       :root {
         color-scheme: light;
         --bg: #f8faf9;
@@ -8245,6 +8223,8 @@ function layout(
         --shadow: 0 24px 70px rgba(21, 31, 44, 0.1);
         --shadow-soft: 0 12px 34px rgba(21, 31, 44, 0.07);
         --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+        --sans: "Hanken Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        --mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
       }
       * {
         box-sizing: border-box;
@@ -8264,7 +8244,7 @@ function layout(
           var(--bg);
         background-size: auto, auto, 72px 72px, 72px 72px, auto;
         color: var(--text);
-        font-family: Geist, "SF Pro Display", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        font-family: var(--sans);
         letter-spacing: 0;
         font-variant-numeric: tabular-nums;
       }
@@ -14585,6 +14565,11 @@ function layout(
           min-height: 40px;
         }
       }
+      svg .m-tile { fill: #f3f3f4; }
+      svg .m-blk { fill: #15181e; }
+      svg .m-face { fill: #ffffff; stroke: #15181e; stroke-width: 1; }
+      svg .m-glare { fill: #ffffff; opacity: 0.9; }
+      svg .m-line { fill: none; stroke: #15181e; stroke-width: 1; stroke-linecap: round; }
     </style>
   </head>
   <body><a class="skip-link" href="#main">Skip to content</a>${body}</body>

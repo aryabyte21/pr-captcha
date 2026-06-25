@@ -204,6 +204,7 @@ function securityPolicy(): string {
     "frame-src https://challenges.cloudflare.com",
     "img-src 'self' data: https://challenges.cloudflare.com",
     "script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com",
+    "font-src 'self'",
     "style-src 'unsafe-inline'",
   ].join("; ");
 }

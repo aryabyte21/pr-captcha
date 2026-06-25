@@ -48,28 +48,16 @@ const gate: GateRecord = {
 };
 
 describe("rendering", () => {
-  it("uses the AI slop landing headline", () => {
+  it("renders the bouncer landing", () => {
     const html = renderHome();
 
-    expect(html).toContain("Make PR spam knock first.");
-    expect(html).toContain("Hosted Worker. SHA-bound. No patch checkout.");
-    expect(html).toContain("AI slop should wait outside the queue.");
-    expect(html).toContain("Install the gate in one pass");
-    expect(html).toContain("Protect pr-captcha/human");
-    expect(html).toContain("Copy workflow gate");
-    expect(html).toContain("Watch demo");
-    expect(html).toContain("Start free");
-    expect(html).toContain("Exact head SHA");
-    expect(html).toContain("The gate is for attention, not taste policing.");
-  });
-
-  it("renders public PR count hydration with honest fallback labels", () => {
-    const html = renderHome();
-
-    expect(html).toContain("/api/public/pr-counts");
-    expect(html).toContain('data-pr-count-repo="microsoft/vscode"');
-    expect(html).toContain("Mixed live and snapshot PR counts");
-    expect(html).toContain("Open-PR count snapshots");
+    expect(html).toContain("Your repo");
+    expect(html).toContain("<em>bouncer</em>");
+    expect(html).toContain("Not AI detection. A door.");
+    expect(html).toContain("Install the GitHub App");
+    expect(html).toContain("Stop refereeing taste. Charge at the door.");
+    expect(html).toContain("pr-captcha/human");
+    expect(html).toContain('data-theme="dark"');
   });
 
   it("renders share metadata and a branded Open Graph image", () => {
