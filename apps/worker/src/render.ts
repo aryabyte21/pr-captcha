@@ -11,6 +11,9 @@ type ProofTheme = "light" | "dark" | "compact";
 type ScorecardRisk = "low" | "medium" | "high";
 type ScorecardTheme = "light" | "dark";
 
+const GITHUB_APP_INSTALL_URL =
+  "https://github.com/apps/pr-captcha-aryabyte21/installations/new";
+
 export function renderHome(baseUrl?: string): string {
   const canonical = baseUrl
     ? `<link rel="canonical" href="${escapeHtml(baseUrl)}" />`
@@ -167,6 +170,8 @@ export function renderHome(baseUrl?: string): string {
       .explore a:hover { border-color: var(--text); transform: translateY(-1px); }
       .explore .rn { font-family: var(--mono); font-size: 13px; font-weight: 600; }
       .explore .rd { font-size: 12.5px; color: var(--muted); margin-top: 4px; }
+      .explore-note { margin-top: 18px; font-size: 13.5px; color: var(--muted); }
+      .explore-note a { color: var(--text); text-decoration: underline; text-underline-offset: 2px; }
       .final { background: var(--ink); color: var(--paper); border-radius: 18px; padding: 56px 48px; display: flex; align-items: center; justify-content: space-between; gap: 32px; flex-wrap: wrap; border: 1px solid var(--line); }
       .final h2 { font-size: clamp(26px, 3.4vw, 36px); letter-spacing: -0.03em; font-weight: 640; margin: 0; max-width: 18ch; text-wrap: balance; }
       .final .quip { font-family: var(--mono); font-size: 12.5px; color: color-mix(in srgb, var(--paper) 55%, transparent); margin-top: 12px; }
@@ -199,11 +204,11 @@ export function renderHome(baseUrl?: string): string {
           <a href="#how">How it works</a>
           <a href="#short">The idea</a>
           <a href="/trust">Trust</a>
-          <a href="/setup-wizard">Docs</a>
+          <a href="/setup-wizard">Setup</a>
           <a href="https://github.com/aryabyte21/pr-captcha">GitHub</a>
         </nav>
         <button class="tg" id="theme" type="button" aria-label="Toggle light or dark">☀</button>
-        <a class="btn primary sm" href="/setup-wizard">Install free</a>
+        <a class="btn primary sm" href="${GITHUB_APP_INSTALL_URL}">Install free</a>
       </div>
     </header>
     <main id="main">
@@ -214,7 +219,7 @@ export function renderHome(baseUrl?: string): string {
             <h1>Your repo<br />has a <em>bouncer</em><br />now.</h1>
             <p class="lede">pr-captcha checks ID at the door. Every unknown PR has to prove a real GitHub human is present before it touches your queue or your CI.</p>
             <div class="cta">
-              <a class="btn primary" href="/setup-wizard">Install the GitHub App</a>
+              <a class="btn primary" href="${GITHUB_APP_INSTALL_URL}">Install the GitHub App</a>
               <a class="btn ghost" href="/demo">Watch the 60s demo</a>
             </div>
             <div class="proofline">
@@ -284,10 +289,8 @@ export function renderHome(baseUrl?: string): string {
             <a href="/demo"><div class="rn">/demo</div><div class="rd">Interactive dry run of the full gate</div></a>
             <a href="/evidence"><div class="rn">/evidence</div><div class="rd">Scan a repo for queue risk</div></a>
             <a href="/queue-pressure"><div class="rn">/queue-pressure</div><div class="rd">Estimate attention at risk</div></a>
-            <a href="/setup-wizard"><div class="rn">/setup-wizard</div><div class="rd">Generate a policy file</div></a>
-            <a href="/launch"><div class="rn">/launch</div><div class="rd">Production install cockpit</div></a>
-            <a href="/status"><div class="rn">/status</div><div class="rd">Live service health</div></a>
           </div>
+          <p class="explore-note">After installing, generate a policy in the <a href="/setup-wizard">setup wizard</a> and check service health on the <a href="/status">status page</a>.</p>
         </section>
         <section class="blk" style="padding-top: 0">
           <div class="final">
@@ -296,7 +299,7 @@ export function renderHome(baseUrl?: string): string {
               <div class="quip">$ git push → "who sent this?" → review still decides.</div>
             </div>
             <div style="display: flex; gap: 12px; flex-wrap: wrap">
-              <a class="btn primary" href="/setup-wizard">Install free</a>
+              <a class="btn primary" href="${GITHUB_APP_INSTALL_URL}">Install free</a>
               <a class="btn ghost" href="/trust">Read the trust docs</a>
             </div>
           </div>
@@ -1219,7 +1222,7 @@ export function renderBadgeBuilderPage(baseUrl?: string): string {
           <p>Install the app, paste the badge into the repository README, then point curious maintainers to the demo, status page, and setup wizard.</p>
         </div>
         <div class="demo-next-actions">
-          <a class="button primary" href="/setup-wizard">Install app</a>
+          <a class="button primary" href="${GITHUB_APP_INSTALL_URL}">Install app</a>
           <a class="button light" href="/status">Verify status</a>
           <a class="button light" href="/queue-pressure">Measure queue</a>
         </div>
@@ -1574,7 +1577,7 @@ export function renderLaunchPage(baseUrl?: string): string {
         <a href="/trust">Trust</a>
         <a href="https://github.com/aryabyte21/pr-captcha">GitHub</a>
       </nav>
-      <a class="button dark header-cta" href="https://github.com/apps/pr-captcha-aryabyte21/installations/new">Install app</a>
+      <a class="button dark header-cta" href="${GITHUB_APP_INSTALL_URL}">Install app</a>
     </header>
     <main id="main" class="preview-page launch-page">
       <section class="preview-heading launch-heading">
@@ -1583,7 +1586,7 @@ export function renderLaunchPage(baseUrl?: string): string {
           <h1 aria-label="Make AI slop knock first">Make AI slop knock first.</h1>
           <p>pr-captcha is a polite little velvet rope for your PR queue. A contributor proves one simple thing before CI or review time starts: a logged-in GitHub human is present for this exact commit.</p>
           <div class="actions demo-actions">
-            <a class="button primary" href="https://github.com/apps/pr-captcha-aryabyte21/installations/new">Install GitHub App</a>
+            <a class="button primary" href="${GITHUB_APP_INSTALL_URL}">Install GitHub App</a>
             <a class="button light" href="/setup-wizard">Make policy</a>
             <button class="button light" type="button" data-copy-launch="share">Copy maintainer note</button>
           </div>
@@ -1668,7 +1671,7 @@ export function renderLaunchPage(baseUrl?: string): string {
             </div>
           </details>
           <div class="launch-actions-row">
-            <a href="https://github.com/apps/pr-captcha-aryabyte21/installations/new"><strong>Install GitHub App</strong><span>Use the hosted pr-captcha app.</span></a>
+            <a href="${GITHUB_APP_INSTALL_URL}"><strong>Install GitHub App</strong><span>Use the hosted pr-captcha app.</span></a>
             <a href="/setup-wizard"><strong>Make policy</strong><span>Choose who needs the check.</span></a>
             <a href="/status"><strong>Check service</strong><span>See whether the hosted gate is healthy.</span></a>
           </div>
@@ -1808,7 +1811,7 @@ export function renderForkPrRehearsalPage(baseUrl?: string): string {
         <a href="/trust">Trust</a>
         <a href="https://github.com/aryabyte21/pr-captcha">GitHub</a>
       </nav>
-      <a class="button dark header-cta" href="https://github.com/apps/pr-captcha-aryabyte21/installations/new">Install app</a>
+      <a class="button dark header-cta" href="${GITHUB_APP_INSTALL_URL}">Install app</a>
     </header>
     <main id="main" class="preview-page rehearsal-page">
       <section class="preview-heading rehearsal-heading">
