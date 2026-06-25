@@ -54,7 +54,7 @@ export function renderHome(baseUrl?: string): string {
     <meta name="twitter:title" content="Your repo has a bouncer now." />
     <meta name="twitter:description" content="A GitHub-authenticated, SHA-bound human check at the door of your pull request queue." />
     <meta name="twitter:image" content="${ogImage}" />
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon.svg?v=2" type="image/svg+xml" />
     <style>
       @font-face { font-family: "Hanken Grotesk"; font-style: normal; font-weight: 400 500; font-display: swap; src: url("/assets/fonts/hanken-400.woff2") format("woff2"); }
       @font-face { font-family: "Hanken Grotesk"; font-style: normal; font-weight: 600 800; font-display: swap; src: url("/assets/fonts/hanken-600.woff2") format("woff2"); }
@@ -8032,103 +8032,59 @@ export function renderGatePage(input: {
   const shortSha = input.gate.head_sha.slice(0, 7);
   const repoFullName = `${input.gate.owner}/${input.gate.repo}`;
   const pullRequestUrl = `https://github.com/${input.gate.owner}/${input.gate.repo}/pull/${input.gate.pr_number}`;
+  const prLink = `<a href="${escapeHtml(pullRequestUrl)}">${escapeHtml(repoFullName)}#${input.gate.pr_number}</a>`;
   const error = input.error
     ? `<div class="notice error">${escapeHtml(input.error)}</div>`
     : "";
-  const successDetail =
-    input.successDetail ??
-    "The required check can turn green for this exact commit.";
-  const success = input.verified
-    ? `<div class="notice success"><strong>Human check passed</strong> <span>${escapeHtml(successDetail)}</span></div>`
-    : "";
-  const button = input.verified
-    ? `<a class="button dark full" href="${escapeHtml(pullRequestUrl)}">Return to pull request</a>`
-    : `<button class="button dark full" type="submit">Complete human check</button>`;
-  const turnstile = input.verified
-    ? ""
-    : `<div class="turnstile-wrap">
-        <div class="cf-turnstile" data-sitekey="${escapeHtml(input.turnstileSiteKey)}"></div>
-      </div>
-      <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>`;
-  const metaTable = `<div class="meta-table" aria-label="Pull request verification target">
-    ${metaRow("Repository", repoFullName)}
-    ${metaRow("Pull request", `#${input.gate.pr_number}`)}
-    ${metaRow("Commit", shortSha, true)}
-    ${metaRow("GitHub user", input.session.login)}
-  </div>`;
-  const gateAction = input.verified
-    ? `<div class="gate-complete-action">
-        ${metaTable}
-        ${button}
-      </div>`
-    : `<form method="post" action="/gate/${escapeHtml(input.gate.id)}">
-        <input type="hidden" name="token" value="${escapeHtml(input.token)}" />
-        <input type="hidden" name="csrf_token" value="${escapeHtml(input.csrfToken)}" />
-        ${metaTable}
-        ${turnstile}
-        ${button}
-      </form>`;
   const gateState = input.verified ? "verified" : "pending";
 
+  const verifiedBody = `<h1>You're verified</h1>
+          <div class="notice success"><strong>Human check passed</strong> <span>${escapeHtml(input.successDetail ?? "The required check can turn green for this exact commit.")}</span></div>
+          <p class="intro">Recorded for ${prLink} at <code>${escapeHtml(shortSha)}</code>, turning <code>pr-captcha/human</code> green.</p>
+          <a class="button dark full" href="${escapeHtml(pullRequestUrl)}">Return to pull request</a>
+          <p class="fine-print" data-gate-return>Taking you back to the pull request...</p>
+          <script>
+            window.setTimeout(function () {
+              window.location.href = "${pullRequestUrl}";
+            }, 2500);
+          </script>`;
+
+  const pendingBody = `<h1>Finish this PR check</h1>
+          <p class="intro">Signed in as <strong>${escapeHtml(input.session.login)}</strong>. Verifying ${prLink} at <code>${escapeHtml(shortSha)}</code> to turn <code>pr-captcha/human</code> green.</p>
+          ${error}
+          <form method="post" action="/gate/${escapeHtml(input.gate.id)}">
+            <input type="hidden" name="token" value="${escapeHtml(input.token)}" />
+            <input type="hidden" name="csrf_token" value="${escapeHtml(input.csrfToken)}" />
+            <div class="turnstile-wrap">
+              <div class="cf-turnstile" data-sitekey="${escapeHtml(input.turnstileSiteKey)}"></div>
+            </div>
+            <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+            <button class="button dark full" type="submit">Complete human check</button>
+          </form>
+          <p class="fine-print">No PR code runs here. The receipt is bound to this commit only: a new commit needs a new check.</p>`;
+
   return layout(
-    "Finish this PR check",
+    input.verified ? "Verified" : "Finish this PR check",
     `<main id="main" class="gate-page">
       <section class="gate-shell" data-gate-shell data-gate-status="${gateState}">
-        <div class="gate gate-primary">
+        <div class="gate">
           <div class="brand centered">${brandMark()}<span>pr-captcha</span></div>
-          <h1>Finish this PR check</h1>
-          <p class="intro">Signed in as <strong>${escapeHtml(input.session.login)}</strong>. This verifies <a href="${escapeHtml(pullRequestUrl)}">${escapeHtml(repoFullName)}#${input.gate.pr_number}</a> at <code>${escapeHtml(shortSha)}</code>.</p>
-          <div class="status-strip">
-            <span><span class="mini-shield">✓</span>Signed into GitHub</span>
-            <span><span class="mini-shield">✓</span>Exact commit</span>
-            <span><span class="mini-shield">✓</span>No PR code runs</span>
-          </div>
-          ${error}
-          ${success}
-          ${gateAction}
-          <p class="fine-print">This verification is valid for this commit only. Pushing a new commit creates a fresh gate for the new SHA.</p>
+          ${input.verified ? verifiedBody : pendingBody}
         </div>
-        <aside class="gate-side" aria-label="Verification details">
-          <section class="gate-panel gate-receipt">
-            <div class="gate-panel-head">
-            <h2>Verification receipt</h2>
-            <span class="gate-status-badge" data-state="${gateState}">${input.verified ? "verified" : "waiting"}</span>
-          </div>
-            <p>${input.verified ? "The human-origin signal is recorded." : "Complete the browser check to turn pr-captcha/human green for this commit."}</p>
-            <dl class="gate-receipt-list">
-              <div><dt>Required check</dt><dd><code>pr-captcha/human</code></dd></div>
-              <div><dt>Target</dt><dd><a href="${escapeHtml(pullRequestUrl)}">${escapeHtml(repoFullName)}#${input.gate.pr_number}</a></dd></div>
-              <div><dt>Commit binding</dt><dd><code>${escapeHtml(input.gate.head_sha)}</code></dd></div>
-              <div><dt>Solver account</dt><dd>${escapeHtml(input.session.login)}</dd></div>
-            </dl>
-          </section>
-          <section class="gate-panel">
-            <h2>What this proves</h2>
-            <ul class="gate-check-list">
-              ${gateTrustItem("sha", "Exact SHA only", "The receipt applies only to this pull request head commit.")}
-              ${gateTrustItem("github", "GitHub account", "The solver is tied to an authenticated GitHub login.")}
-              ${gateTrustItem("sandbox", "No PR code runs here", "This page never checks out or executes contributor code.")}
-              ${gateTrustItem("fresh", "New commits need a new check", "A pushed update cannot reuse an older receipt.")}
-            </ul>
-          </section>
-        </aside>
       </section>
     </main>`,
   );
-}
-
-function gateTrustItem(id: string, title: string, body: string): string {
-  return `<li data-gate-check="${escapeHtml(id)}">
-    <span class="gate-check-icon">✓</span>
-    <div><strong>${escapeHtml(title)}</strong><small>${escapeHtml(body)}</small></div>
-  </li>`;
 }
 
 export function renderMessagePage(
   title: string,
   message: string,
   status: "success" | "error" = "success",
+  link?: { href: string; label: string },
 ): string {
+  const action = link
+    ? `<a class="button dark full" href="${escapeHtml(link.href)}">${escapeHtml(link.label)}</a>`
+    : "";
   return layout(
     title,
     `<main id="main" class="gate-page">
@@ -8136,6 +8092,7 @@ export function renderMessagePage(
         <div class="brand centered">${brandMark()}<span>pr-captcha</span></div>
         <h1>${escapeHtml(title)}</h1>
         <div class="notice ${status}">${escapeHtml(message)}</div>
+        ${action}
       </section>
     </main>`,
   );
@@ -8185,7 +8142,7 @@ function layout(
     <meta name="twitter:description" content="${escapeHtml(description)}" />
     <meta name="twitter:image" content="${escapeHtml(image)}" />
     ${canonical}
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon.svg?v=2" type="image/svg+xml" />
     <style>
       @font-face { font-family: "Hanken Grotesk"; font-style: normal; font-weight: 400 500; font-display: swap; src: url("/assets/fonts/hanken-400.woff2") format("woff2"); }
       @font-face { font-family: "Hanken Grotesk"; font-style: normal; font-weight: 600 800; font-display: swap; src: url("/assets/fonts/hanken-600.woff2") format("woff2"); }
@@ -13347,11 +13304,12 @@ function layout(
         background-size: auto, 72px 72px, 72px 72px;
       }
       .gate-shell {
-        width: min(1080px, 100%);
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) minmax(320px, 0.68fr);
-        gap: 18px;
-        align-items: stretch;
+        width: min(540px, 100%);
+      }
+      .gate .notice + .button,
+      .gate form + .button,
+      .gate .button {
+        margin-top: 18px;
       }
       .gate {
         width: 100%;

@@ -1009,6 +1009,11 @@ app.get("/gate/:id", async (c) => {
       renderMessagePage(
         "Human check not required",
         "This pull request no longer requires a pr-captcha verification for this commit.",
+        "success",
+        {
+          href: `https://github.com/${gate.owner}/${gate.repo}/pull/${gate.pr_number}`,
+          label: "Back to the pull request",
+        },
       ),
     );
   }
@@ -1038,6 +1043,10 @@ app.get("/gate/:id", async (c) => {
           "Verification link already used",
           "This pr-captcha link has already been used or replaced by a newer PR check.",
           "error",
+          {
+            href: `https://github.com/${gate.owner}/${gate.repo}/pull/${gate.pr_number}`,
+            label: "Back to the pull request",
+          },
         ),
         409,
       );
@@ -1222,6 +1231,10 @@ app.post("/gate/:id", async (c) => {
         "Verification link already used",
         "This pr-captcha link has already been used or replaced by a newer PR check.",
         "error",
+        {
+          href: `https://github.com/${gate.owner}/${gate.repo}/pull/${gate.pr_number}`,
+          label: "Back to the pull request",
+        },
       ),
       409,
     );
@@ -1375,6 +1388,10 @@ app.post("/gate/:id", async (c) => {
         "Verification link already used",
         "This pr-captcha link was already consumed by another verification attempt.",
         "error",
+        {
+          href: `https://github.com/${gate.owner}/${gate.repo}/pull/${gate.pr_number}`,
+          label: "Back to the pull request",
+        },
       ),
       409,
     );
