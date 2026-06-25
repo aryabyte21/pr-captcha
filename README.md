@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/assets/pr-captcha-github-app-icon.png" alt="pr-captcha panda bouncer" width="104" height="104">
+</p>
+
 <h1 align="center">pr-captcha</h1>
 
 <p align="center">

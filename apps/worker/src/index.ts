@@ -60,8 +60,6 @@ import {
   startGitHubOAuth,
 } from "./oauth";
 import {
-  renderBadgeBuilderPage,
-  renderBadgeSvg,
   renderFaviconSvg,
   renderConfigPreviewPage,
   renderDemoPage,
@@ -76,13 +74,9 @@ import {
   renderMessagePage,
   renderOpenGraphImageSvg,
   renderPilotPlanPage,
-  renderProofCardBuilderPage,
-  renderProofCardSvg,
   renderQueuePressurePage,
   renderRepositoryDiagnosticsPage,
   renderRobotsTxt,
-  renderScorecardBuilderPage,
-  renderScorecardSvg,
   renderSecurityTxt,
   renderSetupWizardPage,
   renderSpamRadarPage,
@@ -328,31 +322,6 @@ app.get("/trust", (c) => {
   );
 });
 
-app.get("/badge-builder", (c) => {
-  return c.html(
-    renderBadgeBuilderPage(
-      publicBaseUrl(c.env as Partial<Env> | undefined, c.req.url),
-    ),
-  );
-});
-
-app.get("/proof-card", (c) => {
-  return c.html(
-    renderProofCardBuilderPage(
-      publicBaseUrl(c.env as Partial<Env> | undefined, c.req.url),
-    ),
-  );
-});
-
-app.get("/scorecard-builder", (c) => {
-  return c.html(
-    renderScorecardBuilderPage(
-      publicBaseUrl(c.env as Partial<Env> | undefined, c.req.url),
-      normalizeRepositorySlug(c.req.query("repo") ?? "") ?? undefined,
-    ),
-  );
-});
-
 app.get("/github-app-manifest", (c) => {
   return c.html(
     renderGitHubAppManifestPage(
@@ -431,57 +400,6 @@ app.get("/og.svg", (c) =>
     "Content-Type": "image/svg+xml; charset=utf-8",
     "Cache-Control": "public, max-age=86400",
   }),
-);
-app.get("/badge.svg", (c) =>
-  c.body(
-    renderBadgeSvg({
-      label: c.req.query("label") || undefined,
-      message: c.req.query("message") || undefined,
-      tone: c.req.query("tone") || undefined,
-      style: c.req.query("style") || undefined,
-    }),
-    200,
-    {
-      "Content-Type": "image/svg+xml; charset=utf-8",
-      "Cache-Control": "public, max-age=3600",
-    },
-  ),
-);
-app.get("/proof.svg", (c) =>
-  c.body(
-    renderProofCardSvg({
-      repo: c.req.query("repo") || undefined,
-      pr: c.req.query("pr") || undefined,
-      sha: c.req.query("sha") || undefined,
-      user: c.req.query("user") || undefined,
-      result: c.req.query("result") || undefined,
-      theme: c.req.query("theme") || undefined,
-    }),
-    200,
-    {
-      "Content-Type": "image/svg+xml; charset=utf-8",
-      "Cache-Control": "public, max-age=3600",
-    },
-  ),
-);
-app.get("/scorecard.svg", (c) =>
-  c.body(
-    renderScorecardSvg({
-      repo: c.req.query("repo") || undefined,
-      risk: c.req.query("risk") || undefined,
-      open: c.req.query("open") || undefined,
-      fork: c.req.query("fork") || undefined,
-      unknown: c.req.query("unknown") || undefined,
-      labels: c.req.query("labels") || undefined,
-      recommendation: c.req.query("recommendation") || undefined,
-      theme: c.req.query("theme") || undefined,
-    }),
-    200,
-    {
-      "Content-Type": "image/svg+xml; charset=utf-8",
-      "Cache-Control": "public, max-age=3600",
-    },
-  ),
 );
 app.get("/robots.txt", (c) =>
   c.text(
