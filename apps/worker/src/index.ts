@@ -207,12 +207,27 @@ function securityPolicy(): string {
 
 function setSecurityHeaders(c: {
   header: (name: string, value: string) => void;
+  req: { url: string };
 }): void {
   c.header("Content-Security-Policy", securityPolicy());
   c.header("Referrer-Policy", "strict-origin-when-cross-origin");
   c.header("X-Content-Type-Options", "nosniff");
   c.header("X-Frame-Options", "DENY");
-  c.header("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
+  c.header(
+    "Permissions-Policy",
+    "camera=(), microphone=(), geolocation=(), browsing-topics=()",
+  );
+  c.header("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
+  c.header("Cross-Origin-Opener-Policy", "same-origin");
+  const path = new URL(c.req.url).pathname;
+  if (
+    path.startsWith("/gate") ||
+    path.startsWith("/auth/") ||
+    path.startsWith("/api/admin") ||
+    path === "/diagnostics"
+  ) {
+    c.header("Cache-Control", "no-store");
+  }
 }
 
 function acceptsHtml(accept: string | undefined): boolean {
