@@ -73,6 +73,15 @@ describe("rendering", () => {
     expect(ogImage).toContain("pr-captcha / human");
   });
 
+  it("escapes share image metadata", () => {
+    const html = renderHome('https://captcha.example.test/?q="><script>');
+
+    expect(html).toContain(
+      'content="https://captcha.example.test/?q=&quot;&gt;&lt;script&gt;/og.svg"',
+    );
+    expect(html).not.toContain('content="https://captcha.example.test/?q=">');
+  });
+
   it("renders a CSRF token in the gate form", () => {
     const html = renderGatePage({
       gate,
@@ -133,6 +142,31 @@ describe("rendering", () => {
     expect(html).toContain("Return to pull request");
     expect(html).not.toContain("cf-turnstile");
     expect(html).not.toContain('method="post"');
+  });
+
+  it("encodes the verified redirect URL as a JavaScript string", () => {
+    const html = renderGatePage({
+      gate: {
+        ...gate,
+        owner: 'octo"org',
+      },
+      token: "gate-token",
+      csrfToken: "csrf-token",
+      session: {
+        id: 1,
+        login: "some-user",
+        exp: 1791916800,
+      },
+      turnstileSiteKey: "turnstile-site-key",
+      verified: true,
+    });
+
+    expect(html).toContain(
+      'window.location.href = "https://github.com/octo\\"org/awesome-repo/pull/184";',
+    );
+    expect(html).not.toContain(
+      'window.location.href = "https://github.com/octo"org',
+    );
   });
 
   it("renders the config preview tool", () => {

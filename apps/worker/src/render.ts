@@ -43,14 +43,14 @@ export function renderHome(baseUrl?: string): string {
     <meta property="og:site_name" content="pr-captcha" />
     <meta property="og:title" content="Your repo has a bouncer now." />
     <meta property="og:description" content="A GitHub-authenticated, SHA-bound human check at the door of your pull request queue. Not AI detection." />
-    <meta property="og:image" content="${ogImage}" />
+    <meta property="og:image" content="${escapeHtml(ogImage)}" />
     <meta property="og:image:type" content="image/svg+xml" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Your repo has a bouncer now." />
     <meta name="twitter:description" content="A GitHub-authenticated, SHA-bound human check at the door of your pull request queue." />
-    <meta name="twitter:image" content="${ogImage}" />
+    <meta name="twitter:image" content="${escapeHtml(ogImage)}" />
     <link rel="icon" href="/favicon.svg?v=2" type="image/svg+xml" />
     <style>
       @view-transition {
@@ -6658,7 +6658,7 @@ export function renderGatePage(input: {
           <p class="fine-print" data-gate-return>Taking you back to the pull request…</p>
           <script>
             window.setTimeout(function () {
-              window.location.href = "${pullRequestUrl}";
+              window.location.href = ${JSON.stringify(pullRequestUrl)};
             }, 2500);
           </script>`;
 

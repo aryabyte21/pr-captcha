@@ -128,7 +128,7 @@ async function githubWebhookHmac(
     .join("");
 }
 
-function constantTimeEqual(left: string, right: string): boolean {
+export function constantTimeEqual(left: string, right: string): boolean {
   if (left.length !== right.length) {
     return false;
   }

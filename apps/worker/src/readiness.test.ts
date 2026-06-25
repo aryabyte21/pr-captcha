@@ -102,6 +102,51 @@ describe("readiness health check", () => {
     });
   });
 
+  it("warns when production base URL is plain HTTP", async () => {
+    const response = await app.request(
+      "/health/ready",
+      {},
+      {
+        ...readyEnv(),
+        APP_BASE_URL: "http://captcha.example.test",
+      },
+    );
+
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toEqual({
+      ok: true,
+      production_ready: false,
+      service: "pr-captcha",
+      missing: [],
+      database: true,
+      warnings: [
+        {
+          code: "insecure_app_base_url",
+          message:
+            "APP_BASE_URL uses HTTP outside local development. Use HTTPS before production enforcement.",
+        },
+      ],
+    });
+  });
+
+  it("allows local HTTP development base URLs", async () => {
+    const response = await app.request(
+      "/health/ready",
+      {},
+      {
+        ...readyEnv(),
+        APP_BASE_URL: "http://localhost:8787",
+      },
+    );
+
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toMatchObject({
+      ok: true,
+      production_ready: true,
+      warnings: [],
+    });
+  });
+
   it("returns launch readiness without making the UI route an error", async () => {
     const response = await app.request(
       "/api/public/launch-readiness",
